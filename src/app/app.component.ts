@@ -11,7 +11,6 @@ Amplify.configure(outputs);
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'amplify-angular-template';
   
   constructor(public authenticator: AuthenticatorService) {
     Amplify.configure(outputs);

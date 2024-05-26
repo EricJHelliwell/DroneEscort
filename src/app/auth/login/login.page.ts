@@ -19,7 +19,7 @@ export class LoginPage implements AfterContentInit{
   authService: AuthGuardService
 
   constructor(public guard: AuthGuardService) {
-    this.authService = guard;
+    this.authService = this.guard;
   }
 
   ngAfterContentInit(){
