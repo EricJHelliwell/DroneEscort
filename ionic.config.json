@@ -1,0 +1,7 @@
+{
+  "name": "DroneEscort",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
