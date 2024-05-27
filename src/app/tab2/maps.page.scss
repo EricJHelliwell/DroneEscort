@@ -107,3 +107,18 @@
     transform: scale3d(5, 5, 1);
   }
 }
+
+
+ion-header {
+  ion-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 24px;
+      height: 24px;
+
+    }
+  }
+}
