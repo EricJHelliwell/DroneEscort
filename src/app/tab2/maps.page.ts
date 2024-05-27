@@ -28,8 +28,8 @@ export class MapsPage implements OnInit {
     let map;
     const markersOnMap = [
       {
-        placeName: 'John Doe',
-        cover: '../../assets/images/profile.jpg',
+        placeName: 'Drone 1',
+        cover: '../../assets/images/drone-1.png',
         LatLng: [
           {
             lat: 35.975301215474836,
@@ -38,8 +38,8 @@ export class MapsPage implements OnInit {
         ]
       },
       {
-        placeName: 'Virat Hexe',
-        cover: '../../assets/images/profile2.jpg',
+        placeName: 'Drone 3',
+        cover: '../../assets/images/drone-1.png',
         LatLng: [
           {
             lat: 35.974301215474836,
@@ -48,8 +48,8 @@ export class MapsPage implements OnInit {
         ]
       },
       {
-        placeName: 'Mae Clara',
-        cover: '../../assets/images/profile.jpg',
+        placeName: 'Drone 4',
+        cover: '../../assets/images/drone-1.png',
         LatLng: [
           {
             lat: 35.970301215474836,
@@ -58,7 +58,7 @@ export class MapsPage implements OnInit {
         ]
       },
       {
-        placeName: 'Juvi Slavia',
+        placeName: 'Misty May',
         cover: '../../assets/images/profile2.jpg',
         LatLng: [
           {
@@ -68,8 +68,8 @@ export class MapsPage implements OnInit {
         ]
       },
       {
-        placeName: 'Ruvia Nice',
-        cover: '../../assets/images/profile.jpg',
+        placeName: 'Drone 2',
+        cover: '../../assets/images/drone-1.png',
         LatLng: [
           {
             lat: 35.973301215474836,

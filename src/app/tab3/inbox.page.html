@@ -48,7 +48,7 @@
 
     <div class="list_card" *ngFor="let item of [1,2,3,4,5,6,7]; ; let i = index" (click)="goToMessage({i})">
       <div *ngIf="i == 0" class="img" [style.backgroundImage]="'url(assets/images/profile.jpg)'"></div>
-      <div *ngIf="i != 0" enable=false class="img" [style.backgroundImage]="'url(assets/images/drone-1.png)'"></div>
+      <div *ngIf="i != 0" class="img" [style.backgroundImage]="'url(assets/images/drone-1.png)'"></div>
 
       <div class="details">
         <div class="flex_row">
