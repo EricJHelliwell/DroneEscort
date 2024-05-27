@@ -1,0 +1,43 @@
+ion-item-option {
+  background: none;
+}
+
+ion-button {
+  --border-radius: 50%;
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  width: 48px;
+  height: 48px;
+}
+
+.header {
+  --inner-padding-end: 0 !important;
+
+  h2 {
+    font-size: 34px;
+    line-height: 41px;
+    color: #151522;
+  }
+
+  p {
+    font-style: normal;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 20px;
+    color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+
+.item-options-ios  {
+  border-bottom-style: none;
+}
+
+.ios > ion-item-option > ion-button {
+  width: auto !important;
+  height: auto !important;
+  --padding-start: 0;
+  --padding-end: 0;
+}
