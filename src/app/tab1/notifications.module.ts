@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { NotificationsTwoPageRoutingModule } from './notifications-two-routing.module';
+import { NotificationsPageRoutingModule } from './notifications-routing.module';
 
-import { NotificationsTwoPage } from './notifications-two.page';
+import { NotificationsPage } from './notifications.page';
 import { UtilsModule } from 'src/app/utils/utils.module';
 
 @NgModule({
@@ -14,9 +14,9 @@ import { UtilsModule } from 'src/app/utils/utils.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    NotificationsTwoPageRoutingModule,
+    NotificationsPageRoutingModule,
     UtilsModule
   ],
-  declarations: [NotificationsTwoPage]
+  declarations: [NotificationsPage]
 })
-export class NotificationsTwoPageModule {}
+export class NotificationsPageModule {}

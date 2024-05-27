@@ -9,7 +9,8 @@ const routes: Routes = [
     children: [
       {
         path: 'home',
-        loadChildren: () => import('../tab1/notifications-two.module').then(m => m.NotificationsTwoPageModule)
+        loadChildren: () =>
+          import('../tab1/notifications.module').then(m => m.NotificationsPageModule)
       },
       {
         path: 'order',
@@ -30,8 +31,8 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'receipt',
-        loadChildren: () => import('../tab4/tab4.module').then(m => m.Tab4PageModule)
+        path: 'profile',
+        loadChildren: () => import('../tab4/profile-detail.module').then( m => m.ProfileDetailPageModule)
       },      {
         path: '',
         redirectTo: '/home',

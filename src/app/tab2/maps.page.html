@@ -1,11 +1,20 @@
-<!--
-  Authors : initappz (Rahul Jograna)
-  Website : https://initappz.com/
-  App Name : Dating App Template
-  This App Template Source code is licensed as per the
-  terms found in the Website https://initappz.com/license
-  Copyright and Good Faith Purchasers © 2021-present initappz.
- -->
+
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>
+      Find a Drone
+    </ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button fill="solid">
+        <ion-icon slot="start" name="receipt-outline"></ion-icon>
+        Order
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 <ion-content>
   <div class="center_div" *ngIf="loading == true">
     <div class="ripple-container">

@@ -28,7 +28,7 @@ export class MapsPage implements OnInit {
     let map;
     const markersOnMap = [
       {
-        placeName: 'Drone 1',
+        placeName: 'Drone 1 (2 min)',
         cover: '../../assets/images/drone-1.png',
         LatLng: [
           {
@@ -38,7 +38,7 @@ export class MapsPage implements OnInit {
         ]
       },
       {
-        placeName: 'Drone 3',
+        placeName: 'Drone 3  (3 min)',
         cover: '../../assets/images/drone-1.png',
         LatLng: [
           {
@@ -48,7 +48,7 @@ export class MapsPage implements OnInit {
         ]
       },
       {
-        placeName: 'Drone 4',
+        placeName: 'Drone 4  (5 min)',
         cover: '../../assets/images/drone-1.png',
         LatLng: [
           {
@@ -68,7 +68,7 @@ export class MapsPage implements OnInit {
         ]
       },
       {
-        placeName: 'Drone 2',
+        placeName: 'Drone 2  (7 min)',
         cover: '../../assets/images/drone-1.png',
         LatLng: [
           {

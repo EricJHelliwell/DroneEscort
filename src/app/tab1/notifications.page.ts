@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { AlertController } from '@ionic/angular';
+import { signOut } from 'aws-amplify/auth';
 
 @Component({
-  selector: 'app-notifications-two',
-  templateUrl: './notifications-two.page.html',
-  styleUrls: ['./notifications-two.page.scss'],
+  selector: 'app-notifications',
+  templateUrl: './notifications.page.html',
+  styleUrls: ['./notifications.page.scss'],
 })
-export class NotificationsTwoPage implements OnInit {
+export class NotificationsPage implements OnInit {
 
   avatar = 'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=124&q=80';
 
@@ -37,9 +39,31 @@ export class NotificationsTwoPage implements OnInit {
     },
   ];
 
-  constructor() { }
+  constructor(private alertCtl: AlertController) { }
 
   ngOnInit() {
   }
 
+  onLogout()
+  {
+    this.alertCtl.create({
+      header: 'Are you sure?',
+      message: 'Do you want to Logout?'
+      , buttons: [
+        {
+        text: 'Cancel',
+        role: 'cancel'
+        },
+        {
+          text: 'Logout',
+          handler: () => {
+            signOut();
+            document.location.replace('/login');
+          }
+        }
+      ]
+    }).then(alertEl => {
+      alertEl.present();
+    });
+  }
 }
