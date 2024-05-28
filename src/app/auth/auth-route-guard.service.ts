@@ -14,7 +14,7 @@ export class AuthGuardService implements CanActivate {
         case 'signedIn':
           console.log('user have been signedIn successfully.');
           this.isLoggedIn = true;
-          this.router.navigate(['/tabs/home']);
+          this.router.navigate(['/tabs/order']);
           break;
         case 'signedOut':
           console.log('user have been signedOut successfully.');
@@ -39,7 +39,7 @@ export class AuthGuardService implements CanActivate {
     getCurrentUser()
     .then((users) => {
       this.isLoggedIn = true;
-      this.router.navigate(['/tabs/home']);
+      this.router.navigate(['/tabs/order']);
       })
     .catch(err => {
       this.isLoggedIn = false;

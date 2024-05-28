@@ -8,13 +8,8 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'home',
-        loadChildren: () =>
-          import('../tab1/notifications.module').then(m => m.NotificationsPageModule)
-      },
-      {
         path: 'order',
-        loadChildren: () => import('../tab2/maps.module').then(m => m.MapsPageModule)
+        loadChildren: () => import('../order/maps.module').then(m => m.MapsPageModule)
       },
       {
         path: 'chat',
@@ -22,21 +17,26 @@ const routes: Routes = [
           {
             path: '',
             loadChildren: () =>
-              import('../tab3/inbox.module').then(m => m.InboxPageModule)
+              import('../chat/inbox.module').then(m => m.InboxPageModule)
           },
           {
             path: ':messages',
-            loadChildren: () => import('../tab3/messages/messages.module').then( m => m.MessagesPageModule)
+            loadChildren: () => import('../chat/messages/messages.module').then( m => m.MessagesPageModule)
           }
         ]
       },
       {
         path: 'profile',
-        loadChildren: () => import('../tab4/profile-detail.module').then( m => m.ProfileDetailPageModule)
+        loadChildren: () => import('../profile/profile-detail.module').then( m => m.ProfileDetailPageModule)
+      },      
+      {
+        path: 'activity',
+        loadChildren: () =>
+          import('../activity/notifications.module').then(m => m.NotificationsPageModule)
       },      
       {
         path: '',
-        redirectTo: '/tabs/home',
+        redirectTo: '/tabs/order',
         pathMatch: 'full'
       }
     ]

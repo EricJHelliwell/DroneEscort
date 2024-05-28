@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { AlertController } from '@ionic/angular';
+import { signOut } from 'aws-amplify/auth';
 
 @Component({
   selector: 'app-tab5',
@@ -10,7 +12,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class ProfileDetailPage {
   photo: SafeResourceUrl;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private sanitizer: DomSanitizer, private alertCtl: AlertController) {}
 
   async takePicture() {
     const image = await Camera.getPhoto({
@@ -30,4 +32,26 @@ export class ProfileDetailPage {
    // this.photo = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
 
+  onLogout()
+  {
+    this.alertCtl.create({
+      header: 'Are you sure?',
+      message: 'Do you want to Logout?'
+      , buttons: [
+        {
+        text: 'Cancel',
+        role: 'cancel'
+        },
+        {
+          text: 'Logout',
+          handler: () => {
+            signOut();
+            document.location.replace('/login');
+          }
+        }
+      ]
+    }).then(alertEl => {
+      alertEl.present();
+    });
+  }
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
-import { signOut } from 'aws-amplify/auth';
+
 
 @Component({
   selector: 'app-notifications',
@@ -39,31 +38,10 @@ export class NotificationsPage implements OnInit {
     },
   ];
 
-  constructor(private alertCtl: AlertController) { }
+  constructor() { }
 
   ngOnInit() {
   }
 
-  onLogout()
-  {
-    this.alertCtl.create({
-      header: 'Are you sure?',
-      message: 'Do you want to Logout?'
-      , buttons: [
-        {
-        text: 'Cancel',
-        role: 'cancel'
-        },
-        {
-          text: 'Logout',
-          handler: () => {
-            signOut();
-            document.location.replace('/login');
-          }
-        }
-      ]
-    }).then(alertEl => {
-      alertEl.present();
-    });
-  }
+
 }

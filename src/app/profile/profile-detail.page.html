@@ -8,7 +8,11 @@
         <img src="assets/images/drone-1.png" />
       </ion-avatar>
     </ion-buttons>
-
+    <ion-buttons slot="end">
+      <ion-button (click)="onLogout()" fill="clear" size="small" shape="round" color="dark">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
