@@ -33,17 +33,13 @@ const routes: Routes = [
       {
         path: 'profile',
         loadChildren: () => import('../tab4/profile-detail.module').then( m => m.ProfileDetailPageModule)
-      },      {
+      },      
+      {
         path: '',
-        redirectTo: '/home',
+        redirectTo: '/tabs/home',
         pathMatch: 'full'
       }
     ]
-  },
-  {
-    path: '',
-    redirectTo: '/tabs/home',
-    pathMatch: 'full'
   }
 ];
 
