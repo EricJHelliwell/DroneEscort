@@ -31,55 +31,23 @@ export class MessagesPage implements OnInit {
   messages = [
     {
       side: 'left',
-      msg: 'Hello',
-    },
-    {
-      side: 'right',
-      msg: 'Hii',
+      msg: 'Hi.  I am Andrew your Drone Escort Operator today',
     },
     {
       side: 'left',
-      msg: 'okay',
-    },
-    {
-      side: 'right',
-      msg: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe soluta perferendis nulla ad eius',
+      msg: 'I am sending the drone to you now.',
     },
     {
       side: 'left',
-      msg: 'quo quaerat error neque aliquid dolores alias minima necessitatibus molestias voluptatem excepturi sit autem animi quia!',
+      msg: 'Your coordinates are: lat: 35.972301215474836, lng: -79.9959223121594',
+    },
+    {
+      side: 'left',
+      msg: 'You can send me any text updates here or request a call up above.',
     },
     {
       side: 'right',
       msg: 'yes of course',
-    },
-    {
-      side: 'left',
-      msg: 'Lorem ipsum, dolor sit amet consectetur',
-    },
-    {
-      side: 'right',
-      msg: 'yes of course you can do this ',
-    },
-    {
-      side: 'left',
-      msg: 'quaerat error neque aliquid dolores alias minima necessitatibus molestias voluptatem.',
-    },
-    {
-      side: 'right',
-      msg: 'neque aliquid dolores alias minima ne',
-    },
-    {
-      side: 'left',
-      msg: 'neque aliquid alias minima ne',
-    },
-    {
-      side: 'left',
-      msg: 'ipsum, dolor sit amet',
-    },
-    {
-      side: 'left',
-      msg: 'ipsum, dolor sit amet',
     },
   ];
 

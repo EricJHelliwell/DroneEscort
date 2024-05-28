@@ -1,4 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
+//import { GoogleMap } from '@capacitor/google-maps';
+
+//const apiKey = 'AIzaSyBj7cR7j4zbZLwiKDV35BJ6VSASioV0n_8';
 declare var google: any;
 
 
@@ -14,7 +19,7 @@ export class MapsPage implements OnInit {
   @ViewChild('map', { static: true }) mapElement: ElementRef;
   map: any;
 
-  constructor() {
+  constructor(public router: Router, private alertCtl: AlertController) {
     setTimeout(() => {
       this.loading = false;
       this.getULocation();
@@ -22,6 +27,28 @@ export class MapsPage implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  onOrder()
+  {
+    this.alertCtl.create({
+      header: 'Are you sure?',
+      message: 'Do you want request a drone escort?'
+      , buttons: [
+        {
+        text: 'Cancel',
+        role: 'cancel'
+        },
+        {
+          text: 'Order',
+          handler: () => {
+            this.router.navigate(['/tabs/chat/messages']);
+          }
+        }
+      ]
+    }).then(alertEl => {
+      alertEl.present();
+    });
   }
 
   getULocation() {
@@ -141,6 +168,7 @@ export class MapsPage implements OnInit {
     }
 
     function initMap() {
+
       // map = new google.maps.Map(document.getElementById('map'), {
       //   zoom: 10,
       //   center: centerCords,
