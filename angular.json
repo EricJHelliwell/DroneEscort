@@ -31,7 +31,9 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": ["src/global.scss", "src/theme/variables.scss",
+              "node_modules/@aws-amplify/ui-angular/theme.css"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -111,7 +113,8 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": ["src/global.scss", "src/theme/variables.scss",
+            "node_modules/@aws-amplify/ui-angular/theme.css"],
             "scripts": []
           },
           "configurations": {
