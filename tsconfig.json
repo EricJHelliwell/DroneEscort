@@ -2,8 +2,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "strictPropertyInitialization": false,
-    "skipLibCheck": true,
     "baseUrl": "./",
     "outDir": "./www/out-tsc",
     "resolveJsonModule": true,
@@ -31,6 +29,6 @@
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": false
+    "strictTemplates": true
   }
 }
