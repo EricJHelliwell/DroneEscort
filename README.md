@@ -1,6 +1,3 @@
-## AWS Amplify Angular.js Starter Template
-
-This repository provides a starter template for creating applications using Angular.js and AWS Amplify, emphasizing easy setup for authentication, API, and database capabilities.
 
 ## Overview
 
