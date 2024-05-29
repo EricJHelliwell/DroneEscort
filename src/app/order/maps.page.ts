@@ -2,7 +2,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
-import { timer } from 'rxjs';
+import { Geolocation } from '@capacitor/geolocation';
+
 //import { GoogleMap } from '@capacitor/google-maps';
 
 //const apiKey = 'AIzaSyBj7cR7j4zbZLwiKDV35BJ6VSASioV0n_8';
@@ -36,8 +37,13 @@ export class MapsPage implements OnInit {
   }
 
   async showLoading() {
+    const coordinates = await Geolocation.getCurrentPosition();
+    console.log('Current position:', coordinates);
+
     const loading = await this.loadingCtrl.create({
-      message: 'Looking for your drone...',
+      cssClass: "default-alert",
+      message: 'Looking for your drone.  Stay nearby.  You will be met at geo:\nlat: ' + 
+        coordinates.coords.latitude + '\nlong: ' + coordinates.coords.longitude,
       duration: 3000,
     });
 
