@@ -1,6 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
+import { timer } from 'rxjs';
 //import { GoogleMap } from '@capacitor/google-maps';
 
 //const apiKey = 'AIzaSyBj7cR7j4zbZLwiKDV35BJ6VSASioV0n_8';
@@ -19,7 +21,11 @@ export class MapsPage implements OnInit {
   @ViewChild('map', { static: true }) mapElement: ElementRef;
   map: any;
 
-  constructor(public router: Router, private alertCtl: AlertController) {
+  public orderText = "Order";
+  public orderColor = "success";
+
+  constructor(public router: Router, private alertCtl: AlertController
+      , private loadingCtrl: LoadingController) {
     setTimeout(() => {
       this.loading = false;
       this.getULocation();
@@ -29,26 +35,72 @@ export class MapsPage implements OnInit {
   ngOnInit() {
   }
 
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Looking for your drone...',
+      duration: 3000,
+    });
+
+    await loading.present();
+  }
+
+  async showCancelling() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Cancelling your request for drone...',
+      duration: 2000,
+    });
+
+    await loading.present();
+  }
+
   onOrder()
   {
-    this.alertCtl.create({
-      header: 'Are you sure?',
-      message: 'Do you want request a drone escort?'
-      , buttons: [
-        {
-        text: 'Cancel',
-        role: 'cancel'
-        },
-        {
-          text: 'Order',
-          handler: () => {
-            this.router.navigate(['/tabs/chat/messages']);
+    if (this.orderText == "Cancel")
+      {
+        this.alertCtl.create({
+          header: 'Are you sure?',
+          message: 'Do you want cancel this order?'
+          , buttons: [
+            {
+            text: 'No',
+            role: 'no'
+            },
+            {
+              text: 'Yes',
+              handler: async () => {
+                this.orderText = "Order";
+                this.orderColor = "success";
+                await this.showCancelling();
+              }
+            }
+          ]
+        }).then(alertEl => {
+          alertEl.present();
+        });  
+      }
+    else {
+      this.alertCtl.create({
+        header: 'Are you sure?',
+        message: 'Do you want request a drone escort?'
+        , buttons: [
+          {
+          text: 'Cancel',
+          role: 'cancel'
+          },
+          {
+            text: 'Order',
+            handler: async () => {
+              this.orderText = "Cancel";
+              this.orderColor = "warning";
+              await this.showLoading();
+              setTimeout(x => {this.router.navigate(['/tabs/chat/messages']);}, 3000);
+            }
           }
-        }
-      ]
-    }).then(alertEl => {
-      alertEl.present();
-    });
+        ]
+      }).then(alertEl => {
+        alertEl.present();
+      });
+    }
   }
 
   getULocation() {

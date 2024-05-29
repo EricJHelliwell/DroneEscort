@@ -10,9 +10,9 @@
       </ion-avatar>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="onOrder()" fill="solid">
+      <ion-button id="startOrder" (click)="onOrder()" fill="solid" color="{{orderColor}}">
         <ion-icon slot="start" name="receipt-outline"></ion-icon>
-        Order
+        {{orderText}}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
