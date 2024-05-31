@@ -3,7 +3,11 @@ import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { Geolocation } from '@capacitor/geolocation';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../../amplify/data/resource';
 
+
+const client = generateClient<Schema>();
 //import { GoogleMap } from '@capacitor/google-maps';
 
 //const apiKey = 'AIzaSyBj7cR7j4zbZLwiKDV35BJ6VSASioV0n_8';

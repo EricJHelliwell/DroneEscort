@@ -12,6 +12,23 @@ const schema = a.schema({
       content: a.string(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
+    Post: a
+      .model({
+        title: a.string().required(),
+        postId: a.id(),
+        comments: a.hasMany("Comment", "commentId"),
+        // fields can be of custom types
+        owner: a.string().authorization((allow) => [allow.owner().to(['read','delete'])]),
+      })
+      .authorization((allow) => [allow.authenticated().to(['read']), allow.owner()]),
+    Comment: a
+      .model({
+        content: a.string().required(),
+        commentId: a.id(),
+        post: a.belongsTo("Post", "commentId"),
+        owner: a.string().authorization((allow) => [allow.owner().to(['read','delete'])]),
+      })
+      .authorization((allow) => [allow.authenticated().to(['read']), allow.owner()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

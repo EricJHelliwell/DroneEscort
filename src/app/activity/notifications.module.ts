@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { NotificationsPageRoutingModule } from './notifications-routing.module';
 
 import { NotificationsPage } from './notifications.page';
-import { UtilsModule } from 'src/app/utils/utils.module';
+import { UtilsModule } from '../utils/utils.module';
 
 @NgModule({
   imports: [
