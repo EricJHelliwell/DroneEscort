@@ -11,7 +11,7 @@ import { createUser } from "./graphql/mutations";
 const cogClient = new CognitoIdentityProviderClient();
 
 const dataClient = generateClient<Schema>({
-  authMode: 'userPool',
+  authMode: 'iam',
 });
 
 // add user to group
