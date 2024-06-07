@@ -1,4 +1,5 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import { postConfirmation } from "../auth/post-confirmation/resource";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -7,36 +8,52 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  Todo: a
+  Conversation: a
     .model({
-      content: a.string(),
-    })
-    .authorization((allow) => [allow.publicApiKey()]),
-    Post: a
+      conversationId: a.id().required(),
+      name: a.string().required(),
+      createdAt: a.datetime().required(),
+      conversation: a.belongsTo("UserConversation", "conversationId"),
+      messages: a.hasMany("Message", "messageId"),
+    }),
+    Message: a
       .model({
-        title: a.string().required(),
-        postId: a.id(),
-        comments: a.hasMany("Comment", "commentId"),
-        // fields can be of custom types
-        owner: a.string().authorization((allow) => [allow.owner().to(['read','delete'])]),
-      })
-      .authorization((allow) => [allow.authenticated().to(['read']), allow.owner()]),
-    Comment: a
+        messageId: a.id().required(),
+        content: a.string(),
+        createdAt: a.datetime().required(),
+        sender: a.string().required(),
+        isSent: a.boolean().required(),
+        conversationId: a.belongsTo("Conversation", "messageId"),
+//        comments: a.hasMany("Comment", "commentId"),
+//        owner: a.string().authorization((allow) => [allow.owner().to(['read','delete'])]),
+      }),
+      UserConversation: a
       .model({
-        content: a.string().required(),
-        commentId: a.id(),
-        post: a.belongsTo("Post", "commentId"),
-        owner: a.string().authorization((allow) => [allow.owner().to(['read','delete'])]),
+        userConvId: a.id().required(),
+        userId: a.belongsTo("User", "userConvId"),
+        conversationId: a.id().required(),
+        conversation: a.hasOne("Conversation", "conversationId"),
+//        owner: a.string().authorization((allow) => [allow.owner().to(['read','delete'])]),
+      }),
+      User: a
+      .model({
+        userId: a.id().required(),
+        cognitoId: a.string().required(),
+        username: a.string().required(),
+        registered: a.boolean().required(),
+        conversations: a.hasMany("UserConversation", "userConvId"),
       })
-      .authorization((allow) => [allow.authenticated().to(['read']), allow.owner()]),
-});
+})
+.authorization((allow) => [allow.resource(postConfirmation)
+  , allow.authenticated('userPools')]);
 
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'apiKey',
+//    defaultAuthorizationMode: 'apiKey',
+    defaultAuthorizationMode: 'userPool',
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
       expiresInDays: 30,
