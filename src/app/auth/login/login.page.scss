@@ -4,9 +4,8 @@
     font-style: italic;
   }
   
-  ion-content {
-    --background: url("../../../assets/images/Campus-Safety.jpg") center / 30%;
-    --background-position: center center;
+  ion-img::part(image) {
+    width: 50%; /* or whatever value */
+    /* you can set the height value too */
+    align-items: right;
   }
-
-  

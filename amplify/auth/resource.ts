@@ -5,7 +5,13 @@ export const auth = defineAuth({
   loginWith: {
     email: true,
   },   
-  groups: ["EVERYONE"],
+  userAttributes: {
+    preferredUsername: {
+      mutable: true,
+      required: true
+    }
+  },
+  groups: ["SUBSCRIBERS", "PILOTS"],
   triggers: {
     postConfirmation,
   },
