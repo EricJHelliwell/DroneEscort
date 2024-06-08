@@ -44,17 +44,17 @@ const schema = a.schema({
         conversations: a.hasMany("UserConversation", "userConvId"),
       })
 })
-//.authorization((allow) => [//allow.resource(postConfirmation),
-//   allow.authenticated()]);
-.authorization((allow) => [allow.publicApiKey()])
+.authorization((allow) => [//allow.resource(postConfirmation),
+   allow.authenticated()]);
+//.authorization((allow) => [allow.publicApiKey()])
 
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
   authorizationModes: {
-//    defaultAuthorizationMode: 'userPool',
-    defaultAuthorizationMode: 'apiKey',
+    defaultAuthorizationMode: 'userPool',
+//    defaultAuthorizationMode: 'apiKey',
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
       expiresInDays: 30,

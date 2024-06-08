@@ -7,9 +7,10 @@ import { type Schema } from "../../data/resource";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/data";
 import { createUser } from "./graphql/mutations";
-import { env } from '$amplify/env/post-confirmation';
+//import { env } from '$amplify/env/post-confirmation';
 
 const cogClient = new CognitoIdentityProviderClient();
+/*
 Amplify.configure(
   {
     API: {
@@ -31,12 +32,12 @@ Amplify.configure(
           },
         }),
         clearCredentialsAndIdentityId: () => {
-          /* noop */
         },
       },
     },
   }
 );
+*/
 
 const dataClient = generateClient<Schema>({
   authMode: 'iam',
@@ -54,6 +55,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
   });
   const groupResponse = await cogClient.send(command);
   console.log('processed', groupResponse.$metadata.requestId);
+/*
   await dataClient.graphql({
     query: createUser,
     variables: {
@@ -65,7 +67,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
       },
     },
   });
-
+*/
   console.error('created user '+ `${event.userName}`);
   return event;
 };
