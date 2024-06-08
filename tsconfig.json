@@ -22,7 +22,10 @@
       "ES2022",
       "dom"
     ],
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "$amplify/*": ["../.amplify/generated/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
