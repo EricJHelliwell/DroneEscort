@@ -7,8 +7,10 @@ import { type Schema } from "../../data/resource";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/data";
 import { createUser } from "./graphql/mutations";
+import outputs from '../../../amplify_outputs.json';
 
 const cogClient = new CognitoIdentityProviderClient();
+Amplify.configure(outputs);
 
 const dataClient = generateClient<Schema>({
   authMode: 'iam',
