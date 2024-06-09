@@ -15,6 +15,7 @@ const schema = a.schema({
       createdAt: a.datetime().required(),
       conversation: a.belongsTo("UserConversation", "conversationId"),
       messages: a.hasMany("Message", "messageId"),
+      drone: a.hasOne("Drone", "droneId"),
     }),
     Message: a
       .model({
@@ -24,8 +25,6 @@ const schema = a.schema({
         sender: a.string().required(),
         isSent: a.boolean().required(),
         conversationId: a.belongsTo("Conversation", "messageId"),
-//        comments: a.hasMany("Comment", "commentId"),
-//        owner: a.string().authorization((allow) => [allow.owner().to(['read','delete'])]),
       }),
       UserConversation: a
       .model({
@@ -33,20 +32,25 @@ const schema = a.schema({
         userId: a.belongsTo("User", "userConvId"),
         conversationId: a.id().required(),
         conversation: a.hasOne("Conversation", "conversationId"),
-//        owner: a.string().authorization((allow) => [allow.owner().to(['read','delete'])]),
+        active: a.boolean().required(),
       }),
       User: a
       .model({
         userId: a.id().required(),
-        cognitoId: a.string().required(),
         username: a.string().required(),
         registered: a.boolean().required(),
         conversations: a.hasMany("UserConversation", "userConvId"),
+      }),
+      Drone: a
+      .model({
+        droneId: a.id().required(),
+        conversation: a.belongsTo("Conversation", "droneId"),
+        name: a.string().required(),
+        description: a.string()
       })
 })
-.authorization((allow) => [//allow.resource(postConfirmation),
+.authorization((allow) => [allow.resource(postConfirmation),
    allow.authenticated()]);
-//.authorization((allow) => [allow.publicApiKey()])
 
 export type Schema = ClientSchema<typeof schema>;
 

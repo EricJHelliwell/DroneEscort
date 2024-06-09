@@ -2,23 +2,35 @@ import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot  } from '@angular/router';
 import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import { Hub } from 'aws-amplify/utils';
+import { Component, OnInit } from '@angular/core';
+
+import User from '../types/user';
+import Conversation from '../types/conversation';
+import UserConversation from '../types/userConversation';
+
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../../amplify/data/resource';
+
+const client = generateClient<Schema>();
 
 
 @Injectable()
 export class AuthGuardService implements CanActivate {
-  isLoggedIn = false;
+  authDetails = null;
 
   constructor(public router: Router) {
     Hub.listen('auth', ({ payload }) => {
       switch (payload.event) {
         case 'signedIn':
           console.log('user have been signedIn successfully.');
-          this.isLoggedIn = true;
-          this.router.navigate(['/tabs/order']);
+          this.checkDBUser()
+          .then((auth) => {
+            this.router.navigate(['/tabs/order']);
+          })
           break;
         case 'signedOut':
           console.log('user have been signedOut successfully.');
-          this.isLoggedIn = false;
+          this.authDetails = null;
           break;
         case 'tokenRefresh':
           console.log('auth tokens have been refreshed.');
@@ -36,24 +48,43 @@ export class AuthGuardService implements CanActivate {
           break;
       }
     });
-    getCurrentUser()
-    .then((users) => {
-      this.isLoggedIn = true;
-      this.router.navigate(['/tabs/order']);
-      })
-    .catch(err => {
-      this.isLoggedIn = false;
-      console.log('Logged Off');
-      this.router.navigate(['/login']);
-  });
   }
   
+  
+  async checkDBUser() {
+    await fetchAuthSession()
+    .then((auth) => {
+      this.authDetails = auth.tokens.idToken.payload;
+    })
+    .catch(err => {
+      // should not happen
+      this.router.navigate(['/login']);
+    });
+
+    // create user in DB for conversations if not already there
+    const { data: user } = await client.models.User.list({
+      filter: {
+        userId: {
+          eq: this.authDetails.sub
+        }
+      }
+    });
+    console.log(user)
+    if (!user || user.length === 0) {
+      const { data: newuser } = await client.models.User.create({
+        userId: this.authDetails.sub,
+        username: this.authDetails.preferred_username,
+        registered: true,
+      });
+    }
+    this.router.navigate(['/tabs/order']);
+  }    
+
   canActivate(route: ActivatedRouteSnapshot): boolean {
     console.log('AuthGuard#canActivate called');
-    if (this.isLoggedIn == false)
+    if (!this.authDetails)
       this.router.navigate(['/login']);
-    return this.isLoggedIn == true;
-    };
-  
+    return this.authDetails;
   }
+}
 
