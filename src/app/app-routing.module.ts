@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { PreloadAllModules, RouterModule, Routes, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthGuardService } from '../app/auth/auth-route-guard.service';
+import { Injectable, inject } from '@angular/core';
 
 const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule),
-    canActivate: [AuthGuardService]
+    canActivate: [(next: ActivatedRouteSnapshot) => inject(AuthGuardService).canActivate(next)],
   },
   {
     path: 'login',

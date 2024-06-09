@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router, CanActivate, ActivatedRouteSnapshot  } from '@angular/router';
+import { Router, ActivatedRouteSnapshot  } from '@angular/router';
 import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import { Hub } from 'aws-amplify/utils';
 import { Component, OnInit } from '@angular/core';
@@ -15,7 +15,7 @@ const client = generateClient<Schema>();
 
 
 @Injectable()
-export class AuthGuardService implements CanActivate {
+export class AuthGuardService {
   authDetails = null;
 
   constructor(public router: Router) {
@@ -80,7 +80,7 @@ export class AuthGuardService implements CanActivate {
     this.router.navigate(['/tabs/order']);
   }    
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
+  public canActivate(route: ActivatedRouteSnapshot): boolean {
     console.log('AuthGuard#canActivate called');
     if (!this.authDetails)
       this.router.navigate(['/login']);
