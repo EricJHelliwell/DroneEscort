@@ -13,7 +13,6 @@
 
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import outputs from '../../../amplify_outputs.json';
 
 import User from '../types/user';
 import Conversation from '../types/conversation';

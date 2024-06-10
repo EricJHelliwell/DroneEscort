@@ -1,9 +1,19 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
-import { Geolocation } from '@capacitor/geolocation';
+import { AuthGuardService } from '../auth/auth-route-guard.service'
+import { Geolocation, ClearWatchOptions } from '@capacitor/geolocation';
+
+import User from '../types/user';
+import Conversation from '../types/conversation';
+import UserConversation from '../types/userConversation';
+
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../../amplify/data/resource';
+
+const client = generateClient<Schema>();
 declare var google: any;
 
 
@@ -15,6 +25,12 @@ declare var google: any;
 export class MapsPage implements OnInit {
 
   loading: boolean = true;
+  lat: GLfloat;
+  lng: GLfloat;
+  watchId: any;
+  coordinates;
+  isPilot: boolean = false;   
+  isSubscriber: boolean = false; 
 
   @ViewChild('map', { static: true }) mapElement: ElementRef;
   map: any;
@@ -23,37 +39,122 @@ export class MapsPage implements OnInit {
   public orderColor = "success";
 
   constructor(public router: Router, private alertCtl: AlertController
-      , private loadingCtrl: LoadingController) {
+      , private loadingCtrl: LoadingController, private zone: NgZone
+      , private authService: AuthGuardService) {
     setTimeout(() => {
       this.loading = false;
       this.getULocation();
     }, 1000);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.isPilot = this.authService.isPilot();
+    this.isSubscriber = this.authService.isSubscriber();
+  }
+
+  ionViewDidEnter(){
+    var options = {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0,
+    };
+    this.watchId = Geolocation.watchPosition(options, (position, err) => {
+      this.zone.runGuarded(() => {
+        if (!err) {
+        this.lat = position.coords.latitude;
+        this.lng = position.coords.longitude;
+        this.coordinates = position.coords;
+        }
+      });
+    });
+  }
+
+  ionViewDidLeave() {
+    const opt: ClearWatchOptions = {id: this.watchId};
+    Geolocation.clearWatch(opt).then(result=>{
+      ;
+    });
+  }
+
+  async createNewOrder(): Promise<string> {
+    const now = new Date();
+    const convName = this.authService.userPreferredName() + " " + 
+      now.toLocaleDateString("en-US") + " " +
+      now.toLocaleTimeString("en-US");
+    const reqId = this.authService.userDatabaseId();
+    const {errors, data: conv } = await client.models.Conversation.create({
+      name: convName,
+      createdAt: now.toISOString(),
+      active: true,
+      requestorId: reqId,
+    });
+    console.log(errors);
+    console.log(conv);
+    return conv.id;
   }
 
   async showLoading() {
-    const coordinates = await Geolocation.getCurrentPosition();
-    console.log('Current position:', coordinates);
+//    const coordinates = await Geolocation.getCurrentPosition();
+//    console.log('Current position:', this.coordinates);
 
     const loading = await this.loadingCtrl.create({
       cssClass: "default-alert",
       message: 'Looking for your drone.  Stay nearby.  You will be met at geo:\nlat: ' + 
-        coordinates.coords.latitude + '\nlong: ' + coordinates.coords.longitude,
-      duration: 3000,
+        this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude,
+      duration: 600000,
     });
 
-    await loading.present();
+    // Create and Subscribe to order
+    const ReqId = await this.createNewOrder();
+    console.log(ReqId);
+    const updateSub = client.models.Conversation.observeQuery({  
+      filter: {
+      id: {
+        eq: ReqId,
+      },
+    },
+    }).subscribe({
+      next: (data) => {
+        console.log(data.items[0]);
+        // cancelled 
+        if (data.items[0].active == false) {
+          updateSub.unsubscribe();
+          loading.dismiss();
+     
+          this.zone.run(() => {this.showCancelling();});
+        }
+        // fulfilled
+        else if (data.items[0].drone.name.length != 0) {
+          updateSub.unsubscribe();
+          loading.dismiss();
+          this.zone.run(() => {
+            this.router.navigate(['/tabs/chat/messages'])});
+        }
+      },
+      error: (error) => console.warn(error),
+    });
+    
+    setTimeout(x => {
+      this.updateActive(ReqId, false);
+    }, 10000);
+
+    loading.present();
   }
 
+  async updateActive(reqId: string, flag: boolean) {
+    const {data: conv } = await client.models.Conversation.update({
+      id: reqId,
+      active: flag,
+    });    
+  }
   async showCancelling() {
     const loading = await this.loadingCtrl.create({
       message: 'Cancelling your request for drone...',
       duration: 2000,
     });
-
     await loading.present();
+    this.orderText = "Order";
+    this.orderColor = "success";
   }
 
   onOrder()
@@ -71,8 +172,6 @@ export class MapsPage implements OnInit {
             {
               text: 'Yes',
               handler: async () => {
-                this.orderText = "Order";
-                this.orderColor = "success";
                 await this.showCancelling();
               }
             }
@@ -96,7 +195,6 @@ export class MapsPage implements OnInit {
               this.orderText = "Cancel";
               this.orderColor = "warning";
               await this.showLoading();
-              setTimeout(x => {this.router.navigate(['/tabs/chat/messages']);}, 3000);
             }
           }
         ]
@@ -111,51 +209,45 @@ export class MapsPage implements OnInit {
     const markersOnMap = [
       {
         placeName: 'Drone 1 (2 min)',
-        cover: '../../assets/images/drone-1.png',
+        cover: '../../assets/images/drone-2.png',
         LatLng: [
           {
-            lat: 35.975301215474836,
-            lng: -79.9929223121594
+            lat: this.coordinates.latitude + (180/Math.PI)*(Math.random() * 300 / 6378137),
+            lng: this.coordinates.longitude + (180/Math.PI)*(Math.random() * 300 / 6378137) / 
+              Math.cos(this.coordinates.latitude)
           }
         ]
       },
       {
         placeName: 'Drone 3  (3 min)',
-        cover: '../../assets/images/drone-1.png',
+        cover: '../../assets/images/drone-2.png',
         LatLng: [
           {
-            lat: 35.974301215474836,
-            lng: -79.9979223121594,
+            lat: this.coordinates.latitude + (180/Math.PI)*(Math.random() * 300 / 6378137),
+            lng: this.coordinates.longitude + (180/Math.PI)*(Math.random() * 300 / 6378137) / 
+              Math.cos(this.coordinates.latitude)
           }
         ]
       },
       {
         placeName: 'Drone 4  (5 min)',
-        cover: '../../assets/images/drone-1.png',
+        cover: '../../assets/images/drone-2.png',
         LatLng: [
           {
-            lat: 35.970301215474836,
-            lng: -79.9939223121594
-          }
-        ]
-      },
-      {
-        placeName: 'Misty May',
-        cover: '../../assets/images/profile2.jpg',
-        LatLng: [
-          {
-            lat: 35.971301215474836,
-            lng: -79.9949223121594
+            lat: this.coordinates.latitude + (180/Math.PI)*(Math.random() * 300 / 6378137),
+            lng: this.coordinates.longitude + (180/Math.PI)*(Math.random() * 300 / 6378137) / 
+              Math.cos(this.coordinates.latitude)
           }
         ]
       },
       {
         placeName: 'Drone 2  (7 min)',
-        cover: '../../assets/images/drone-1.png',
+        cover: '../../assets/images/drone-2.png',
         LatLng: [
           {
-            lat: 35.973301215474836,
-            lng: -79.9969223121594
+            lat: this.coordinates.latitude + (180/Math.PI) * (Math.random() * 300 / 6378137),
+            lng: this.coordinates.longitude + (180/Math.PI) * (Math.random() * 300 / 6378137) / 
+              Math.cos(this.coordinates.latitude)
           }
         ]
       },
@@ -163,8 +255,8 @@ export class MapsPage implements OnInit {
 
     var InforObj = [];
     var centerCords = {
-      lat: 35.972301215474836,
-      lng: -79.9959223121594
+      lat: this.coordinates.latitude,
+      lng: this.coordinates.longitude
     };
     initMap();
 

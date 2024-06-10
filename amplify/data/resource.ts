@@ -10,43 +10,48 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   Conversation: a
     .model({
-      conversationId: a.id().required(),
+      id: a.id().required(),
       name: a.string().required(),
       createdAt: a.datetime().required(),
-      conversation: a.belongsTo("UserConversation", "conversationId"),
-      messages: a.hasMany("Message", "messageId"),
-      drone: a.hasOne("Drone", "droneId"),
+      active: a.boolean().required(),
+      requestorId: a.string().required(),
+      userConversation: a.belongsTo("UserConversation", "id"),
+      messages: a.hasMany("Message", "id"),
+      drone: a.hasOne("Drone", "id"),
     }),
     Message: a
       .model({
-        messageId: a.id().required(),
+        id: a.id().required(),
         content: a.string(),
         createdAt: a.datetime().required(),
         sender: a.string().required(),
         isSent: a.boolean().required(),
-        conversationId: a.belongsTo("Conversation", "messageId"),
+        conversation: a.belongsTo("Conversation", "id"),
       }),
       UserConversation: a
       .model({
-        userConvId: a.id().required(),
-        userId: a.belongsTo("User", "userConvId"),
-        conversationId: a.id().required(),
-        conversation: a.hasOne("Conversation", "conversationId"),
-        active: a.boolean().required(),
+        id: a.id().required(),
+        user: a.belongsTo("User", "id"),
+        conversation: a.hasOne("Conversation", "id"),
       }),
       User: a
       .model({
-        userId: a.id().required(),
+        id: a.id().required(),
+        userId: a.id().required(),  // this is specific to the security subsystem
         username: a.string().required(),
         registered: a.boolean().required(),
-        conversations: a.hasMany("UserConversation", "userConvId"),
+        conversations: a.hasMany("UserConversation", "id"),
+        lat: a.float(),
+        lng: a.float(),
       }),
       Drone: a
       .model({
-        droneId: a.id().required(),
-        conversation: a.belongsTo("Conversation", "droneId"),
+        id: a.id().required(),
+        conversation: a.belongsTo("Conversation", "id"),
         name: a.string().required(),
-        description: a.string()
+        description: a.string(),
+        lat: a.float(),
+        lng: a.float(),
       })
 })
 .authorization((allow) => [allow.resource(postConfirmation),
