@@ -21,7 +21,7 @@ export class LoginPage implements AfterContentInit{
   authService: AuthGuardService
 
   background = {
-    backgroundImage: 'url(/assets/images/Campus_Drone3.jpeg)'
+    backgroundImage: 'url(/assets/images/Campus_Drone3.jpg)'
   };
 
   constructor(public guard: AuthGuardService, private route: Router) {
