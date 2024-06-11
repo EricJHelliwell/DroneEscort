@@ -41,15 +41,18 @@ export class MapsPage implements OnInit {
   constructor(public router: Router, private alertCtl: AlertController
       , private loadingCtrl: LoadingController, private zone: NgZone
       , private authService: AuthGuardService) {
-    setTimeout(() => {
-      this.loading = false;
-      this.getULocation();
-    }, 1000);
   }
 
   async ngOnInit() {
     this.isPilot = this.authService.isPilot();
     this.isSubscriber = this.authService.isSubscriber();
+    const loc = await Geolocation.getCurrentPosition();
+    setTimeout(() => {
+      this.loading = false;
+      this.lat = loc.coords.latitude;
+      this.lng = loc.coords.longitude;
+      this.getULocation();
+    }, 1000);
   }
 
   ionViewDidEnter(){
