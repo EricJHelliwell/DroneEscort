@@ -9,3 +9,21 @@
     /* you can set the height value too */
     align-items: right;
   }
+
+  .background-opts {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    box-shadow: inset 0 0 0 1000pt rgba(0, 0, 0, 0.3);
+    --background: transparent;
+  }
+  
+  ion-header ion-toolbar {
+    --background: transparent;
+  }
+
+  ion-grid {
+    display: flex;
+    align-items: bottom;
+    justify-content: left;
+  }

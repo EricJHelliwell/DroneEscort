@@ -15,7 +15,7 @@ const client = generateClient<Schema>();
 
 
 @Injectable()
-export class AuthGuardService {
+export class AuthGuardService implements OnInit {
   loggedIn: boolean = false;
   authDetails: any = null;
   userDBId: string = "";  // internal Dynamo DB
@@ -25,11 +25,11 @@ export class AuthGuardService {
     Hub.listen('auth', ({ payload }) => {
       switch (payload.event) {
         case 'signedIn':
-          console.log('user have been signedIn successfully.');
-          this.loggedIn = true;
+          console.log('user has been signedIn successfully.');
+          this.checkDBUser();
           break;
         case 'signedOut':
-          console.log('user have been signedOut successfully.');
+          console.log('user has been signedOut successfully.');
           this.loggedIn = false;
           this.authDetails = null;
           this.userDBId = "";
@@ -50,20 +50,27 @@ export class AuthGuardService {
           break;
       }
     });
+  }
 
-    this.checkDBUser();
+  async ngOnInit() {
+    console.log('In init');
+      await this.checkDBUser();
   }
 
   async checkDBUser() {
     await fetchAuthSession()
     .then((auth) => {
+      console.log(auth);
       this.loggedIn = true;
       this.authDetails = auth.tokens.idToken.payload;
-      console.log(this.authDetails);
     })
     .catch(err => {
-      // should not happen
+      console.log(err);
+      this.loggedIn = false;
+      this.authDetails = null;
+      this.userDBId = "";
       this.router.navigate(['/login']);
+      return;
     });
 
     // create user in DB for conversations if not already there
@@ -90,7 +97,9 @@ export class AuthGuardService {
   }    
 
   public canActivate(route: ActivatedRouteSnapshot): boolean {
+    console.log('loggedIn = ' + this.loggedIn);
     if (!this.loggedIn) {
+      this.router.navigate(['/login']);
       return false;
     }
     return true;

@@ -1,4 +1,6 @@
-<ion-header class="ion-no-border">
+
+<ion-content [fullscreen]="true" class="background-opts"  [ngStyle]="background">
+	<ion-header class="ion-no-border">
 	<ion-toolbar>
 	  <ion-title>
 		Drone Escort
@@ -12,8 +14,10 @@
 	</ion-toolbar>
   </ion-header>
   
-  <ion-content padding>
-	<amplify-authenticator [hideSignUp]="false">
+  <ion-grid class="ion-padding-vertical">
+	<ion-row class="ion-padding-vertical">
+		<ion-col class="ion-padding-vertical">
+	<amplify-authenticator [hideSignUp]="false" class="background-opts">
 		<ng-template
 		  amplifySlot="authenticated"
 		  let-user="user"
@@ -22,4 +26,5 @@
 		  <button (click)="signOut()">Sign Out</button>
 		</ng-template>
 	  </amplify-authenticator>
+	  </ion-col></ion-row></ion-grid>
 </ion-content>

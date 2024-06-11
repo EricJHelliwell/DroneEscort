@@ -47,9 +47,11 @@ const schema = a.schema({
       Drone: a
       .model({
         id: a.id().required(),
+        createdAt: a.datetime().required(),
         conversation: a.belongsTo("Conversation", "id"),
         name: a.string().required(),
         description: a.string(),
+        active: a.boolean(),
         lat: a.float(),
         lng: a.float(),
       })

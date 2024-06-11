@@ -30,9 +30,9 @@ const routes: Routes = [
         loadChildren: () => import('../profile/profile-detail.module').then( m => m.ProfileDetailPageModule)
       },      
       {
-        path: 'activity',
+        path: 'drones',
         loadChildren: () =>
-          import('../activity/notifications.module').then(m => m.NotificationsPageModule)
+          import('../drones/drones.module').then(m => m.DronesPageModule)
       },      
       {
         path: '',

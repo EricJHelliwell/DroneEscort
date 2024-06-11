@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../../amplify/data/resource';
 
+const client = generateClient<Schema>();
 
 @Component({
-  selector: 'app-notifications',
-  templateUrl: './notifications.page.html',
-  styleUrls: ['./notifications.page.scss'],
+  selector: 'app-drones',
+  templateUrl: './drones.page.html',
+  styleUrls: ['./drones.page.scss'],
 })
-export class NotificationsPage implements OnInit {
-
-  avatar = 'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=124&q=80';
-
+export class DronesPage implements OnInit {
+  drones: any;
   notifications = [
     {
       avatar: 'https://images.unsplash.com/photo-1556637641-0ac7101023f9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=124&q=80',
@@ -40,8 +41,24 @@ export class NotificationsPage implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const {errors, data: drones } = await client.models.Drone.list();
+    this.drones = drones;
+    console.log(this.drones);
   }
 
-
+  async onAddDrone() {
+    const now = new Date();
+    for (let i=1; i<5; i++){
+      const droneName = "Drone " + i;
+      const {errors, data: drone } = await client.models.Drone.create({
+        name: droneName,
+        createdAt: now.toISOString(),
+        active: true,
+        description: "latest drone",
+      });
+      console.log(errors);
+      console.log(drone);
+      }
+  }
 }

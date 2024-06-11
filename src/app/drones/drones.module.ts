@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { NotificationsPageRoutingModule } from './notifications-routing.module';
+import { DronesPageRoutingModule } from './drones-routing.module';
 
-import { NotificationsPage } from './notifications.page';
+import { DronesPage } from './drones.page';
 import { UtilsModule } from '../utils/utils.module';
 
 @NgModule({
@@ -14,9 +14,9 @@ import { UtilsModule } from '../utils/utils.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    NotificationsPageRoutingModule,
+    DronesPageRoutingModule,
     UtilsModule
   ],
-  declarations: [NotificationsPage]
+  declarations: [DronesPage]
 })
-export class NotificationsPageModule {}
+export class DronesPageModule {}
