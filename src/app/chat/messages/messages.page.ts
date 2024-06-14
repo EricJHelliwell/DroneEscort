@@ -6,6 +6,7 @@ import { NavController } from '@ionic/angular';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../../amplify/data/resource';
 import { AuthGuardService } from '../../auth/auth-route-guard.service'
+import { parseISO } from 'date-fns';
 
 const client = generateClient<Schema>();
 
@@ -16,12 +17,15 @@ const client = generateClient<Schema>();
 })
 export class MessagesPage implements OnInit {
 
+  @ViewChild('content') private content: any;
+
   chatName = "";
   messages: any[] = [];
   drones: any[] = [];
   userId = "";
   isModalOpen = false;
   conversationId = "";
+  convSub = null;
 
   constructor(public router: Router, private activatedRoute: ActivatedRoute,
     private navCtrl: NavController, private authService: AuthGuardService,
@@ -44,6 +48,9 @@ export class MessagesPage implements OnInit {
   }
 
   ionViewDidLeave() {
+    if (this.convSub) {
+      this.convSub.unsubscribe();
+    }
   }
 
   async loadMessage(conversationId) {
@@ -60,8 +67,20 @@ export class MessagesPage implements OnInit {
         this.isModalOpen = true;
       }
     const {data: msgs } = await conv.messages();
-    this.messages = msgs;
-
+    this.messages = msgs.sort(function(a, b) {
+      return (a.createdAt < b.createdAt) ? -1 : ((a.createdAt > b.createdAt) ? 1 : 0);
+    });
+    this.scrollToBottom();
+    this.convSub = client.models.Message.onCreate( { 
+      filter: {
+        conversationId: {
+          eq: conv.id,
+        },
+      }
+    },).subscribe({
+      next: (data) => {this.messages.push(data); this.scrollToBottom()},
+      error: (error) => console.warn(error),
+    });
   }
 
   async setDrone(id:string, name:string) {
@@ -133,15 +152,25 @@ export class MessagesPage implements OnInit {
 
   }
   
-  async goToSend(textToSend) {
+  scrollToBottom(){
+    setTimeout(() => {
+      if (this.content.scrollToBottom) {
+          this.content.scrollToBottom(400);
+      }
+  }, 500);
+  }
+
+  async goToSend(sendObj) {
     const now = new Date();
     const {data: droneMsg } = await client.models.Message.create({
-      content: textToSend,
+      content: sendObj.value,
       createdAt: now.toISOString(),
       isSent: true,
       conversationId: this.conversationId,
       sender: this.userId,
     });
+    sendObj.value = ""
+    this.scrollToBottom();
   }
 
   setOpenModal(isOpen: boolean) {

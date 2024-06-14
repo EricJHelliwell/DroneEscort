@@ -21,7 +21,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding" #content>
   <ion-modal [isOpen]="isModalOpen">
     <ng-template>
       <ion-header>
@@ -42,7 +42,7 @@
     </ng-template>
   </ion-modal>
 
-  <div class="main-content">
+  <div #content class="main-content">
     <div class="lower_div" *ngFor="let msg of messages">
       <div class="left" *ngIf="msg.sender && msg.sender != userId">
         <div class="content">
@@ -78,13 +78,14 @@
 <ion-footer>
   <div class="footer">
     <div class="sendbox">
-      <ion-input #sendText id="sendText" type="text" placeholder="Send Message..." class="ion-no-padding"></ion-input>
+      <ion-input #sendText id="sendText" type="text" placeholder="Send Message..." 
+        class="ion-no-padding" (keyup.enter)="goToSend(sendText)"></ion-input>
       <div class="icon">
         <ion-buttons>
           <ion-button (click)="goToAttach()">
             <ion-icon class="attach" name="attach-outline"></ion-icon>
           </ion-button>
-          <ion-button (click)="goToSend(sendText.value)">
+          <ion-button (click)="goToSend(sendText)">
             <ion-icon slot="start" name="send-outline" color="dark"></ion-icon>
           </ion-button>
         </ion-buttons>

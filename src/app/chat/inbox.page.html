@@ -47,7 +47,7 @@
           <ion-label *ngIf="item.active == true && item.droneId =='unassigned'" class="title">(Pending) {{item.name}}</ion-label>          
           <ion-label *ngIf="item.active ==true && item.droneId !='unassigned'" class="title">(Active) {{item.name}}</ion-label>          
           <ion-label *ngIf="item.active == false" class="title">(ARCHIVED) {{item.name}}</ion-label>
-          <ion-label class="tag">2</ion-label>
+          <ion-label class="tag">{{item.msgCount}}</ion-label>
         </div>
         <div class="flex_row">
           <ion-label class="text">Lorem ipsum dolor sit, amet</ion-label>

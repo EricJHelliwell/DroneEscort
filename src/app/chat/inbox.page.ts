@@ -23,6 +23,8 @@ export class InboxPage implements OnInit {
 
   user: any;
   conversations: any[] = [];
+  subUserConv = null;
+  subUnassigned = null;
 
   constructor(public router: Router,
     public navCtrl: NavController, private authService: AuthGuardService) { }
@@ -31,15 +33,18 @@ export class InboxPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    if (this.authService.isSubscriber())
-      this.getSubscriberConvos();
-    else if (this.authService.isPilot)
+    this.conversations = [];
+    this.getUserConversations();
+    if (this.authService.isPilot)
       this.getPilotConvos();
   }
 
-  async getSubscriberConvos() {
-    this.conversations = [];
+  ionViewDidLeave() {
+    if (this.subUserConv) this.subUserConv.unsubscribe();
+    if (this.subUnassigned) this.subUnassigned.unsubscribe();
+  }
 
+  async getUserConversations() {
     const {data: user } = await client.models.User.get ({
       id: this.authService.userDatabaseId(),
     });
@@ -47,40 +52,66 @@ export class InboxPage implements OnInit {
 
     for (const conv of userConvs) {
         const {data: convDetail } = await conv.conversation();
-        if (convDetail.active == true) {
-          this.conversations.push(convDetail);
-        }
+        this.pushAndSort(convDetail);
     }
+
+    this.subUserConv = client.models.UserConversation.onCreate( { 
+      filter: {
+        userId: {
+          eq: this.authService.userDatabaseId(),
+        },
+      }
+    }).subscribe({
+      next: (data) => {
+        data.conversation().then((convDetail) => {
+          this.pushAndSort(convDetail.data);
+        });
+      }
+    });
   }
 
   async getPilotConvos() {
-    this.conversations = [];
-
-    // first get existing conversations for the pilot
-    const {data: user } = await client.models.User.get ({
-      id: this.authService.userDatabaseId(),
-    });
-    const {data: userConvs } = await user.conversations();
-
-    for (const conv of userConvs) {
-        const {data: convDetail } = await conv.conversation();
-        if (convDetail.active == true) {
-          this.conversations.push(convDetail);
-        }
-    }
-
     // now get ones that not assigned a drone
     const {data: unassignedConversations } = await client.models.Conversation.list ({
       filter: {
-        droneId: {
-          eq: "unassigned"
-        }
+        and: [
+          { droneId: { eq: "unassigned" }},
+          { active: { eq: true }},
+        ]
       }
-    });
+      });
     for (const conv of unassignedConversations) {
-      this.conversations.push(conv);
+      this.pushAndSort(conv);
+    }
+
+    //subscribe
+      this.subUnassigned = client.models.Conversation.onCreate({ 
+        filter: {
+          and: [
+            { droneId: { eq: "unassigned" }},
+            { active: { eq: true }},
+          ]
+        }
+      })
+      .subscribe({
+        next: (data) => { this.pushAndSort(data); }
+      });
   }
-}
+
+  
+  async pushAndSort(newConv)
+  {
+    if (newConv.active == false)
+      return;
+    // add the unread message count dynamically to object
+    const {data: msgs } = await newConv.messages();
+    newConv.msgCount = msgs.length;
+    
+    this.conversations.push(newConv);
+    this.conversations = this.conversations.sort(function(a, b) {
+      return (a.createdAt < b.createdAt) ? -1 : ((a.createdAt > b.createdAt) ? 1 : 0);
+    });
+  }
 
   goToBack() {
     this.navCtrl.back();
