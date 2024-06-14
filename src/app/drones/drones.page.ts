@@ -44,7 +44,6 @@ export class DronesPage implements OnInit {
   async ngOnInit() {
     const {errors, data: drones } = await client.models.Drone.list();
     this.drones = drones;
-    console.log(this.drones);
   }
 
   async onAddDrone() {
@@ -57,8 +56,6 @@ export class DronesPage implements OnInit {
         active: true,
         description: "latest drone",
       });
-      console.log(errors);
-      console.log(drone);
-      }
+    }
   }
 }

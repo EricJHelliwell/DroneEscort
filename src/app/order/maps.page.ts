@@ -31,13 +31,16 @@ export class MapsPage implements OnInit {
   coordinates;
   isPilot: boolean = false;   
   isSubscriber: boolean = false; 
-
+  
   @ViewChild('map', { static: true }) mapElement: ElementRef;
   map: any;
 
   public orderText = "Order";
   public orderColor = "success";
-
+  background = {
+    backgroundImage: 'url(/assets/images/Campus_Drone2.jpg)'
+  };
+  
   constructor(public router: Router, private alertCtl: AlertController
       , private loadingCtrl: LoadingController, private zone: NgZone
       , private authService: AuthGuardService) {
@@ -79,37 +82,49 @@ export class MapsPage implements OnInit {
     });
   }
 
-  async createNewOrder(): Promise<string> {
+  async createNewOrder(messageToDisplay:string): Promise<string> {
     const now = new Date();
     const convName = this.authService.userPreferredName() + " " + 
       now.toLocaleDateString("en-US") + " " +
       now.toLocaleTimeString("en-US");
     const reqId = this.authService.userDatabaseId();
-    const {errors, data: conv } = await client.models.Conversation.create({
+    const {data: conv } = await client.models.Conversation.create({
       name: convName,
       createdAt: now.toISOString(),
       active: true,
       requestorId: reqId,
+      droneId: "unassigned",
     });
-    console.log(errors);
-    console.log(conv);
+
+    const {errors, data: firstMsg } = await client.models.Message.create({
+      content: messageToDisplay,
+      createdAt: now.toISOString(),
+      isSent: true,
+      conversationId: conv.id,
+      sender: "System"
+    });
+
+    const {data: convUser } = await client.models.UserConversation.create({
+      userId: reqId,
+      userConversationId: conv.id,
+      lastRead: now.toISOString(),
+    });
+
     return conv.id;
   }
 
   async showLoading() {
-//    const coordinates = await Geolocation.getCurrentPosition();
-//    console.log('Current position:', this.coordinates);
+    const messageToDisplay = 'Looking for your drone.  Stay nearby.  You will be met at geo:\nlat: ' + 
+        this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude;
 
     const loading = await this.loadingCtrl.create({
       cssClass: "default-alert",
-      message: 'Looking for your drone.  Stay nearby.  You will be met at geo:\nlat: ' + 
-        this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude,
+      message: messageToDisplay,
       duration: 600000,
     });
 
     // Create and Subscribe to order
-    const ReqId = await this.createNewOrder();
-    console.log(ReqId);
+    const ReqId = await this.createNewOrder(messageToDisplay);
     const updateSub = client.models.Conversation.observeQuery({  
       filter: {
       id: {
@@ -118,46 +133,39 @@ export class MapsPage implements OnInit {
     },
     }).subscribe({
       next: (data) => {
-        console.log(data.items[0]);
+        console.log(data);
         // cancelled 
         if (data.items[0].active == false) {
           updateSub.unsubscribe();
           loading.dismiss();
-     
+          this.orderText = "Order";
+          this.orderColor = "success";
           this.zone.run(() => {this.showCancelling();});
         }
         // fulfilled
-        else if (data.items[0].drone.name.length != 0) {
+        else if (data.items[0].droneId != "unassigned") {
           updateSub.unsubscribe();
           loading.dismiss();
+          this.orderText = "Order";
+          this.orderColor = "success";
           this.zone.run(() => {
-            this.router.navigate(['/tabs/chat/messages'])});
+            this.router.navigate(['/tabs/chat', data.items[0].id])});
         }
       },
       error: (error) => console.warn(error),
     });
-    
-    setTimeout(x => {
-      this.updateActive(ReqId, false);
-    }, 10000);
 
     loading.present();
+    this.orderText = "Cancel";
+    this.orderColor = "warning";
   }
 
-  async updateActive(reqId: string, flag: boolean) {
-    const {data: conv } = await client.models.Conversation.update({
-      id: reqId,
-      active: flag,
-    });    
-  }
   async showCancelling() {
     const loading = await this.loadingCtrl.create({
       message: 'Cancelling your request for drone...',
       duration: 2000,
     });
     await loading.present();
-    this.orderText = "Order";
-    this.orderColor = "success";
   }
 
   onOrder()
@@ -195,8 +203,6 @@ export class MapsPage implements OnInit {
           {
             text: 'Order',
             handler: async () => {
-              this.orderText = "Cancel";
-              this.orderColor = "warning";
               await this.showLoading();
             }
           }

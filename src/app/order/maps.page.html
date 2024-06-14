@@ -9,7 +9,7 @@
         <img src="assets/images/uss_drone.jpg"/>
       </ion-avatar>
     </ion-buttons>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="isSubscriber">
       <ion-button id="startOrder" (click)="onOrder()" fill="solid" color="{{orderColor}}">
         <ion-icon slot="start" name="receipt-outline"></ion-icon>
         {{orderText}}
@@ -35,3 +35,6 @@
     </div>
   </div>
 </ion-content>
+
+<!-- <ion-content *ngIf="orderText != 'Order'" [fullscreen]="true" class="background-opts"  [ngStyle]="background">
+</ion-content> -->

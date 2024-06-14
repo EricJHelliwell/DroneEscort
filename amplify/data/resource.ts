@@ -10,45 +10,45 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   Conversation: a
     .model({
-      id: a.id().required(),
       name: a.string().required(),
       createdAt: a.datetime().required(),
       active: a.boolean().required(),
       requestorId: a.string().required(),
-      userConversation: a.belongsTo("UserConversation", "id"),
-      messages: a.hasMany("Message", "id"),
-      drone: a.hasOne("Drone", "id"),
+      userConversation: a.hasOne("UserConversation", "userConversationId"),
+      messages: a.hasMany("Message", "conversationId"),
+      droneId: a.id(),
+      drone: a.belongsTo("Drone", "droneId"),
     }),
     Message: a
       .model({
-        id: a.id().required(),
         content: a.string(),
         createdAt: a.datetime().required(),
         sender: a.string().required(),
         isSent: a.boolean().required(),
-        conversation: a.belongsTo("Conversation", "id"),
+        conversationId: a.id().required(),
+        conversation: a.belongsTo("Conversation", "conversationId"),
       }),
       UserConversation: a
       .model({
-        id: a.id().required(),
-        user: a.belongsTo("User", "id"),
-        conversation: a.hasOne("Conversation", "id"),
+        userId: a.id().required(),
+        user: a.belongsTo("User", "userId"),
+        lastRead: a.datetime(),
+        userConversationId: a.id().required(),
+        conversation: a.belongsTo("Conversation", "userConversationId"),
       }),
       User: a
       .model({
-        id: a.id().required(),
-        userId: a.id().required(),  // this is specific to the security subsystem
+        cognitoId: a.id().required(),  // this is specific to the security subsystem
         username: a.string().required(),
         registered: a.boolean().required(),
-        conversations: a.hasMany("UserConversation", "id"),
+        conversations: a.hasMany("UserConversation", "userId"),
         lat: a.float(),
         lng: a.float(),
       }),
       Drone: a
       .model({
-        id: a.id().required(),
         createdAt: a.datetime().required(),
-        conversation: a.belongsTo("Conversation", "id"),
+        conversation: a.hasMany("Conversation", "droneId"),
         name: a.string().required(),
         description: a.string(),
         active: a.boolean(),

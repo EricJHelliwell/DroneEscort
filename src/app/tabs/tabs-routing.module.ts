@@ -20,7 +20,7 @@ const routes: Routes = [
               import('../chat/inbox.module').then(m => m.InboxPageModule)
           },
           {
-            path: ':messages',
+            path: ':conversationId',
             loadChildren: () => import('../chat/messages/messages.module').then( m => m.MessagesPageModule)
           }
         ]

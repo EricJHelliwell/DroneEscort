@@ -53,14 +53,12 @@ export class AuthGuardService implements OnInit {
   }
 
   async ngOnInit() {
-    console.log('In init');
-      await this.checkDBUser();
+    await this.checkDBUser();
   }
 
   async checkDBUser() {
     await fetchAuthSession()
     .then((auth) => {
-      console.log(auth);
       this.loggedIn = true;
       this.authDetails = auth.tokens.idToken.payload;
     })
@@ -76,7 +74,7 @@ export class AuthGuardService implements OnInit {
     // create user in DB for conversations if not already there
     const { data: existingUser } = await client.models.User.list({
       filter: {
-        userId: {
+        cognitoId: {
           eq: this.authDetails.sub
         }
       }
@@ -84,7 +82,7 @@ export class AuthGuardService implements OnInit {
 
     if (!existingUser || existingUser.length === 0) {
       const { data: newuser } = await client.models.User.create({
-        userId: this.authDetails.sub,
+        cognitoId: this.authDetails.sub,
         username: this.authDetails.preferred_username,
         registered: true,
       });
@@ -97,7 +95,6 @@ export class AuthGuardService implements OnInit {
   }    
 
   public canActivate(route: ActivatedRouteSnapshot): boolean {
-    console.log('loggedIn = ' + this.loggedIn);
     if (!this.loggedIn) {
       this.router.navigate(['/login']);
       return false;

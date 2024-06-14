@@ -13,36 +13,56 @@
       <ion-button (click)="goToVideoCall()">
         <ion-icon slot="start" name="videocam-outline" color="dark"></ion-icon>
       </ion-button>
-      <ion-button>
-        <ion-icon slot="start" name="ellipsis-vertical-outline" color="dark"></ion-icon>
+      <ion-button (click)="goToCancel()">
+        <ion-icon slot="start" name="exit-outline" color="dark"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Andrew Russule</ion-title>
+    <ion-title>{{chatName}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
+  <ion-modal [isOpen]="isModalOpen">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Assign Drone</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="setOpenModal(false)">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-radio-group value="dronelist">
+          <ion-item *ngFor="let drone of drones">
+            <ion-radio value="{{drone.id}}" (click)="setDrone(drone.id, drone.name)">{{drone.name}}</ion-radio>
+          </ion-item>
+        </ion-radio-group>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
   <div class="main-content">
     <div class="lower_div" *ngFor="let msg of messages">
-      <div class="left" *ngIf="msg.side == 'left'">
+      <div class="left" *ngIf="msg.sender && msg.sender != userId">
         <div class="content">
           <div class="icon_div">
             <ion-icon class="icon" name="person" color="light"></ion-icon>
           </div>
           <div class="msg_div">
             <div class="msg">
-              {{msg.msg}}
+              {{msg.content}}
             </div>
             <ion-label class="time">12.03 PM</ion-label>
           </div>
         </div>
       </div>
 
-      <div class="right" *ngIf="msg.side == 'right'">
+      <div class="right" *ngIf="msg.sender && msg.sender == userId">
         <div class="content">
           <div class="msg_div">
             <div class="msg">
-              {{msg.msg}}
+              {{msg.content}}
             </div>
             <ion-label class="time">12.03 PM</ion-label>
           </div>

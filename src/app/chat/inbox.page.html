@@ -39,14 +39,14 @@
       </div>
     </div>
 
-    <div class="list_card" *ngFor="let item of [1,2,3,4,5,6,7]; ; let i = index" (click)="goToMessage({i})">
-      <div *ngIf="i == 0" class="img" [style.backgroundImage]="'url(assets/images/profile.jpg)'"></div>
-      <div *ngIf="i != 0" class="img" [style.backgroundImage]="'url(assets/images/drone-1.png)'"></div>
+    <div class="list_card" *ngFor="let item of conversations; ; let i = index" [routerLink]="['./', item.id]">
+      <div class="img" [style.backgroundImage]="'url(assets/images/drone-1.png)'"></div>
 
       <div class="details">
         <div class="flex_row">
-          <ion-label *ngIf="i == 0" class="title">Andrew Russle</ion-label>          
-          <ion-label *ngIf="i != 0" class="title">(ARCHIVED) Andrew Russle</ion-label>
+          <ion-label *ngIf="item.active == true && item.droneId =='unassigned'" class="title">(Pending) {{item.name}}</ion-label>          
+          <ion-label *ngIf="item.active ==true && item.droneId !='unassigned'" class="title">(Active) {{item.name}}</ion-label>          
+          <ion-label *ngIf="item.active == false" class="title">(ARCHIVED) {{item.name}}</ion-label>
           <ion-label class="tag">2</ion-label>
         </div>
         <div class="flex_row">
