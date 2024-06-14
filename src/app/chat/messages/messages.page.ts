@@ -42,9 +42,9 @@ export class MessagesPage implements OnInit {
     }); 
   }
 
-  ionViewDidEnter(){
-    this.loadMessage(this.conversationId)
+  ionViewDidEnter() {
     this.userId = this.authService.userDatabaseId();
+    this.loadMessage(this.conversationId)
   }
 
   ionViewDidLeave() {
@@ -59,6 +59,7 @@ export class MessagesPage implements OnInit {
     });
     if (errors)
         return;
+
     this.chatName = conv.name;
     if (conv.droneId == "unassigned" && this.authService.isPilot())
       {
@@ -81,6 +82,24 @@ export class MessagesPage implements OnInit {
       next: (data) => {this.messages.push(data); this.scrollToBottom()},
       error: (error) => console.warn(error),
     });
+
+    // update lastRead
+    var now = new Date();
+    const {data: userConv } = await client.models.UserConversation.list ({
+      filter: {
+        and: [
+          { userId: { eq: this.userId }},
+          { userConversationId: { eq: conv.id }},
+        ]
+      }
+    });
+    // sanity check there is only one result
+    if (userConv.length > 1)
+      return;
+    const {data: userConvUpdate} = await client.models.UserConversation.update({
+      id: userConv[0].id,
+      lastRead: now.toISOString()
+    })
   }
 
   async setDrone(id:string, name:string) {

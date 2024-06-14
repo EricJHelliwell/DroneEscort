@@ -25,6 +25,7 @@ export class InboxPage implements OnInit {
   conversations: any[] = [];
   subUserConv = null;
   subUnassigned = null;
+  subMessages = null;
 
   constructor(public router: Router,
     public navCtrl: NavController, private authService: AuthGuardService) { }
@@ -37,11 +38,25 @@ export class InboxPage implements OnInit {
     this.getUserConversations();
     if (this.authService.isPilot)
       this.getPilotConvos();
+    this.watchMessages();
   }
 
   ionViewDidLeave() {
     if (this.subUserConv) this.subUserConv.unsubscribe();
     if (this.subUnassigned) this.subUnassigned.unsubscribe();
+    if (this.subMessages) this.subMessages.unsubscribe();
+  }
+
+  async watchMessages() {
+    this.subMessages = client.models.Message.onCreate( {} )
+    .subscribe({
+      next: (data) => {
+        const result = this.conversations.find((conv) => data.conversationId == conv.id);
+        if (result) {
+          result.msgCount++;
+          result.lastUpdatedAt = data.createdAt;       }
+      }
+    });
   }
 
   async getUserConversations() {
@@ -52,7 +67,7 @@ export class InboxPage implements OnInit {
 
     for (const conv of userConvs) {
         const {data: convDetail } = await conv.conversation();
-        this.pushAndSort(convDetail);
+        this.pushAndSort(convDetail, conv.lastRead);
     }
 
     this.subUserConv = client.models.UserConversation.onCreate( { 
@@ -64,7 +79,7 @@ export class InboxPage implements OnInit {
     }).subscribe({
       next: (data) => {
         data.conversation().then((convDetail) => {
-          this.pushAndSort(convDetail.data);
+          this.pushAndSort(convDetail.data, data.lastRead);
         });
       }
     });
@@ -81,7 +96,7 @@ export class InboxPage implements OnInit {
       }
       });
     for (const conv of unassignedConversations) {
-      this.pushAndSort(conv);
+      this.pushAndSort(conv, null);
     }
 
     //subscribe
@@ -94,18 +109,27 @@ export class InboxPage implements OnInit {
         }
       })
       .subscribe({
-        next: (data) => { this.pushAndSort(data); }
+        next: (data) => { this.pushAndSort(data, null); }
       });
   }
 
   
-  async pushAndSort(newConv)
+  async pushAndSort(newConv, dateLastRead)
   {
     if (newConv.active == false)
       return;
     // add the unread message count dynamically to object
     const {data: msgs } = await newConv.messages();
-    newConv.msgCount = msgs.length;
+    const result = msgs.filter((msg) => !dateLastRead || msg.createdAt > dateLastRead );
+    newConv.msgCount = result.length;
+    // now find the date of the last message so it can be shown
+    newConv.lastUpdatedAt = new Date(
+      Math.max(
+        ...msgs.map(element => {
+          return new Date(element.createdAt);
+        }),
+      ),
+    );
     
     this.conversations.push(newConv);
     this.conversations = this.conversations.sort(function(a, b) {

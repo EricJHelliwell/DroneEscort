@@ -50,8 +50,8 @@
           <ion-label class="tag">{{item.msgCount}}</ion-label>
         </div>
         <div class="flex_row">
-          <ion-label class="text">Lorem ipsum dolor sit, amet</ion-label>
-          <ion-label class="text">12:26</ion-label>
+          <ion-label class="text">{{ item.lastUpdatedAt | humanizeDate }}</ion-label>
+          <!-- <ion-label class="text">12:26</ion-label> -->
         </div>
       </div>
     </div>
