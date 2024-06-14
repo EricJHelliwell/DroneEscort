@@ -1,5 +1,5 @@
 
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, NgZone } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
@@ -128,10 +128,24 @@ export class MessagesPage implements OnInit {
         alertEl.present();
       });  
   }
+
+  goToAttach() {
+
+  }
   
+  async goToSend(textToSend) {
+    const now = new Date();
+    const {data: droneMsg } = await client.models.Message.create({
+      content: textToSend,
+      createdAt: now.toISOString(),
+      isSent: true,
+      conversationId: this.conversationId,
+      sender: this.userId,
+    });
+  }
+
   setOpenModal(isOpen: boolean) {
     this.isModalOpen = isOpen;
   }
-  
 
 }

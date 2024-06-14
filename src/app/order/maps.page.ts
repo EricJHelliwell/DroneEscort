@@ -35,12 +35,10 @@ export class MapsPage implements OnInit {
   @ViewChild('map', { static: true }) mapElement: ElementRef;
   map: any;
 
-  public orderText = "Order";
-  public orderColor = "success";
-  background = {
-    backgroundImage: 'url(/assets/images/Campus_Drone2.jpg)'
-  };
-  
+  orderText = "Order";
+  orderColor = "success";
+  conversationId = "";
+
   constructor(public router: Router, private alertCtl: AlertController
       , private loadingCtrl: LoadingController, private zone: NgZone
       , private authService: AuthGuardService) {
@@ -110,7 +108,8 @@ export class MapsPage implements OnInit {
       lastRead: now.toISOString(),
     });
 
-    return conv.id;
+    this.conversationId = conv.id;
+    return this.conversationId;
   }
 
   async showLoading() {
@@ -118,7 +117,8 @@ export class MapsPage implements OnInit {
         this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude;
 
     const loading = await this.loadingCtrl.create({
-      cssClass: "default-alert",
+      cssClass: "custom-loading",
+      backdropDismiss: true,
       message: messageToDisplay,
       duration: 600000,
     });
@@ -161,11 +161,19 @@ export class MapsPage implements OnInit {
   }
 
   async showCancelling() {
+    this.orderText = "Order";
+    this.orderColor = "success";
     const loading = await this.loadingCtrl.create({
       message: 'Cancelling your request for drone...',
       duration: 2000,
     });
-    await loading.present();
+    
+    loading.present();
+    const {errors, data: conv } = await client.models.Conversation.update ({
+      id: this.conversationId,
+      active: false
+    });
+
   }
 
   onOrder()

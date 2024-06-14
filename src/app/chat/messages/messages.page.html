@@ -78,10 +78,16 @@
 <ion-footer>
   <div class="footer">
     <div class="sendbox">
-      <ion-input type="text" placeholder="Send Message..." class="ion-no-padding"></ion-input>
+      <ion-input #sendText id="sendText" type="text" placeholder="Send Message..." class="ion-no-padding"></ion-input>
       <div class="icon">
-        <ion-icon class="attach" name="attach-outline"></ion-icon>
-        <ion-icon class="send" name="send-outline"></ion-icon>
+        <ion-buttons>
+          <ion-button (click)="goToAttach()">
+            <ion-icon class="attach" name="attach-outline"></ion-icon>
+          </ion-button>
+          <ion-button (click)="goToSend(sendText.value)">
+            <ion-icon slot="start" name="send-outline" color="dark"></ion-icon>
+          </ion-button>
+        </ion-buttons>
       </div>
     </div>
   </div>
