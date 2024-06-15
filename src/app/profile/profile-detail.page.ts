@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlertController } from '@ionic/angular';
 
-import { uploadData } from "aws-amplify/storage";
+import { uploadData, getUrl } from "aws-amplify/storage";
 import { signOut } from 'aws-amplify/auth';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { generateClient } from 'aws-amplify/data';
@@ -33,12 +33,17 @@ export class ProfileDetailPage {
   isDescModalOpen = false;
 
   constructor(private sanitizer: DomSanitizer, private alertCtl: AlertController
-    , private authService: AuthGuardService) {
+    , private authService: AuthGuardService) 
+    {
       this.user = this.authService.userDatabase();
-      console.log(this.user);
     }
 
-  async takePicture() {
+    async ngOnInit() {
+      const result = await getUrl({path: "profile-pictures/" + this.user.username + ".png"});
+      this.photo = result.url; 
+    }
+
+    async takePicture() {
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: true,
@@ -59,7 +64,7 @@ export class ProfileDetailPage {
     fileReader.onload = async (event) => {
       console.log("Complete File read successfully!", event.target.result);
       try {
-        await uploadData({
+        const result = await uploadData({
               data: event.target.result, 
               path: "profile-pictures/" + this.user.username + ".png"
           });
