@@ -38,8 +38,8 @@
             {{user.description}}
           </p>
           <p *ngIf="!user.description">
-            Tell us something about yourself.  Select the Set About Me button below.
-            Also, a photo helps us identify you, so please feel free to add via the Set Photo button below.
+            Tell us something about yourself by selecting the About Me button below.
+            Also, a photo helps us identify you, so please feel free to add via the Photo button below.
           </p>
         </div>
       </ion-col>
@@ -62,13 +62,13 @@
       <ion-col size="6" class="ion-padding-vertical">
           <ion-button (click)="takePicture()" class="action-button" expand="block" fill="solid" color="primary">
             <ion-icon slot="start" name="camera"></ion-icon>
-            <span>Set Photo</span>
+            <span>Photo</span>
         </ion-button>
       </ion-col>
       <ion-col size="6" class="ion-padding-vertical">
         <ion-button (click)="isDescModalOpen = true" class="action-button" expand="block"  fill="solid" color="primary">
           <ion-icon slot="start" name="body-outline"></ion-icon>
-          <span>Set About Me</span>
+          <span>About Me</span>
       </ion-button>
       </ion-col>
     </ion-row>

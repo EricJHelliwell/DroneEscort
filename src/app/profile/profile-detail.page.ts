@@ -76,6 +76,7 @@ export class ProfileDetailPage {
       id: this.user.id,
       description: newDesc.value
     })
+    this.user.description = newDesc.value;
     this.isDescModalOpen = false;
   }
 
