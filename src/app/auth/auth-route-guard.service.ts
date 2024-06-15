@@ -16,9 +16,9 @@ const client = generateClient<Schema>();
 
 @Injectable()
 export class AuthGuardService implements OnInit {
-  loggedIn: boolean = false;
-  authDetails: any = null;
-  userDBId: string = "";  // internal Dynamo DB
+  private loggedIn: boolean = false;
+  private authDetails: any = null;
+  private userDB: any;  // internal Dynamo DB
 
   constructor(public router: Router) {
 
@@ -32,7 +32,7 @@ export class AuthGuardService implements OnInit {
           console.log('user has been signedOut successfully.');
           this.loggedIn = false;
           this.authDetails = null;
-          this.userDBId = "";
+          this.userDB = null;
           break;
         case 'tokenRefresh':
           console.log('auth tokens have been refreshed.');
@@ -66,7 +66,7 @@ export class AuthGuardService implements OnInit {
       console.log(err);
       this.loggedIn = false;
       this.authDetails = null;
-      this.userDBId = "";
+      this.userDB = null;
       this.router.navigate(['/login']);
       return;
     });
@@ -86,10 +86,10 @@ export class AuthGuardService implements OnInit {
         username: this.authDetails.preferred_username,
         registered: true,
       });
-      this.userDBId = newuser.id;
+      this.userDB = newuser;
     }
     else {
-      this.userDBId = existingUser[0].id;
+      this.userDB = existingUser[0];
     }
     this.router.navigate(['/tabs/order']);
   }    
@@ -115,8 +115,11 @@ export class AuthGuardService implements OnInit {
   }
 
   public userDatabaseId() : string {
-    return this.userDBId;
+    return this.userDB.id;
   } 
 
+  public userDatabase() : any {
+    return this.userDB;
+  } 
 }
 

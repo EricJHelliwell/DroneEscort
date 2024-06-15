@@ -10,7 +10,12 @@ export const auth = defineAuth({
     preferredUsername: {
       mutable: true,
       required: true
+    },
+    phoneNumber: {
+      mutable: true,
+      required: true
     }
+    
   },
   groups: ["SUBSCRIBERS", "PILOTS"],
   triggers: {

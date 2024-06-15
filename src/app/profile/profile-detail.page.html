@@ -16,46 +16,126 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-list>
-    <ion-list-header>
-      <ion-label>
-        Single Selection
-      </ion-label>
-    </ion-list-header>
-  
-    <ion-item>
-      <ion-label>Gender</ion-label>
-      <ion-select placeholder="Select One">
-        <ion-select-option value="f">Female</ion-select-option>
-        <ion-select-option value="m">Male</ion-select-option>
-      </ion-select>
-    </ion-item>
-  
-    <ion-item>
-      <ion-label>Hair Color</ion-label>
-      <ion-select value="brown" okText="Okay" cancelText="Dismiss">
-        <ion-select-option value="brown">Brown</ion-select-option>
-        <ion-select-option value="blonde">Blonde</ion-select-option>
-        <ion-select-option value="black">Black</ion-select-option>
-        <ion-select-option value="red">Red</ion-select-option>
-      </ion-select>
-    </ion-item>
-  
-    <ion-item>
-      <ion-toggle>Hide Visibility to Others</ion-toggle>
-    </ion-item>
-
-  </ion-list>
-  
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <div class="profile">
+          <ion-avatar>
+            <img *ngIf="photo"
+              src="{{photo}}"
+              alt=""
+              srcset=""
+            />
+            <img *ngIf="!photo"
+              src="/assets/icon/avatar.png"
+              alt=""
+              srcset=""
+            />
+          </ion-avatar>
+          <h4 class="ion-margin-vertical">{{user.username}}</h4>
+          <p *ngIf="user.description">
+            {{user.description}}
+          </p>
+          <p *ngIf="!user.description">
+            Tell us something about yourself.  Select the Set About Me button below.
+            Also, a photo helps us identify you, so please feel free to add via the Set Photo button below.
+          </p>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row class="borders">
+      <ion-col size="4" class="ion-no-padding">
+        <h5>485</h5>
+        <p>Escorts</p>
+      </ion-col>
+      <ion-col size="4" class="ion-no-padding">
+        <h5>562</h5>
+        <p>Texts</p>
+      </ion-col>
+      <ion-col size="4" class="ion-no-padding">
+        <h5>12k</h5>
+        <p>Photos</p>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6" class="ion-padding-vertical">
+          <ion-button (click)="takePicture()" class="action-button" expand="block" fill="solid" color="primary">
+            <ion-icon slot="start" name="camera"></ion-icon>
+            <span>Set Photo</span>
+        </ion-button>
+      </ion-col>
+      <ion-col size="6" class="ion-padding-vertical">
+        <ion-button (click)="isDescModalOpen = true" class="action-button" expand="block"  fill="solid" color="primary">
+          <ion-icon slot="start" name="body-outline"></ion-icon>
+          <span>Set About Me</span>
+      </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="ion-no-padding">
+        <ion-item lines="none" class="section">
+          <ion-text color="dark">
+            <h5>Photos</h5>
+          </ion-text>
+          <ion-buttons slot="end">
+            <ion-button
+            slot="end"
+            fill="clear"
+            size="small"
+            shape="round"
+            color="medium"
+            class="small-button"
+          >
+            <ion-icon slot="icon-only" name="list-outline"></ion-icon>
+          </ion-button>
+          <ion-button
+            slot="end"
+            fill="clear"
+            size="small"
+            shape="round"
+            color="medium"
+            class="small-button"
+          >
+            <ion-icon slot="icon-only" name="grid-outline"></ion-icon>
+          </ion-button>
+          </ion-buttons>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="4" *ngFor="let photo of photos">
+        <img class="image-element" [src]="photo" alt="">
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+<!-- Set description modal-->
+  <ion-modal [isOpen]="isDescModalOpen">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="isDescModalOpen = false">Cancel</ion-button>
+          </ion-buttons>
+          <ion-title>Description</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="setDescription(desc)" [strong]="true">Confirm</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+          <ion-textarea #desc
+            rows="10"
+            label="Tell us about yourself"
+            labelPlacement="floating"
+            fill="solid"
+            type="text"
+            spellcheck="true"
+            value="{{user.description}}"
+            >
+          </ion-textarea>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
 
-<ion-content>
-  <img [src]="photo" >
-
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button (click)="takePicture()">
-      <ion-icon name="camera"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-</ion-content>

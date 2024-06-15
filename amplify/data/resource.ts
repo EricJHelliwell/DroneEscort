@@ -41,6 +41,7 @@ const schema = a.schema({
         cognitoId: a.id().required(),  // this is specific to the security subsystem
         username: a.string().required(),
         registered: a.boolean().required(),
+        description: a.string(),
         conversations: a.hasMany("UserConversation", "userId"),
         lat: a.float(),
         lng: a.float(),
