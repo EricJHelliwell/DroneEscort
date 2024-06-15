@@ -5,7 +5,6 @@ export const storage = defineStorage({
   access: (allow) => ({
     'profile-pictures/*': [
       allow.authenticated.to(['read','write', 'delete']),
-      allow.guest.to(['read','write', 'delete']),
       allow.entity('identity').to(['read', 'write', 'delete'])
     ],
     'chat-submissions/{entity_id}/*': [
