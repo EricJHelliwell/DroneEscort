@@ -6,10 +6,6 @@ import { LoadingController } from '@ionic/angular';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { Geolocation, ClearWatchOptions } from '@capacitor/geolocation';
 
-import User from '../types/user';
-import Conversation from '../types/conversation';
-import UserConversation from '../types/userConversation';
-
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
 

@@ -4,10 +4,6 @@ import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/a
 import { Hub } from 'aws-amplify/utils';
 import { Component, OnInit } from '@angular/core';
 
-import User from '../types/user';
-import Conversation from '../types/conversation';
-import UserConversation from '../types/userConversation';
-
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
 

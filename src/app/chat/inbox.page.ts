@@ -5,10 +5,6 @@ import { NavController } from '@ionic/angular';
 import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 
-import User from '../types/user';
-import Conversation from '../types/conversation';
-import UserConversation from '../types/userConversation';
-
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
 
