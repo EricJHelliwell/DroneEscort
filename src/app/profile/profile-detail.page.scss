@@ -4,6 +4,10 @@
   align-items: center;
 
   img {
+    width:100% !important;  
+    height : 100% !important;  
+    max-width: 100px !important;  //any size
+    max-height: 100px !important; //any size 
     border: 2px solid rgba(228, 228, 228, 0.6);
   }
 
@@ -22,6 +26,13 @@
     text-align: center;
     color: #151522;
   }
+  
+  item-avatar  {     
+    width:100% !important;  
+    height : 100% !important;  
+    max-width: 100px !important;  //any size
+    max-height: 100px !important; //any size 
+    }
 }
 
 .borders {
@@ -79,9 +90,3 @@
   }
 }
 
-.image-element {
-  height: 100px;
-  width: 100%;
-  border-radius: 6px;
-  object-fit: cover;
-}
