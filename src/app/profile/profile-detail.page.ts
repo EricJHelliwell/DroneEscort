@@ -16,7 +16,7 @@ const client = generateClient<Schema>();
   templateUrl: 'profile-detail.page.html',
   styleUrls: ['profile-detail.page.scss']
 })
-export class ProfileDetailPage {
+export class ProfileDetailPage implements OnInit {
   photo: SafeResourceUrl;
   photos = [
     'https://images.unsplash.com/photo-1592486058517-36236ba247c8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80',
@@ -30,42 +30,28 @@ export class ProfileDetailPage {
     'https://images.unsplash.com/photo-1587613990444-68fe88ee970a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80'
   ];
   user: any;
-  userIdArg: string;
   isDescModalOpen = false;
 
   constructor(private sanitizer: DomSanitizer, private alertCtl: AlertController
     , private authService: AuthGuardService, private activatedRoute: ActivatedRoute
-    , public router: Router) 
+    , public router: Router)
     {
-      this.activatedRoute.paramMap.subscribe(paramMap => {
-        if (paramMap.has('userId')) {
-          // redirect
-          this.userIdArg = paramMap.get('userId');
-        }
-      });
     }
 
     async ngOnInit() {
-      if (this.userIdArg)
-        {
-          const {errors, data: userProf } = await client.models.User.get ({
-            id: this.userIdArg,
-          });
-          if (!errors) {
-            this.user = userProf;
-          }
-        }
-      else {
-        this.user = this.authService.userDatabase();
-      }
-
+      this.user = this.authService.userDatabase();
+  
       const result = await getUrl({path: "profile-pictures/" + this.user.id + ".png"});
       fetch(result.url)
       .then((response) => {
         if (response.status != 404)
           this.photo = result.url; 
       });
-    }
+      }
+
+   async ionViewDidEnter() {
+    console.log('ionViewWillEnter');
+  }
 
     async takePicture() {
     const image = await Camera.getPhoto({

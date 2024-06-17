@@ -34,8 +34,8 @@
 
     <div class="slide_profile">
       <ion-buttons>
-        <div *ngFor="let item of activePhotos">
-          <ion-button slot="start" (click)="getProfile(item.userId)">
+        <div *ngFor="let item of activePhotos" [routerLink]="['./profile', item.userId]">
+          <ion-button slot="start">
             <img class="img" src={{item.url}}/>
           </ion-button>
       </div>

@@ -42,7 +42,7 @@
     </ng-template>
   </ion-modal>
 
-  <div class="main-content">
+  <div class="main-content" #content>
     <div class="lower_div" *ngFor="let msg of messages">
       <div class="left" *ngIf="msg.sender && msg.sender != userId">
         <div class="content">

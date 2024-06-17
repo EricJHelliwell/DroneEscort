@@ -23,21 +23,21 @@ const routes: Routes = [
           {
             path: ':conversationId',
             loadChildren: () => import('../chat/messages/messages.module').then( m => m.MessagesPageModule)
+          },
+          {
+            path: 'profile',
+            children: [
+            {
+              path: ':userId',
+              loadChildren: () => import('../chat/profile/profile-guest.module').then( m => m.ProfileActivePageModule)
+            }
+            ]
           }
         ]
       },
       {
         path: 'profile',
-        children: [
-          {
-            path: '',
-            loadChildren: () => import('../profile/profile-detail.module').then( m => m.ProfileDetailPageModule)
-          },
-          {
-            path: ':userId',
-            loadChildren: () => import('../profile/profile-detail.module').then( m => m.ProfileDetailPageModule)
-          }
-        ]
+        loadChildren: () => import('../profile/profile-detail.module').then( m => m.ProfileDetailPageModule)
       },
       {
         path: 'drones',

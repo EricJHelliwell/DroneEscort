@@ -2,7 +2,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { getUrl } from "aws-amplify/storage";
 import { generateClient } from 'aws-amplify/data';
@@ -172,16 +171,8 @@ export class InboxPage implements OnInit {
     this.navCtrl.back();
   }
 
-  goToMessage(id) 
+  goToProfile(id)
   {
-    this.router.navigate(['/tabs/chat'], {
-      queryParams: { conversationId: id }
-    });
-  }
-
-  getProfile(id) {
-    this.router.navigate(['/tabs/profile'], {
-      queryParams: { userId: id }
-    });
+    this.router.navigate(['./profile', id]);
   }
 }

@@ -1,0 +1,77 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Actives Profile
+    </ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="goToBack()">
+        <ion-icon slot="start" name="chevron-back" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="start" class="ion-padding-start">
+      <ion-avatar>
+        <img src="assets/images/uss_drone.jpg" />
+      </ion-avatar>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <div class="profile">
+          <ion-avatar>
+            <img *ngIf="photo"
+              src="{{photo}}"
+              alt=""
+              srcset=""
+            />
+            <img *ngIf="!photo"
+              src="/assets/icon/avatar.png"
+              alt=""
+              srcset=""
+            />
+          </ion-avatar>
+          <h4 class="ion-margin-vertical">{{user.username}}</h4>
+          <p *ngIf="user.description">
+            {{user.description}}
+          </p>
+          <p *ngIf="!user.description">
+            Tell us something about yourself by selecting the About Me button below.
+            Also, a photo helps us identify you, so please feel free to add via the Photo button below.
+          </p>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row class="borders">
+      <ion-col size="4" class="ion-no-padding">
+        <h5>485</h5>
+        <p>Escorts</p>
+      </ion-col>
+      <ion-col size="4" class="ion-no-padding">
+        <h5>562</h5>
+        <p>Texts</p>
+      </ion-col>
+      <ion-col size="4" class="ion-no-padding">
+        <h5>12k</h5>
+        <p>Photos</p>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6" class="ion-padding-vertical">
+          <ion-button class="action-button" expand="block" fill="solid" color="primary">
+            <ion-icon slot="start" name="mail-outline"></ion-icon>
+            <span>Email User</span>
+        </ion-button>
+      </ion-col>
+      <ion-col size="6" class="ion-padding-vertical">
+        <ion-button class="action-button" expand="block"  fill="solid" color="primary">
+          <ion-icon slot="start" name="call-outline"></ion-icon>
+          <span>Call User</span>
+      </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+

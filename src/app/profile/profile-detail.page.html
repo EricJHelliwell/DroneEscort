@@ -17,7 +17,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding-horizontal">
-  <ion-grid>
+  <ion-grid *ngIf="user">
     <ion-row>
       <ion-col>
         <div class="profile">
