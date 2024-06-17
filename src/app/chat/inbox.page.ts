@@ -12,7 +12,7 @@ const client = generateClient<Schema>();
 
 type PhotoStorage = {
   userId: string,
-  url: URL
+  url: string
 }
 
 @Component({
@@ -24,7 +24,7 @@ export class InboxPage implements OnInit {
 
   user: any;
   activeUsers: string[] = [];
-  activePhotos: string[] = [];
+  activePhotos: PhotoStorage[] = [];
   conversations: any[];
   subUserConv = null;
   subUnassigned = null;
@@ -158,12 +158,11 @@ export class InboxPage implements OnInit {
         const result = await getUrl({path: "profile-pictures/" + activeUser.userId + ".png"});
         const testURLReq = await fetch(result.url);
         if (testURLReq.status != 404) {
-          this.activePhotos.push(result.url.toString());
-          console.log(this.activePhotos.length);
+          this.activePhotos.push({userId: activeUser.userId, url: result.url.toString()});
         }
         else {
           // user does not have a valid photo, so substitute and avatar
-          this.activePhotos.push('../assets/icon/avatar.png');
+          this.activePhotos.push({userId: activeUser.userId, url: '../assets/icon/avatar.png'});
         }
       }
     }
@@ -180,4 +179,9 @@ export class InboxPage implements OnInit {
     });
   }
 
+  getProfile(id) {
+    this.router.navigate(['/tabs/profile'], {
+      queryParams: { userId: id }
+    });
+  }
 }

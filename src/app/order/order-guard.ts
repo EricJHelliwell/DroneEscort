@@ -8,7 +8,9 @@ export class OrderRouteGuard {
     constructor() {}
 
     public canDeactivate(route: ActivatedRouteSnapshot) {
-        console.log('canDeActivate');
+        if (isOrderActive()) {
+            alert('You must cancel or wait for the order to leave the page');
+        }
         return !isOrderActive();
     }
  }

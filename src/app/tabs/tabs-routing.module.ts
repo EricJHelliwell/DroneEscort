@@ -28,8 +28,17 @@ const routes: Routes = [
       },
       {
         path: 'profile',
-        loadChildren: () => import('../profile/profile-detail.module').then( m => m.ProfileDetailPageModule)
-      },      
+        children: [
+          {
+            path: '',
+            loadChildren: () => import('../profile/profile-detail.module').then( m => m.ProfileDetailPageModule)
+          },
+          {
+            path: ':userId',
+            loadChildren: () => import('../profile/profile-detail.module').then( m => m.ProfileDetailPageModule)
+          }
+        ]
+      },
       {
         path: 'drones',
         loadChildren: () =>

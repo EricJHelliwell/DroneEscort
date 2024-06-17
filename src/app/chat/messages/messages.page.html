@@ -21,7 +21,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" #content>
+<ion-content class="ion-padding">
   <ion-modal [isOpen]="isModalOpen">
     <ng-template>
       <ion-header>
@@ -42,7 +42,7 @@
     </ng-template>
   </ion-modal>
 
-  <div #content class="main-content">
+  <div class="main-content">
     <div class="lower_div" *ngFor="let msg of messages">
       <div class="left" *ngIf="msg.sender && msg.sender != userId">
         <div class="content">

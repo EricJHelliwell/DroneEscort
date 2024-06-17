@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlertController } from '@ionic/angular';
-
+import { Router, ActivatedRoute } from '@angular/router';
 import { uploadData, getUrl } from "aws-amplify/storage";
 import { signOut } from 'aws-amplify/auth';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
@@ -30,16 +30,35 @@ export class ProfileDetailPage {
     'https://images.unsplash.com/photo-1587613990444-68fe88ee970a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80'
   ];
   user: any;
+  userIdArg: string;
   isDescModalOpen = false;
 
   constructor(private sanitizer: DomSanitizer, private alertCtl: AlertController
-    , private authService: AuthGuardService) 
+    , private authService: AuthGuardService, private activatedRoute: ActivatedRoute
+    , public router: Router) 
     {
-      this.user = this.authService.userDatabase();
-      console.log(this.user);
+      this.activatedRoute.paramMap.subscribe(paramMap => {
+        if (paramMap.has('userId')) {
+          // redirect
+          this.userIdArg = paramMap.get('userId');
+        }
+      });
     }
 
     async ngOnInit() {
+      if (this.userIdArg)
+        {
+          const {errors, data: userProf } = await client.models.User.get ({
+            id: this.userIdArg,
+          });
+          if (!errors) {
+            this.user = userProf;
+          }
+        }
+      else {
+        this.user = this.authService.userDatabase();
+      }
+
       const result = await getUrl({path: "profile-pictures/" + this.user.id + ".png"});
       fetch(result.url)
       .then((response) => {
