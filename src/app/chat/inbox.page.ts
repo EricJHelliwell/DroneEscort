@@ -4,11 +4,16 @@ import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { signIn, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
-
+import { getUrl } from "aws-amplify/storage";
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
 
 const client = generateClient<Schema>();
+
+type PhotoStorage = {
+  userId: string,
+  url: URL
+}
 
 @Component({
   selector: 'app-inbox',
@@ -18,7 +23,9 @@ const client = generateClient<Schema>();
 export class InboxPage implements OnInit {
 
   user: any;
-  conversations: any[] = [];
+  activeUsers: string[] = [];
+  activePhotos: string[] = [];
+  conversations: any[];
   subUserConv = null;
   subUnassigned = null;
   subMessages = null;
@@ -127,10 +134,39 @@ export class InboxPage implements OnInit {
       ),
     );
     
+    // add the conversation in sorted order  
     this.conversations.push(newConv);
     this.conversations = this.conversations.sort(function(a, b) {
       return (a.createdAt < b.createdAt) ? -1 : ((a.createdAt > b.createdAt) ? 1 : 0);
     });
+
+    // add any counterparts to the Active list
+    const {errors, data: actives } = await client.models.UserConversation.list ({ 
+      filter: {
+        and: [
+          { userConversationId: { eq: newConv.id }},
+          { userId: { ne: this.authService.userDatabaseId() }}
+        ]
+      }
+    });
+    if (errors)
+      return;
+    for (const activeUser of actives) {
+      const found = this.activeUsers.find((userId) => userId == activeUser.userId);
+      if (!found) {
+        this.activeUsers.push(activeUser.userId); 
+        const result = await getUrl({path: "profile-pictures/" + activeUser.userId + ".png"});
+        const testURLReq = await fetch(result.url);
+        if (testURLReq.status != 404) {
+          this.activePhotos.push(result.url.toString());
+          console.log(this.activePhotos.length);
+        }
+        else {
+          // user does not have a valid photo, so substitute and avatar
+          this.activePhotos.push('../assets/icon/avatar.png');
+        }
+      }
+    }
   }
 
   goToBack() {

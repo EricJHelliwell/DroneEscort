@@ -36,11 +36,16 @@ export class ProfileDetailPage {
     , private authService: AuthGuardService) 
     {
       this.user = this.authService.userDatabase();
+      console.log(this.user);
     }
 
     async ngOnInit() {
-      const result = await getUrl({path: "profile-pictures/" + this.user.username + ".png"});
-      this.photo = result.url; 
+      const result = await getUrl({path: "profile-pictures/" + this.user.id + ".png"});
+      fetch(result.url)
+      .then((response) => {
+        if (response.status != 404)
+          this.photo = result.url; 
+      });
     }
 
     async takePicture() {
@@ -66,7 +71,7 @@ export class ProfileDetailPage {
       try {
         const result = await uploadData({
               data: event.target.result, 
-              path: "profile-pictures/" + this.user.username + ".png"
+              path: "profile-pictures/" + this.user.id + ".png"
           });
       } catch (e) {
         console.log("error", e);

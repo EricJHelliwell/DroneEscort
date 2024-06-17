@@ -33,9 +33,8 @@
     </div>
 
     <div class="slide_profile">
-      <div *ngFor="let item of [1]">
-        <div class="img" [style.backgroundImage]="'url(assets/images/profile.jpg)'">
-        </div>
+      <div *ngFor="let item of activePhotos">
+        <img class="img" src={{item}}/>
       </div>
     </div>
 
