@@ -7,6 +7,7 @@ import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../../amplify/data/resource';
 import { AuthGuardService } from '../../auth/auth-route-guard.service'
 import { parseISO } from 'date-fns';
+import { isDroneAssigned } from '../../library/order'
 
 const client = generateClient<Schema>();
 
@@ -61,7 +62,7 @@ export class MessagesPage implements OnInit {
         return;
 
     this.chatName = conv.name;
-    if (conv.droneId == "unassigned" && this.authService.isPilot())
+    if (!isDroneAssigned(conv.droneId) && this.authService.isPilot())
       {
         const {data: dronesQuery } = await client.models.Drone.list();
         this.drones = dronesQuery;
@@ -93,8 +94,9 @@ export class MessagesPage implements OnInit {
         ]
       }
     });
-    // sanity check there is only one result
-    if (userConv.length > 1)
+    // sanity check there are results.
+    // there may not be if we are still assigning the drone and pilot
+    if (userConv.length < 1)
       return;
     const {data: userConvUpdate} = await client.models.UserConversation.update({
       id: userConv[0].id,
@@ -126,6 +128,7 @@ export class MessagesPage implements OnInit {
       userConversationId: this.conversationId,
       lastRead: now.toISOString(),
     });
+
   }
 
   goToBack() {

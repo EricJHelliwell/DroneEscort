@@ -5,13 +5,9 @@ import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { Geolocation, ClearWatchOptions } from '@capacitor/geolocation';
+import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder, isOrderActive } from '../library/order'
 
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '../../../amplify/data/resource';
-
-const client = generateClient<Schema>();
 declare var google: any;
-
 
 @Component({
   selector: 'app-maps',
@@ -31,9 +27,9 @@ export class MapsPage implements OnInit {
   @ViewChild('map', { static: true }) mapElement: ElementRef;
   map: any;
 
-  orderText = "Order";
-  orderColor = "success";
-  conversationId = "";
+  orderText: string;
+  orderColor: string;
+  ReqId: any  = null;
 
   constructor(public router: Router, private alertCtl: AlertController
       , private loadingCtrl: LoadingController, private zone: NgZone
@@ -41,6 +37,7 @@ export class MapsPage implements OnInit {
   }
 
   async ngOnInit() {
+    this.showOrderButton();
     this.isPilot = this.authService.isPilot();
     this.isSubscriber = this.authService.isSubscriber();
     const loc = await Geolocation.getCurrentPosition();
@@ -67,6 +64,13 @@ export class MapsPage implements OnInit {
         }
       });
     });
+    if (isOrderActive()) {
+      this.showCancelButton()
+      }
+  }
+
+  ionViewCanLeave() {
+    console.log('ionViewCanLeave');
   }
 
   ionViewDidLeave() {
@@ -74,38 +78,7 @@ export class MapsPage implements OnInit {
     Geolocation.clearWatch(opt).then(result=>{
       ;
     });
-  }
-
-  async createNewOrder(messageToDisplay:string): Promise<string> {
-    const now = new Date();
-    const convName = this.authService.userPreferredName() + " " + 
-      now.toLocaleDateString("en-US") + " " +
-      now.toLocaleTimeString("en-US");
-    const reqId = this.authService.userDatabaseId();
-    const {data: conv } = await client.models.Conversation.create({
-      name: convName,
-      createdAt: now.toISOString(),
-      active: true,
-      requestorId: reqId,
-      droneId: "unassigned",
-    });
-
-    const {errors, data: firstMsg } = await client.models.Message.create({
-      content: messageToDisplay,
-      createdAt: now.toISOString(),
-      isSent: true,
-      conversationId: conv.id,
-      sender: "System"
-    });
-
-    const {data: convUser } = await client.models.UserConversation.create({
-      userId: reqId,
-      userConversationId: conv.id,
-      lastRead: now.toISOString(),
-    });
-
-    this.conversationId = conv.id;
-    return this.conversationId;
+    cancelMonitorOrder();
   }
 
   async showLoading() {
@@ -120,56 +93,47 @@ export class MapsPage implements OnInit {
     });
 
     // Create and Subscribe to order
-    const ReqId = await this.createNewOrder(messageToDisplay);
-    const updateSub = client.models.Conversation.observeQuery({  
-      filter: {
-      id: {
-        eq: ReqId,
-      },
-    },
-    }).subscribe({
-      next: (data) => {
-        console.log(data);
-        // cancelled 
-        if (data.items[0].active == false) {
-          updateSub.unsubscribe();
-          loading.dismiss();
-          this.orderText = "Order";
-          this.orderColor = "success";
-          this.zone.run(() => {this.showCancelling();});
-        }
-        // fulfilled
-        else if (data.items[0].droneId != "unassigned") {
-          updateSub.unsubscribe();
-          loading.dismiss();
-          this.orderText = "Order";
-          this.orderColor = "success";
-          this.zone.run(() => {
-            this.router.navigate(['/tabs/chat', data.items[0].id])});
-        }
-      },
-      error: (error) => console.warn(error),
+    this.ReqId = await createNewOrder(messageToDisplay, this.authService.userDatabase());
+    const WatchId = monitorOrder((result) => {
+      console.log(result);
+      if (result == "Cancelled") {
+        loading.dismiss();
+        this.zone.run(() => {this.showCancelling();});
+      }
+      else if (result == "Accepted") {
+        loading.dismiss();
+        this.showOrderButton();
+        this.zone.run(() => {
+          this.router.navigate(['/tabs/chat', this.ReqId])});
+      }
     });
 
     loading.present();
-    this.orderText = "Cancel";
-    this.orderColor = "warning";
+    this.showCancelButton();
   }
 
   async showCancelling() {
-    this.orderText = "Order";
-    this.orderColor = "success";
+    this.showCancelButton();
     const loading = await this.loadingCtrl.create({
       message: 'Cancelling your request for drone...',
       duration: 2000,
     });
     
     loading.present();
-    const {errors, data: conv } = await client.models.Conversation.update ({
-      id: this.conversationId,
-      active: false
-    });
+    cancelOrder();
+    cancelMonitorOrder();
+    this.showOrderButton();
+    this.ReqId = null;
+  }
 
+  showOrderButton() {
+    this.orderText = "Order";
+    this.orderColor = "success";
+  }
+
+  showCancelButton() {
+    this.orderText = "Cancel";
+    this.orderColor = "warning";
   }
 
   onOrder()
