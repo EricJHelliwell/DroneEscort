@@ -16,7 +16,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+<ion-content *ngIf="user" [fullscreen]="true" class="ion-padding-horizontal">
   <ion-grid>
     <ion-row>
       <ion-col>
