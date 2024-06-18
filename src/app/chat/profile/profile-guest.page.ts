@@ -25,18 +25,19 @@ export class ProfileActiveDetailPage implements OnInit {
     , private authService: AuthGuardService, private activatedRoute: ActivatedRoute
     , public router: Router, private navCtrl: NavController)
     {
-      this.activatedRoute.paramMap.subscribe(paramMap => {
-        if (paramMap.has('userId')) {
-          // redirect
-          this.userIdArg = paramMap.get('userId');
-        }
-      });
+
     }
 
     async ngOnInit() {
       }
 
    async ionViewDidEnter() {
+    this.activatedRoute.paramMap.subscribe(paramMap => {
+      if (paramMap.has('userId')) {
+        // redirect
+        this.userIdArg = paramMap.get('userId');
+      }
+    });
     console.log('ionViewDidEnter');
     if (this.userIdArg)
       {

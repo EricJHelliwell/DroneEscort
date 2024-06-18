@@ -41,8 +41,25 @@ const routes: Routes = [
       },
       {
         path: 'drones',
-        loadChildren: () =>
-          import('../drones/drones.module').then(m => m.DronesPageModule)
+        children: [
+          {
+            path: '',
+            loadChildren: () => import('../drones/drones.module').then(m => m.DronesPageModule)
+          },
+          {
+            path: 'detail',
+            children: [
+              {
+                path: '',
+                loadChildren: () => import('../drones/detail/drones.detail.module').then( m => m.DronesDetailPageModule)
+              },
+              {
+                path: ':droneId',
+                loadChildren: () => import('../drones/detail/drones.detail.module').then( m => m.DronesDetailPageModule)
+              },
+            ]
+          }
+        ]
       },      
       {
         path: '',

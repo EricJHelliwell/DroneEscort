@@ -11,7 +11,7 @@ const cogClient = new CognitoIdentityProviderClient();
 // add user to group
 export const handler: PostConfirmationTriggerHandler = async (event) => {
   var groupToAddTo = "SUBSCRIBERS";
-  if (event.request.userAttributes.email.indexOf("@gmail.com") !== -1)
+  if (event.request.userAttributes['email'].indexOf("@gmail.com") !== -1)
     groupToAddTo = "PILOTS";
   const command = new AdminAddUserToGroupCommand({
     GroupName: groupToAddTo,

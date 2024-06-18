@@ -1,19 +1,18 @@
-
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { RouterModule } from '@angular/router';
 
-import { MessagesPageRoutingModule } from './messages-routing.module';
-import { MessagesPage } from './messages.page';
+import { DronesDetailPage } from './drones.detail.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    MessagesPageRoutingModule
+    RouterModule.forChild([{ path: '', component: DronesDetailPage }])
   ],
-  declarations: [MessagesPage]
+  declarations: [DronesDetailPage]
 })
-export class MessagesPageModule { }
+export class DronesDetailPageModule {}

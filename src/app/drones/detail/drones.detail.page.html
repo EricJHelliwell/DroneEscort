@@ -1,0 +1,67 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goToBack()">
+        <ion-icon slot="start" name="chevron-back" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="start" class="ion-padding-start">
+      <ion-avatar>
+        <img src="assets/images/uss_drone.jpg"/>
+      </ion-avatar>
+    </ion-buttons>
+    <ion-title *ngIf="droneId">
+      Drone Edit
+    </ion-title>
+    <ion-title *ngIf="!droneId">
+      Drone Add
+    </ion-title>
+    <ion-buttons slot="end" class="ion-padding-end">
+      <ion-button id="saveDrone" (click)="onSaveDrone()" fill="solid" color="success">
+        <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+        Save
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid class="ion-padding-horizontal">
+    <ion-row>
+      <ion-col>
+       <ion-item lines="none" class="header ion-no-padding">
+         <ion-label slot="start">
+          <p>Manage Drone</p>
+         </ion-label>
+       </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+          <ion-textarea #name
+            rows="2"
+            label="Name"
+            labelPlacement="floating"
+            fill="solid"
+            type="text"
+            spellcheck="true"
+            >
+          </ion-textarea>
+          <ion-textarea #desc
+            rows="2"
+            label="Description"
+            labelPlacement="floating"
+            fill="solid"
+            type="text"
+            spellcheck="true"
+            >
+          </ion-textarea>
+          <ion-item>
+            <ion-label  class="ion-padding-start">
+              Active Status
+            </ion-label>
+            <ion-toggle #active slot="end" mode="ios" color="primary"></ion-toggle>
+          </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

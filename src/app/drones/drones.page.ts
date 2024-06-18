@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
+import { handler } from '../../../amplify/auth/post-confirmation/handler';
 
 const client = generateClient<Schema>();
 
@@ -9,39 +10,33 @@ const client = generateClient<Schema>();
   templateUrl: './drones.page.html',
   styleUrls: ['./drones.page.scss'],
 })
+
 export class DronesPage implements OnInit {
   drones: any;
-  notifications = [
+  selectedDrone: string;
+  public alertButtons = [
     {
-      avatar: 'https://images.unsplash.com/photo-1556637641-0ac7101023f9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=124&q=80',
-      title: 'Completed an escorted trip',
-      date: new Date()
+      text: 'Cancel',
+      role: 'cancel',
+      handler: () => {
+        return true;
+      },
     },
     {
-      avatar: 'https://images.unsplash.com/photo-1545912452-8aea7e25a3d3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=124&q=80',
-      title: 'Completed an escorted trip',
-      date:  new Date(2020, 6, 10)
+      text: 'OK',
+      role: 'confirm',
+      handler: () => {
+        return true;
+      },
     },
-    {
-      avatar: 'https://images.unsplash.com/photo-1508341591423-4347099e1f19?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=124&q=80',
-      title: 'Completed an escorted trip',
-      date:  new Date(2020, 6, 1)
-    },
-    {
-      avatar: 'https://images.unsplash.com/photo-1545231027-637d2f6210f8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=124&q=80',
-      title: 'Starbucks sent you an offer',
-      date:  new Date(2020, 5, 25)
-    },
-    {
-      avatar: 'https://images.unsplash.com/photo-1481824429379-07aa5e5b0739?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=124&q=80',
-      title: 'Completed an escorted trip',
-      date:  new Date(2020, 4, 16)
-    },
-  ];
+  ];  
 
   constructor() { }
 
   async ngOnInit() {
+  }
+
+  async ionViewDidEnter() {
     const {errors, data: drones } = await client.models.Drone.list();
     this.drones = drones;
   }
@@ -58,4 +53,20 @@ export class DronesPage implements OnInit {
       });
     }
   }
+
+  
+  async onDeleteDismiss(ev) {
+    if (ev.detail.role == "confirm") {
+      const {errors, data: drone } = await client.models.Drone.delete({
+        id: this.selectedDrone,
+      });
+      if (errors)
+        {
+          alert('There was an issue deleting the drone')
+        }
+        const {data: drones } = await client.models.Drone.list();
+        this.drones = drones;
+    }
+  }
+
 }
