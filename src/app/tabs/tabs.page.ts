@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { IonTabs } from '@ionic/angular'
 import { AuthGuardService } from '../auth/auth-route-guard.service'
+import { Platform } from '@ionic/angular';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 @Component({
   selector: 'app-tabs',
@@ -12,13 +14,17 @@ export class TabsPage {
   isSubscriber: boolean = false; 
   private activeTab?: HTMLElement;
 
-  constructor(private authService: AuthGuardService) 
+  constructor(private authService: AuthGuardService, private platform: Platform)
   {
     this.isPilot = this.authService.isPilot();
     console.log('isPilot = ' + this.isPilot);
     this.isSubscriber = this.authService.isSubscriber();
     console.log('isSubscriber = ' + this.isSubscriber);
     console.log('Current user id: ' + this.authService.userDatabaseId());
+
+    if (this.platform.is("mobileweb")) {
+      StatusBar.hide();
+    }
   }
 
   tabChange(tabsRef: IonTabs) {
