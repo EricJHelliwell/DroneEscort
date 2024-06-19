@@ -61,15 +61,15 @@ const schema = a.schema({
       GeoBoundary: a
       .model({
         domainId: a.id().required(),
-        location: a.ref('Location'),
-        radius: a.float(),
+        location: a.ref('Location').required(),
+        radius: a.float().required(),
         domain: a.belongsTo('GeoDomainBoundary', 'domainId'),
       }),
       GeoDomainBoundary: a
       .model({
         domain: a.string().required(),
-        description: a.string(),
-        active: a.boolean(),
+        description: a.string().required(),
+        active: a.boolean().required(),
         locations: a.hasMany('GeoBoundary','domainId'),
       })
 })

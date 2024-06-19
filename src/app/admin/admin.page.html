@@ -45,7 +45,7 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-list id="confirm-delete">
+        <ion-list id="confirm-delete-drone">
           <ion-item-sliding #slidelist *ngFor="let item of drones">
             <ion-item [routerLink]="['./drone', item.id]" lines="none" class="ion-no-padding">
               <ion-avatar slot="start">
@@ -90,14 +90,14 @@
     <ion-row>
       <ion-col>
         <ion-list id="confirm-delete-geo">
-          <ion-item-sliding #slidelist *ngFor="let item of drones">
-            <ion-item [routerLink]="['./drone', item.id]" lines="none" class="ion-no-padding">
+          <ion-item-sliding #slidelist *ngFor="let item of domains">
+            <ion-item [routerLink]="['./geo', item.id]" lines="none" class="ion-no-padding">
               <ion-avatar slot="start">
                 <img src="assets/images/uss_drone.jpg">
               </ion-avatar>
               <ion-label>
-                <h2 *ngIf="item.active">(Active) {{ item.name }}</h2>
-                <h2 *ngIf="!item.active">(Inactive) {{ item.name }}</h2>
+                <h2 *ngIf="item.active">(Active) {{ item.domain }}</h2>
+                <h2 *ngIf="!item.active">(Inactive) {{ item.domain }}</h2>
                 <p>{{ item.description }}</p>
               </ion-label>
             </ion-item>

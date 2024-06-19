@@ -52,6 +52,7 @@ export class AdminPage implements OnInit {
   }
 
   async onAddItem() {
+    console.log(this.segmentTab);
     if (!this.segmentTab) alert('Please select a category'); 
 
     if (this.segmentTab == 'drone') {
@@ -59,7 +60,7 @@ export class AdminPage implements OnInit {
     }
 
     if (this.segmentTab == 'geo') {
-      this.router.navigate(['/tabs/admin/drone']);
+      this.router.navigate(['/tabs/admin/geo']);
     }
   }
 
@@ -87,8 +88,8 @@ export class AdminPage implements OnInit {
         {
           alert('There was an issue deleting the domain')
         }
-        const {data: drones } = await client.models.Drone.list();
-        this.drones = drones;
+        const {data: domains } = await client.models.GeoDomainBoundary.list();
+        this.domains = domains;
     }
   }
 

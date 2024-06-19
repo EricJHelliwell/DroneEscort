@@ -12,11 +12,13 @@ const client = generateClient<Schema>();
   styleUrls: ['geo.detail.page.scss'],
 })
 export class GeoBoundaryDetailPage implements OnInit {
-  @ViewChild('name') private droneName: any;
-  @ViewChild('desc') private droneDesc: any;
-  @ViewChild('active') private droneActive: any;
+  @ViewChild('domain') private geoDomain: any;
+  @ViewChild('desc') private geoDesc: any;
+  @ViewChild('active') private geoActive: any;
+  locations: any[] = [];
 
   geoBoundaryId: string;
+  isDescModalOpen = false;
 
   constructor(private activatedRoute: ActivatedRoute
     , private navCtrl: NavController) { 
@@ -34,40 +36,93 @@ export class GeoBoundaryDetailPage implements OnInit {
   });
 
   if (this.geoBoundaryId) {
-    const {errors, data: drone } = await client.models.Drone.get ({
+    const {errors, data: geo } = await client.models.GeoDomainBoundary.get ({
       id: this.geoBoundaryId,
     });
 
     if (errors) return;
-    this.droneDesc.value = drone.description;
-    this.droneName.value = drone.name;
-    this.droneActive.checked = drone.active;
+    this.geoDesc.value = geo.description;
+    this.geoDomain.value = geo.domain;
+    this.geoActive.checked = geo.active;
+
+    console.log(geo);
+
+    const {data: locs } = await client.models.GeoBoundary.list ({
+      filter: {
+        domainId: {eq: this.geoBoundaryId }
+      }
+    });
+    this.locations = locs;
   }
 }
 
-   async onSaveGeoBoundary() {
+  async createDomainBoundary() {
+    const {errors, data: geo } = await client.models.GeoDomainBoundary.create ({
+      domain: this.geoDomain.value,
+      description: this.geoDesc.value,
+      active: this.geoActive.checked
+    });
+    if (errors) alert('Issue with updating.  Try later.');
+    console.log(geo);
+    // now create the locations
+    for (const loc of this.locations) {
+      const {data: locCreate } = await client.models.GeoBoundary.create ({
+        location: {lat: loc.location.lat, long: loc.location.long },
+        radius: loc.radius
+      });
+    }
+    if (errors) alert('Issue with creating.  Try later.');
+    else this.goToBack();
+  } 
+  
+  async onSaveGeoBoundary() {
+    if (!this.geoDomain || this.geoDomain.value.length == 0)
+      return;
     if (this.geoBoundaryId) {
-      const {errors, data: drone } = await client.models.Drone.update ({
+      const {errors, data: geo } = await client.models.GeoDomainBoundary.update ({
         id: this.geoBoundaryId,
-        description: this.droneDesc.value,
-        name: this.droneName.value,
-        active: this.droneActive.checked
+        description: this.geoDesc.value,
+        domain: this.geoDomain.value,
+        active: this.geoActive.checked
       });
+      
       if (errors) alert('Issue with updating.  Try later.');
-      else this.goToBack();
+      // delete old locations and add new ones
+      else {
+        const {data: locs } = await client.models.GeoBoundary.list ({
+          filter: {
+            domainId: {eq: this.geoBoundaryId }
+          }
+        });
+        for (const loc of locs) {
+          const {data: locDel } = await client.models.GeoBoundary.delete ({
+            id: loc.id
+          });
+        }
+        for (const loc of this.locations) {
+          const {data: locCreate } = await client.models.GeoBoundary.create ({
+            location: {lat: loc.location.lat, long: loc.location.long },
+            radius: loc.radius
+          });
+        }
+      }
     }
-    else {
-      const {errors, data: drone } = await client.models.Drone.create ({
-        description: this.droneDesc.value,
-        name: this.droneName.value,
-        active: this.droneActive.checked
-      });
-      if (errors) alert('Issue with creating.  Try later.');
-      else this.goToBack();
-    }
+    // new instance
+    else return this.createDomainBoundary();
    }
 
-   
+  onDeleteLocation(index) {
+    this.locations.splice(index, 1);
+   }
+
+  onCreateLocation(lat, long, radius) {
+    this.locations.push({
+      location:{ lat: lat.value, long: long.value},
+      radius: radius.value
+    });
+    this.isDescModalOpen = false;
+  }
+
   goToBack() {
     this.navCtrl.back();
   }

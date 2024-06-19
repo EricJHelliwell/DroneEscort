@@ -5,11 +5,6 @@
         <ion-icon slot="start" name="chevron-back" color="dark"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-buttons slot="start" class="ion-padding-start">
-      <ion-avatar>
-        <img src="assets/images/uss_drone.jpg"/>
-      </ion-avatar>
-    </ion-buttons>
     <ion-title *ngIf="geoBoundaryId">
       GeoBoundary Edit
     </ion-title>
@@ -30,22 +25,15 @@
       <ion-col>
        <ion-item lines="none" class="header ion-no-padding">
          <ion-label slot="start">
-          <p>Manage GeoBoundary</p>
+          <p>Enter the domain and individual boundaries</p>
          </ion-label>
        </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-          <ion-textarea #domain
-            rows="2"
-            label="Domain"
-            labelPlacement="floating"
-            fill="solid"
-            type="text"
-            spellcheck="true"
-            >
-          </ion-textarea>
+          <ion-input #domain label="Domain" fill="solid" type="text" required="true">
+          </ion-input>
           <ion-textarea #desc
             rows="2"
             label="Description"
@@ -64,4 +52,57 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+
+    <ion-item class="ion-padding-start">
+      <ion-label>GeoBoundary Locations</ion-label>
+      <ion-button (click)="isDescModalOpen = true" fill="clear" size="small" shape="round" color="danger">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+
+  <ion-item-sliding #slidelist class="ion-padding-start" *ngFor="let item of locations; index as i">
+    <ion-item lines="none">
+      <ion-label>
+        Lat: {{ item.location.lat }}
+          , Long: {{ item.location.long }}
+          , Radius: {{ item.radius }}km
+      </ion-label>
+    </ion-item>
+    <ion-item-options side="end">
+      <ion-item-option>
+        <ion-button (click)="onDeleteLocation(i)" fill="clear" size="small" shape="round" color="danger">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item-option>
+    </ion-item-options>
+</ion-item-sliding>     
+
+<!-- Set description modal-->
+<ion-modal [isOpen]="isDescModalOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button (click)="isDescModalOpen = false">Cancel</ion-button>
+        </ion-buttons>
+        <ion-title>Enter GeoCoordinates and Radius</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="onCreateLocation(lat, long, radius)" [strong]="true">Confirm</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-item>
+        <ion-input #lat type="number" label="Latitude" placeholder="Geo Latitude (number only)"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input #long type="number" label="Longitude" placeholder="Geo Longitude (number only)"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input #radius type="number" label="Radius (km)" placeholder="Radius (in kilometers)"></ion-input>
+      </ion-item>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
 </ion-content>
