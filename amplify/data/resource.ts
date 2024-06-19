@@ -68,6 +68,8 @@ const schema = a.schema({
       GeoDomainBoundary: a
       .model({
         domain: a.string().required(),
+        description: a.string(),
+        active: a.boolean(),
         locations: a.hasMany('GeoBoundary','domainId'),
       })
 })

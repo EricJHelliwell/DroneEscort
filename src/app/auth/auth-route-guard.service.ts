@@ -76,8 +76,7 @@ export class AuthGuardService implements OnInit {
         }
       }
     });
-console.log(errors);
-console.log(this.authDetails.sub);
+
     if (!existingUser || existingUser.length === 0) {
       const { errors, data: newuser } = await client.models.User.create({
         cognitoId: this.authDetails.sub,

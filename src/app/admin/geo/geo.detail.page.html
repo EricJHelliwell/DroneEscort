@@ -10,14 +10,14 @@
         <img src="assets/images/uss_drone.jpg"/>
       </ion-avatar>
     </ion-buttons>
-    <ion-title *ngIf="droneId">
-      Drone Edit
+    <ion-title *ngIf="geoBoundaryId">
+      GeoBoundary Edit
     </ion-title>
-    <ion-title *ngIf="!droneId">
-      Drone Add
+    <ion-title *ngIf="!geoBoundaryId">
+      GeoBoundary Add
     </ion-title>
     <ion-buttons slot="end" class="ion-padding-end">
-      <ion-button id="saveDrone" (click)="onSaveDrone()" fill="solid" color="success">
+      <ion-button id="saveDrone" (click)="onSaveGeoBoundary()" fill="solid" color="success">
         <ion-icon slot="start" name="checkmark-outline"></ion-icon>
         Save
       </ion-button>
@@ -30,16 +30,16 @@
       <ion-col>
        <ion-item lines="none" class="header ion-no-padding">
          <ion-label slot="start">
-          <p>Manage Drone</p>
+          <p>Manage GeoBoundary</p>
          </ion-label>
        </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-          <ion-textarea #name
+          <ion-textarea #domain
             rows="2"
-            label="Name"
+            label="Domain"
             labelPlacement="floating"
             fill="solid"
             type="text"

@@ -16,7 +16,7 @@ export class GeoBoundaryDetailPage implements OnInit {
   @ViewChild('desc') private droneDesc: any;
   @ViewChild('active') private droneActive: any;
 
-  droneId: string;
+  geoBoundaryId: string;
 
   constructor(private activatedRoute: ActivatedRoute
     , private navCtrl: NavController) { 
@@ -27,15 +27,15 @@ export class GeoBoundaryDetailPage implements OnInit {
 
   async ionViewDidEnter() {
   this.activatedRoute.paramMap.subscribe(paramMap => {
-    if (paramMap.has('droneId')) {
+    if (paramMap.has('geoBoundaryId')) {
       // redirect
-      this.droneId = paramMap.get('droneId');
+      this.geoBoundaryId = paramMap.get('geoBoundaryId');
     }
   });
 
-  if (this.droneId) {
+  if (this.geoBoundaryId) {
     const {errors, data: drone } = await client.models.Drone.get ({
-      id: this.droneId,
+      id: this.geoBoundaryId,
     });
 
     if (errors) return;
@@ -45,10 +45,10 @@ export class GeoBoundaryDetailPage implements OnInit {
   }
 }
 
-   async onSaveDrone() {
-    if (this.droneId) {
+   async onSaveGeoBoundary() {
+    if (this.geoBoundaryId) {
       const {errors, data: drone } = await client.models.Drone.update ({
-        id: this.droneId,
+        id: this.geoBoundaryId,
         description: this.droneDesc.value,
         name: this.droneName.value,
         active: this.droneActive.checked
