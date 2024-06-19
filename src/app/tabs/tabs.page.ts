@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonTabs } from '@ionic/angular'
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { Platform } from '@ionic/angular';
@@ -9,7 +9,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss']
 })
-export class TabsPage {
+export class TabsPage implements OnInit {
   isPilot: boolean = false;   
   isSubscriber: boolean = false; 
   private activeTab?: HTMLElement;
@@ -21,7 +21,9 @@ export class TabsPage {
     this.isSubscriber = this.authService.isSubscriber();
     console.log('isSubscriber = ' + this.isSubscriber);
     console.log('Current user id: ' + this.authService.userDatabaseId());
+  }
 
+  ngOnInit(): void {
     if (this.platform.is("mobileweb")) {
       StatusBar.hide();
     }
