@@ -4,8 +4,8 @@ import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
-import { Geolocation, ClearWatchOptions } from '@capacitor/geolocation';
 import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder, isOrderActive } from '../library/order'
+import { setUserLocation, watchUserLocationUpdate, watchUserLocationCancel } from '../library/user'
 
 declare var google: any;
 
@@ -20,7 +20,7 @@ export class MapsPage implements OnInit {
   lat: GLfloat;
   lng: GLfloat;
   watchId: any;
-  coordinates;
+  coordinates: any;
   isPilot: boolean = false;   
   isSubscriber: boolean = false; 
   
@@ -40,44 +40,33 @@ export class MapsPage implements OnInit {
     this.showOrderButton();
     this.isPilot = this.authService.isPilot();
     this.isSubscriber = this.authService.isSubscriber();
-    const loc = await Geolocation.getCurrentPosition();
-    setTimeout(() => {
+    setUserLocation(this.authService.userDatabaseId(), (coords) => {
       this.loading = false;
-      this.lat = loc.coords.latitude;
-      this.lng = loc.coords.longitude;
-      this.getULocation();
-    }, 1000);
+      this.coordinates = coords;
+      this.lat = this.coordinates.latitude;
+      this.lng = this.coordinates.longitude;
+      setTimeout(() => {
+        this.getULocation();
+      }, 1000);
+    });
   }
 
   ionViewDidEnter(){
-    var options = {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 0,
-    };
-    this.watchId = Geolocation.watchPosition(options, (position, err) => {
-      this.zone.runGuarded(() => {
-        if (!err) {
-        this.lat = position.coords.latitude;
-        this.lng = position.coords.longitude;
-        this.coordinates = position.coords;
-        }
-      });
+    watchUserLocationUpdate(this.authService.userDatabaseId(), this.zone, (coords) => {
+      this.coordinates = coords;
+      alert('user moved 10 meters')
     });
+
     if (isOrderActive()) {
       this.showCancelButton()
       }
   }
 
   ionViewCanLeave() {
-    console.log('ionViewCanLeave');
   }
 
   ionViewDidLeave() {
-    const opt: ClearWatchOptions = {id: this.watchId};
-    Geolocation.clearWatch(opt).then(result=>{
-      ;
-    });
+    watchUserLocationCancel();
     cancelMonitorOrder();
   }
 
