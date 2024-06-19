@@ -115,7 +115,6 @@ export class MessagesPage implements OnInit {
     const now = new Date();
     const {data: droneMsg } = await client.models.Message.create({
       content: "Drone " + name + " assigned.  Stay close.",
-      createdAt: now.toISOString(),
       isSent: true,
       conversationId: this.conversationId,
       sender: "System"
@@ -184,10 +183,8 @@ export class MessagesPage implements OnInit {
   }
 
   async goToSend(sendObj) {
-    const now = new Date();
     const {data: droneMsg } = await client.models.Message.create({
       content: sendObj.value,
-      createdAt: now.toISOString(),
       isSent: true,
       conversationId: this.conversationId,
       sender: this.userId,

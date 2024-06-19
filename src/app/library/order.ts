@@ -15,7 +15,6 @@ let ReqId : any = null;
     const reqId = user.id;
     const {data: conv } = await client.models.Conversation.create({
       name: convName,
-      createdAt: now.toISOString(),
       active: true,
       requestorId: reqId,
       droneId: "unassigned",
@@ -23,7 +22,6 @@ let ReqId : any = null;
 
     const {errors, data: firstMsg } = await client.models.Message.create({
       content: messageToDisplay,
-      createdAt: now.toISOString(),
       isSent: true,
       conversationId: conv.id,
       sender: "System"

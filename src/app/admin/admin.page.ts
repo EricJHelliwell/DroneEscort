@@ -48,7 +48,6 @@ export class AdminPage implements OnInit {
 
   segmentChanged(event: any) {
     this.segmentTab = event.detail.value;
-    console.log(this.segmentTab);
   }
 
   async onAddItem() {

@@ -45,14 +45,8 @@ export class GeoBoundaryDetailPage implements OnInit {
     this.geoDomain.value = geo.domain;
     this.geoActive.checked = geo.active;
 
-    console.log(geo);
-
-    const {data: locs } = await client.models.GeoBoundary.list ({
-      filter: {
-        domainId: {eq: this.geoBoundaryId }
-      }
-    });
-    this.locations = locs;
+    const {data: locations } = await geo.locations();
+    this.locations = locations;
   }
 }
 
@@ -67,6 +61,7 @@ export class GeoBoundaryDetailPage implements OnInit {
     // now create the locations
     for (const loc of this.locations) {
       const {data: locCreate } = await client.models.GeoBoundary.create ({
+        domainId: geo.id,
         location: {lat: loc.location.lat, long: loc.location.long },
         radius: loc.radius
       });
@@ -76,8 +71,12 @@ export class GeoBoundaryDetailPage implements OnInit {
   } 
   
   async onSaveGeoBoundary() {
-    if (!this.geoDomain || this.geoDomain.value.length == 0)
-      return;
+    if (   !this.geoDomain 
+        || this.geoDomain.value.length == 0
+        || !this.geoDesc
+        || this.geoDesc.value.length == 0
+    ) return;
+
     if (this.geoBoundaryId) {
       const {errors, data: geo } = await client.models.GeoDomainBoundary.update ({
         id: this.geoBoundaryId,
@@ -101,11 +100,13 @@ export class GeoBoundaryDetailPage implements OnInit {
         }
         for (const loc of this.locations) {
           const {data: locCreate } = await client.models.GeoBoundary.create ({
+            domainId: this.geoBoundaryId,
             location: {lat: loc.location.lat, long: loc.location.long },
             radius: loc.radius
           });
         }
       }
+      this.goToBack();
     }
     // new instance
     else return this.createDomainBoundary();

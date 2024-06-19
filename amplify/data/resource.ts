@@ -15,7 +15,6 @@ const schema = a.schema({
   Conversation: a
     .model({
       name: a.string().required(),
-      createdAt: a.datetime().required(),
       active: a.boolean().required(),
       requestorId: a.string().required(),
       userConversation: a.hasOne("UserConversation", "userConversationId"),
@@ -26,7 +25,6 @@ const schema = a.schema({
     Message: a
       .model({
         content: a.string(),
-        createdAt: a.datetime().required(),
         sender: a.string().required(),
         isSent: a.boolean().required(),
         conversationId: a.id().required(),
@@ -51,7 +49,6 @@ const schema = a.schema({
       }),
       Drone: a
       .model({
-        createdAt: a.datetime().required(),
         conversation: a.hasMany("Conversation", "droneId"),
         name: a.string().required(),
         description: a.string(),
