@@ -46,7 +46,8 @@ export class MessagesPage implements OnInit {
   ionViewDidEnter() {
     console.log('ionViewDidEnter');
     this.userId = this.authService.userDatabaseId();
-    this.loadMessage(this.conversationId)
+    this.loadMessage(this.conversationId);
+    window.scrollTo(0, 1);
   }
 
   ionViewDidLeave() {

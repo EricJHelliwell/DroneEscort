@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { IonTabs } from '@ionic/angular'
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { Platform } from '@ionic/angular';
-import { StatusBar, Style } from '@capacitor/status-bar';
 
 @Component({
   selector: 'app-tabs',
@@ -23,10 +22,7 @@ export class TabsPage implements OnInit {
     console.log('Current user id: ' + this.authService.userDatabaseId());
   }
 
-  ngOnInit(): void {
-    if (this.platform.is("mobileweb")) {
-      StatusBar.hide();
-    }
+  async ngOnInit() {
   }
 
   tabChange(tabsRef: IonTabs) {
