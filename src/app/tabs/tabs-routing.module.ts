@@ -40,22 +40,35 @@ const routes: Routes = [
         loadChildren: () => import('../profile/profile-detail.module').then( m => m.ProfileDetailPageModule)
       },
       {
-        path: 'drones',
+        path: 'admin',
         children: [
           {
             path: '',
-            loadChildren: () => import('../drones/drones.module').then(m => m.DronesPageModule)
+            loadChildren: () => import('../admin/admin.module').then(m => m.AdminPageModule)
           },
           {
-            path: 'detail',
+            path: 'drone',
             children: [
               {
                 path: '',
-                loadChildren: () => import('../drones/detail/drones.detail.module').then( m => m.DronesDetailPageModule)
+                loadChildren: () => import('../admin/drone/drones.detail.module').then( m => m.DronesDetailPageModule)
               },
               {
                 path: ':droneId',
-                loadChildren: () => import('../drones/detail/drones.detail.module').then( m => m.DronesDetailPageModule)
+                loadChildren: () => import('../admin/drone/drones.detail.module').then( m => m.DronesDetailPageModule)
+              },
+            ]
+          },
+          {
+            path: 'geo',
+            children: [
+              {
+                path: '',
+                loadChildren: () => import('../admin/geo/geo.detail.module').then( m => m.GeoBoundaryDetailPageModule)
+              },
+              {
+                path: ':geoBoundaryId',
+                loadChildren: () => import('../admin/geo/geo.detail.module').then( m => m.GeoBoundaryDetailPageModule)
               },
             ]
           }

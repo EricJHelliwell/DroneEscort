@@ -7,13 +7,14 @@ const client = generateClient<Schema>();
 
 @Component({
   selector: 'app-drones',
-  templateUrl: './drones.page.html',
-  styleUrls: ['./drones.page.scss'],
+  templateUrl: './admin.page.html',
+  styleUrls: ['./admin.page.scss'],
 })
 
-export class DronesPage implements OnInit {
+export class AdminPage implements OnInit {
   drones: any;
   selectedDrone: string;
+  segmentTab: any;
   public alertButtons = [
     {
       text: 'Cancel',
@@ -39,6 +40,11 @@ export class DronesPage implements OnInit {
   async ionViewDidEnter() {
     const {errors, data: drones } = await client.models.Drone.list();
     this.drones = drones;
+  }
+
+  segmentChanged(event: any) {
+    this.segmentTab = event.detail.value;
+    console.log(this.segmentTab);
   }
 
   async onAddDrone() {

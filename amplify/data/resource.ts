@@ -8,6 +8,10 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
+  Location: a.customType({
+    lat: a.float(),
+    long: a.float(),
+  }),
   Conversation: a
     .model({
       name: a.string().required(),
@@ -43,8 +47,7 @@ const schema = a.schema({
         registered: a.boolean().required(),
         description: a.string(),
         conversations: a.hasMany("UserConversation", "userId"),
-        lat: a.float(),
-        lng: a.float(),
+        location: a.ref('Location'),
       }),
       Drone: a
       .model({
@@ -53,8 +56,19 @@ const schema = a.schema({
         name: a.string().required(),
         description: a.string(),
         active: a.boolean(),
-        lat: a.float(),
-        lng: a.float(),
+        location: a.ref('Location'),
+      }),
+      GeoBoundary: a
+      .model({
+        domainId: a.id().required(),
+        location: a.ref('Location'),
+        radius: a.float(),
+        domain: a.belongsTo('GeoDomainBoundary', 'domainId'),
+      }),
+      GeoDomainBoundary: a
+      .model({
+        domain: a.string().required(),
+        locations: a.hasMany('GeoBoundary','domainId'),
       })
 })
 .authorization((allow) => [allow.resource(postConfirmation),

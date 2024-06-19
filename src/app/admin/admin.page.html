@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-title>
-      Drone Inventory
+      Admin Panel
     </ion-title>
     <ion-buttons slot="start" class="ion-padding-start">
       <ion-avatar>
@@ -9,15 +9,31 @@
       </ion-avatar>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button id="addDrone" [routerLink]="['./detail']" fill="solid" color="success">
+      <ion-button id="addItem" [routerLink]="['./detail']" fill="solid" color="success">
         <ion-icon slot="start" name="add-circle-outline"></ion-icon>
         Add
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content>
-  <ion-grid class="ion-padding-horizontal">
+  <ion-segment mode="md" (ionChange)="segmentChanged($event)" padding>
+    <ion-segment-button mode="md" value="drone" checked="true" fixed>
+      <div class="contentCenter">
+        <ion-text slot=end>Drones</ion-text>
+      </div>
+    </ion-segment-button>
+
+
+    <ion-segment-button mode="md" value="geo">
+      <div class="contentCenter">
+        <ion-text slot=end>Geo-Fences</ion-text>
+      </div>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-grid *ngIf="segmentTab == 'drone'" class="ion-padding-horizontal">
     <ion-row>
       <ion-col>
        <ion-item lines="none" class="header ion-no-padding">
@@ -36,7 +52,8 @@
                 <img src="assets/images/uss_drone.jpg">
               </ion-avatar>
               <ion-label>
-                <h2>{{ item.name }}</h2>
+                <h2 *ngIf="item.active">(Active) {{ item.name }}</h2>
+                <h2 *ngIf="!item.active">(Inactive) {{ item.name }}</h2>
                 <p>{{ item.description }}</p>
               </ion-label>
             </ion-item>
