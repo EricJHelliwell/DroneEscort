@@ -49,6 +49,7 @@ export class AuthGuardService implements OnInit {
   }
 
   async ngOnInit() {
+    console.log('init user');
     await this.checkDBUser();
   }
 
@@ -68,21 +69,23 @@ export class AuthGuardService implements OnInit {
     });
 
     // create user in DB for conversations if not already there
-    const { data: existingUser } = await client.models.User.list({
+    const { errors, data: existingUser } = await client.models.User.list({
       filter: {
         cognitoId: {
           eq: this.authDetails.sub
         }
       }
     });
-
+console.log(errors);
+console.log(this.authDetails.sub);
     if (!existingUser || existingUser.length === 0) {
-      const { data: newuser } = await client.models.User.create({
+      const { errors, data: newuser } = await client.models.User.create({
         cognitoId: this.authDetails.sub,
         username: this.authDetails.preferred_username,
         registered: true,
       });
       this.userDB = newuser;
+      console.log(errors);
     }
     else {
       this.userDB = existingUser[0];

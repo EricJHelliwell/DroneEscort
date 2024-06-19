@@ -48,6 +48,7 @@ export class AdminPage implements OnInit {
   }
 
   async onAddDrone() {
+    console.log(this.segmentChanged);
     const now = new Date();
     for (let i=1; i<5; i++){
       const droneName = "Drone " + i;

@@ -18,7 +18,7 @@ export class TabsPage {
     console.log('isPilot = ' + this.isPilot);
     this.isSubscriber = this.authService.isSubscriber();
     console.log('isSubscriber = ' + this.isSubscriber);
-    console.log('Current user id: ' + this.authService.userDatabaseId());
+// /    console.log('Current user id: ' + this.authService.userDatabaseId());
   }
 
   tabChange(tabsRef: IonTabs) {
