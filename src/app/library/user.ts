@@ -13,12 +13,11 @@ let coordinates: any = null;
 export async function setUserLocation(userId: string, callback) {
     const loc = await Geolocation.getCurrentPosition();
     coordinates = loc.coords;
-    console.log(coordinates);
+
     const {errors, data: updateUser } = await client.models.User.update({
         id: userId,
         location: {lat: coordinates.latitude, lng: coordinates.longitude}
       });
-    console.log(errors);
     callback(coordinates);
 }
 
@@ -38,7 +37,6 @@ export async function watchUserLocationUpdate(userId: string, zone, callback) {
             position.coords.latitude, position.coords.longitude
           );
 
-          console.log(kmDist);
           if (kmDist > 0.02) {
             coordinates = position.coords;
             callback(position.coords);

@@ -126,7 +126,6 @@ export async function getULocation(userIds:string[], domain:string, centerCords)
         };
 
         const { data: users } = await client.models.User.list({ filter });
-        console.log(users);
         for (const user of users) {
             getUserProfilePhoto(user.id, (url) => {
                 const userIcon = {

@@ -116,9 +116,9 @@ export class GeoBoundaryDetailPage implements OnInit {
     this.locations.splice(index, 1);
    }
 
-  onCreateLocation(lat, long, radius) {
+  onCreateLocation(lat, lng, radius) {
     this.locations.push({
-      location:{ lat: lat.value, long: long.value},
+      location:{ lat: lat.value, lng: lng.value},
       radius: radius.value
     });
     this.isDescModalOpen = false;

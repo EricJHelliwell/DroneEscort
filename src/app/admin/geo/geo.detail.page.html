@@ -64,7 +64,7 @@
     <ion-item lines="none">
       <ion-label>
         Lat: {{ item.location.lat }}
-          , Long: {{ item.location.lng }}
+          , Lng: {{ item.location.lng }}
           , Radius: {{ item.radius }}km
       </ion-label>
     </ion-item>
@@ -87,7 +87,7 @@
         </ion-buttons>
         <ion-title>Enter GeoCoordinates and Radius</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="onCreateLocation(lat, long, radius)" [strong]="true">Confirm</ion-button>
+          <ion-button (click)="onCreateLocation(lat, lng, radius)" [strong]="true">Confirm</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -96,7 +96,7 @@
         <ion-input #lat type="number" label="Latitude" placeholder="Geo Latitude (number only)"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-input #long type="number" label="Longitude" placeholder="Geo Longitude (number only)"></ion-input>
+        <ion-input #lng type="number" label="Longitude" placeholder="Geo Longitude (number only)"></ion-input>
       </ion-item>
       <ion-item>
         <ion-input #radius type="number" label="Radius (km)" placeholder="Radius (in kilometers)"></ion-input>
