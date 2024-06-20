@@ -10,7 +10,7 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   Location: a.customType({
     lat: a.float(),
-    long: a.float(),
+    lng: a.float(),
   }),
   Conversation: a
     .model({

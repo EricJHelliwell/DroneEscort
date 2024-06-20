@@ -62,7 +62,7 @@ export class GeoBoundaryDetailPage implements OnInit {
     for (const loc of this.locations) {
       const {data: locCreate } = await client.models.GeoBoundary.create ({
         domainId: geo.id,
-        location: {lat: loc.location.lat, long: loc.location.long },
+        location: {lat: loc.location.lat, lng: loc.location.lng },
         radius: loc.radius
       });
     }
@@ -101,7 +101,7 @@ export class GeoBoundaryDetailPage implements OnInit {
         for (const loc of this.locations) {
           const {data: locCreate } = await client.models.GeoBoundary.create ({
             domainId: this.geoBoundaryId,
-            location: {lat: loc.location.lat, long: loc.location.long },
+            location: {lat: loc.location.lat, lng: loc.location.lng },
             radius: loc.radius
           });
         }

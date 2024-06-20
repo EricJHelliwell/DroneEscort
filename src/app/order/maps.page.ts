@@ -6,9 +6,8 @@ import { LoadingController } from '@ionic/angular';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder, isOrderActive } from '../library/order'
 import { setUserLocation, watchUserLocationUpdate, watchUserLocationCancel } from '../library/user'
-import { getUserProfilePhoto } from '../library/user'
+import { getULocation, test } from '../library/map';
 
-declare var google: any;
 
 @Component({
   selector: 'app-maps',
@@ -18,8 +17,8 @@ declare var google: any;
 export class MapsPage implements OnInit {
 
   loading: boolean = true;
-  lat: GLfloat;
-  lng: GLfloat;
+  // lat: GLfloat;
+  // lng: GLfloat;
   watchId: any;
   coordinates: any;
   isPilot: boolean = false;   
@@ -27,8 +26,8 @@ export class MapsPage implements OnInit {
   userId: string;
   userMarker: any;
   
-  @ViewChild('map', { static: true }) mapElement: ElementRef;
-  map: any;
+  // @ViewChild('map', { static: true }) mapElement: ElementRef;
+  // map: any;
 
   orderText: string;
   orderColor: string;
@@ -47,10 +46,15 @@ export class MapsPage implements OnInit {
     setUserLocation(this.userId, (coords) => {
       this.loading = false;
       this.coordinates = coords;
-      this.lat = this.coordinates.latitude;
-      this.lng = this.coordinates.longitude;
+      // use gmap format for centering the map.  default is current user location
+      var centerCords = {
+        lat: this.coordinates.latitude,
+        lng: this.coordinates.longitude
+      };
+      // this.lat = this.coordinates.latitude;
+      // this.lng = this.coordinates.longitude;
       setTimeout(() => {
-        this.getULocation(this.userId);
+        getULocation([this.userId], this.authService.userEmailDomain(), centerCords);
       }, 1000);
     });
   }
@@ -58,12 +62,6 @@ export class MapsPage implements OnInit {
   ionViewDidEnter(){
     watchUserLocationUpdate(this.userId, this.zone, (coords) => {
       this.coordinates = coords;
-      // update user marker
-      var centerCords = {
-        lat: this.coordinates.latitude,
-        lng: this.coordinates.longitude
-      };
-      this.userMarker.SetPosition(centerCords);
     });
 
     if (isOrderActive()) {
@@ -177,167 +175,6 @@ export class MapsPage implements OnInit {
         alertEl.present();
       });
     }
-  }
-
-  getULocation(userId) {
-    let map;
-    const markersOnMap = [
-      {
-        placeName: 'Drone 1 (2 min)',
-        cover: '../../assets/images/drone-2.png',
-        LatLng: [
-          {
-            lat: this.coordinates.latitude + (180/Math.PI)*(Math.random() * 300 / 6378137),
-            lng: this.coordinates.longitude + (180/Math.PI)*(Math.random() * 300 / 6378137) / 
-              Math.cos(this.coordinates.latitude)
-          }
-        ]
-      },
-      {
-        placeName: 'Drone 3  (3 min)',
-        cover: '../../assets/images/drone-2.png',
-        LatLng: [
-          {
-            lat: this.coordinates.latitude + (180/Math.PI)*(Math.random() * 300 / 6378137),
-            lng: this.coordinates.longitude + (180/Math.PI)*(Math.random() * 300 / 6378137) / 
-              Math.cos(this.coordinates.latitude)
-          }
-        ]
-      },
-      {
-        placeName: 'Drone 4  (5 min)',
-        cover: '../../assets/images/drone-2.png',
-        LatLng: [
-          {
-            lat: this.coordinates.latitude + (180/Math.PI)*(Math.random() * 300 / 6378137),
-            lng: this.coordinates.longitude + (180/Math.PI)*(Math.random() * 300 / 6378137) / 
-              Math.cos(this.coordinates.latitude)
-          }
-        ]
-      },
-      {
-        placeName: 'Drone 2  (7 min)',
-        cover: '../../assets/images/drone-2.png',
-        LatLng: [
-          {
-            lat: this.coordinates.latitude + (180/Math.PI) * (Math.random() * 300 / 6378137),
-            lng: this.coordinates.longitude + (180/Math.PI) * (Math.random() * 300 / 6378137) / 
-              Math.cos(this.coordinates.latitude)
-          }
-        ]
-      },
-    ];
-
-    var InforObj = [];
-    var centerCords = {
-      lat: this.coordinates.latitude,
-      lng: this.coordinates.longitude
-    };
-    initMap();
-
-    function addMarker() {
-      for (var i = 0; i < markersOnMap.length; i++) {
-        var contentString = '<div id="content"><h1>' + markersOnMap[i].placeName +
-          '</h1></div>';
-        const icon = {
-          url: markersOnMap[i].cover,
-          scaledSize: new google.maps.Size(30, 30), // scaled size
-          origin: new google.maps.Point(0, 0), // origin
-          anchor: new google.maps.Point(0, 0) // anchor
-        };
-        // console.log(markersOnMap[i].LatLng[0]);
-        const marker = new google.maps.Marker({
-          position: markersOnMap[i].LatLng[0],
-          map: map,
-          animation: google.maps.Animation.DROP,
-          icon: icon,
-        });
-
-        const infowindow = new google.maps.InfoWindow({
-          content: contentString,
-          maxWidth: 200
-        });
-
-        marker.addListener('click', function () {
-          closeOtherInfo();
-          infowindow.open(marker.get('map'), marker);
-          InforObj[0] = infowindow;
-        });
-
-      }
-
-      getUserProfilePhoto(userId, (url) => {
-        const userIcon = {
-          url: url,
-          scaledSize: new google.maps.Size(40, 40), // scaled size
-          origin: new google.maps.Point(0, 0), // origin
-          anchor: new google.maps.Point(0, 0) // anchor
-        }
-  
-        const userMarker = new google.maps.Marker({
-          position: centerCords,
-          map: map,
-          animation: google.maps.Animation.DROP,
-          icon: userIcon,
-        });          
-      });
-    }
-
-    function closeOtherInfo() {
-      if (InforObj.length > 0) {
-        InforObj[0].set("marker", null);
-        InforObj[0].close();
-        InforObj.length = 0;
-      }
-    }
-
-    function initMap() {
-
-      // map = new google.maps.Map(document.getElementById('map'), {
-      //   zoom: 10,
-      //   center: centerCords,
-      // });
-      var style = [
-        {
-          featureType: 'all',
-          elementType: 'all',
-          stylers: [
-            { saturation: -100 }
-          ]
-        }
-      ];
-
-      var mapOptions = {
-        zoom: 15,
-        scaleControl: false,
-        streetViewControl: false,
-        zoomControl: false,
-        overviewMapControl: false,
-        center: centerCords,
-        mapTypeControl: false,
-        mapTypeControlOptions: {
-          mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'nepate']
-        },
-        disableDefaultUI: true
-      }
-
-      map = new google.maps.Map(document.getElementById('map'), mapOptions);
-      var mapType = new google.maps.StyledMapType(style, { name: 'Grayscale' });
-      const cityCircle = new google.maps.Circle({
-        strokeColor: "#9d1fff",
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
-        fillColor: "#9d1fff",
-        fillOpacity: 0.35,
-        map,
-        center: centerCords,
-        radius: Math.sqrt(1000) * 10,
-      });
-      map.mapTypes.set('nepate', mapType);
-      map.setMapTypeId('nepate');
-      addMarker();
-    }
-
   }
 
 }

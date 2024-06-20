@@ -116,6 +116,10 @@ export class AuthGuardService implements OnInit {
     return this.authDetails.email;
   }
 
+  public userEmailDomain(): string {
+    return this.authDetails.email.split('@')[1];
+  }
+
   public userphone(): string {
     return this.authDetails.phone_number;
   }
