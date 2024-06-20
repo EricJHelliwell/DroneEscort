@@ -50,7 +50,7 @@ export class MapsPage implements OnInit {
       this.lat = this.coordinates.latitude;
       this.lng = this.coordinates.longitude;
       setTimeout(() => {
-        this.getULocation();
+        this.getULocation(this.userId);
       }, 1000);
     });
   }
@@ -63,7 +63,7 @@ export class MapsPage implements OnInit {
         lat: this.coordinates.latitude,
         lng: this.coordinates.longitude
       };
-      this.userMarker.position = centerCords;
+      this.userMarker.SetPosition(centerCords);
     });
 
     if (isOrderActive()) {
@@ -179,7 +179,7 @@ export class MapsPage implements OnInit {
     }
   }
 
-  getULocation() {
+  getULocation(userId) {
     let map;
     const markersOnMap = [
       {
@@ -245,7 +245,7 @@ export class MapsPage implements OnInit {
           origin: new google.maps.Point(0, 0), // origin
           anchor: new google.maps.Point(0, 0) // anchor
         };
-        console.log(markersOnMap[i].LatLng[0]);
+        // console.log(markersOnMap[i].LatLng[0]);
         const marker = new google.maps.Marker({
           position: markersOnMap[i].LatLng[0],
           map: map,
@@ -266,7 +266,7 @@ export class MapsPage implements OnInit {
 
       }
 
-      getUserProfilePhoto(this.userId, (url) => {
+      getUserProfilePhoto(userId, (url) => {
         const userIcon = {
           url: url,
           scaledSize: new google.maps.Size(40, 40), // scaled size
@@ -274,7 +274,7 @@ export class MapsPage implements OnInit {
           anchor: new google.maps.Point(0, 0) // anchor
         }
   
-        this.userMarker = new google.maps.Marker({
+        const userMarker = new google.maps.Marker({
           position: centerCords,
           map: map,
           animation: google.maps.Animation.DROP,

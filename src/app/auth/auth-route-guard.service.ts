@@ -112,6 +112,14 @@ export class AuthGuardService implements OnInit {
     return this.authDetails.preferred_username;
   }
 
+  public userEmail(): string {
+    return this.authDetails.email;
+  }
+
+  public userphone(): string {
+    return this.authDetails.phone_number;
+  }
+
   public userDatabaseId() : string {
     return this.userDB.id;
   } 
