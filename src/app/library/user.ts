@@ -38,7 +38,7 @@ export async function watchUserLocationUpdate(userId: string, zone, callback) {
           );
 
           console.log(kmDist);
-          if (kmDist > 0.05) {
+          if (kmDist > 0.02) {
             coordinates = position.coords;
             callback(position.coords);
             client.models.User.update({

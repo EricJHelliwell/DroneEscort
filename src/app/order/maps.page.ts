@@ -25,6 +25,7 @@ export class MapsPage implements OnInit {
   isPilot: boolean = false;   
   isSubscriber: boolean = false; 
   userId: string;
+  userMarker: any;
   
   @ViewChild('map', { static: true }) mapElement: ElementRef;
   map: any;
@@ -49,7 +50,7 @@ export class MapsPage implements OnInit {
       this.lat = this.coordinates.latitude;
       this.lng = this.coordinates.longitude;
       setTimeout(() => {
-        this.getULocation(this.userId);
+        this.getULocation();
       }, 1000);
     });
   }
@@ -57,7 +58,12 @@ export class MapsPage implements OnInit {
   ionViewDidEnter(){
     watchUserLocationUpdate(this.userId, this.zone, (coords) => {
       this.coordinates = coords;
-      alert('user moved 10 meters')
+      // update user marker
+      var centerCords = {
+        lat: this.coordinates.latitude,
+        lng: this.coordinates.longitude
+      };
+      this.userMarker.position = centerCords;
     });
 
     if (isOrderActive()) {
@@ -173,7 +179,7 @@ export class MapsPage implements OnInit {
     }
   }
 
-  getULocation(userId) {
+  getULocation() {
     let map;
     const markersOnMap = [
       {
@@ -260,7 +266,7 @@ export class MapsPage implements OnInit {
 
       }
 
-      getUserProfilePhoto(userId, (url) => {
+      getUserProfilePhoto(this.userId, (url) => {
         const userIcon = {
           url: url,
           scaledSize: new google.maps.Size(40, 40), // scaled size
@@ -268,7 +274,7 @@ export class MapsPage implements OnInit {
           anchor: new google.maps.Point(0, 0) // anchor
         }
   
-        const marker = new google.maps.Marker({
+        this.userMarker = new google.maps.Marker({
           position: centerCords,
           map: map,
           animation: google.maps.Animation.DROP,
