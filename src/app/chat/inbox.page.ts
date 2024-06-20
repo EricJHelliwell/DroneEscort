@@ -6,6 +6,7 @@ import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { getUrl } from "aws-amplify/storage";
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
+import { getUserProfilePhoto } from '../library/user'
 
 const client = generateClient<Schema>();
 
@@ -153,16 +154,10 @@ export class InboxPage implements OnInit {
     for (const activeUser of actives) {
       const found = this.activeUsers.find((userId) => userId == activeUser.userId);
       if (!found) {
-        this.activeUsers.push(activeUser.userId); 
-        const result = await getUrl({path: "profile-pictures/" + activeUser.userId + ".png"});
-        const testURLReq = await fetch(result.url);
-        if (testURLReq.status != 404) {
-          this.activePhotos.push({userId: activeUser.userId, url: result.url.toString()});
-        }
-        else {
-          // user does not have a valid photo, so substitute and avatar
-          this.activePhotos.push({userId: activeUser.userId, url: '../assets/icon/avatar.png'});
-        }
+        this.activeUsers.push(activeUser.userId);
+        getUserProfilePhoto(activeUser.userId, (url) => {
+          this.activePhotos.push({userId: activeUser.userId, url: url});
+        })
       }
     }
   }

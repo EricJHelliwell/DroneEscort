@@ -6,6 +6,7 @@ import { LoadingController } from '@ionic/angular';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder, isOrderActive } from '../library/order'
 import { setUserLocation, watchUserLocationUpdate, watchUserLocationCancel } from '../library/user'
+import { getUserProfilePhoto } from '../library/user'
 
 declare var google: any;
 
@@ -23,6 +24,7 @@ export class MapsPage implements OnInit {
   coordinates: any;
   isPilot: boolean = false;   
   isSubscriber: boolean = false; 
+  userId: string;
   
   @ViewChild('map', { static: true }) mapElement: ElementRef;
   map: any;
@@ -34,25 +36,26 @@ export class MapsPage implements OnInit {
   constructor(public router: Router, private alertCtl: AlertController
       , private loadingCtrl: LoadingController, private zone: NgZone
       , private authService: AuthGuardService) {
+    this.userId = this.authService.userDatabaseId();
   }
 
   async ngOnInit() {
     this.showOrderButton();
     this.isPilot = this.authService.isPilot();
     this.isSubscriber = this.authService.isSubscriber();
-    setUserLocation(this.authService.userDatabaseId(), (coords) => {
+    setUserLocation(this.userId, (coords) => {
       this.loading = false;
       this.coordinates = coords;
       this.lat = this.coordinates.latitude;
       this.lng = this.coordinates.longitude;
       setTimeout(() => {
-        this.getULocation();
+        this.getULocation(this.userId);
       }, 1000);
     });
   }
 
   ionViewDidEnter(){
-    watchUserLocationUpdate(this.authService.userDatabaseId(), this.zone, (coords) => {
+    watchUserLocationUpdate(this.userId, this.zone, (coords) => {
       this.coordinates = coords;
       alert('user moved 10 meters')
     });
@@ -170,7 +173,7 @@ export class MapsPage implements OnInit {
     }
   }
 
-  getULocation() {
+  getULocation(userId) {
     let map;
     const markersOnMap = [
       {
@@ -257,18 +260,20 @@ export class MapsPage implements OnInit {
 
       }
 
-      const userIcon = {
-        url: '../../assets/images/profile.jpg',
-        scaledSize: new google.maps.Size(40, 40), // scaled size
-        origin: new google.maps.Point(0, 0), // origin
-        anchor: new google.maps.Point(0, 0) // anchor
-      }
-
-      const marker = new google.maps.Marker({
-        position: centerCords,
-        map: map,
-        animation: google.maps.Animation.DROP,
-        icon: userIcon,
+      getUserProfilePhoto(userId, (url) => {
+        const userIcon = {
+          url: url,
+          scaledSize: new google.maps.Size(40, 40), // scaled size
+          origin: new google.maps.Point(0, 0), // origin
+          anchor: new google.maps.Point(0, 0) // anchor
+        }
+  
+        const marker = new google.maps.Marker({
+          position: centerCords,
+          map: map,
+          animation: google.maps.Animation.DROP,
+          icon: userIcon,
+        });          
       });
     }
 

@@ -3,6 +3,7 @@ import type { Schema } from '../../../amplify/data/resource';
 import { Subscription } from 'rxjs';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { Geolocation, ClearWatchOptions } from '@capacitor/geolocation';
+import { getUrl } from "aws-amplify/storage";
 
 const client = generateClient<Schema>();
 
@@ -37,7 +38,7 @@ export async function watchUserLocationUpdate(userId: string, zone, callback) {
           );
 
           console.log(kmDist);
-          if (kmDist > 0.01) {
+          if (kmDist > 0.05) {
             coordinates = position.coords;
             callback(position.coords);
             client.models.User.update({
@@ -51,10 +52,23 @@ export async function watchUserLocationUpdate(userId: string, zone, callback) {
 }
 
 export async function watchUserLocationCancel() {
-  const opt: ClearWatchOptions = {id: this.watchId};
+  const opt: ClearWatchOptions = {id: watchId};
   Geolocation.clearWatch(opt).then(result=>{
     ;
   });
+}
+
+export async function getUserProfilePhoto(userId, callback) {
+  const result = await getUrl({path: "profile-pictures/" + userId + ".png"});
+  const testURLReq = await fetch(result.url);
+  if (testURLReq.status != 404) {
+    console.log('found image');
+    callback(result.url.toString());
+  }
+  else {
+    // user does not have a valid photo, so substitute and avatar
+    callback('../assets/icon/avatar.png');
+  }
 }
 
 
