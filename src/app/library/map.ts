@@ -8,6 +8,7 @@ import { getUserProfilePhoto } from '../library/user'
 
 const client = generateClient<Schema>();
 declare var google: any;
+var subUsersWatch: any = null;
 
 export async function test() {
     const {data: dronesQuery } = await client.models.Drone.list({
@@ -30,7 +31,7 @@ export async function test() {
     console.log(dronesQuery2);
 }
 
-export async function getULocation(userIds:string[], domain:string, centerCords) {
+export async function createMap(userIds:string[], domain:string, centerCords) {
     let map;
 /*
     const markersOnMap = [
@@ -135,15 +136,25 @@ export async function getULocation(userIds:string[], domain:string, centerCords)
                 anchor: new google.maps.Point(0, 0) // anchor
                 }
         
-                const userMarker = new google.maps.Marker({
+                // add a marker to the user object
+                user['marker'] = new google.maps.Marker({
                 position: { lat: user.location.lat, lng: user.location.lng },
                 map: map,
                 animation: google.maps.Animation.DROP,
                 icon: userIcon,
-                });          
+                });      
             });
-        }
-    }
+         }
+
+         // watch all the user updates to reset location
+         subUsersWatch = client.models.User.onUpdate({ filter })
+         .subscribe({
+          next: (data) => {
+            const movedUser = userIds.find(user => data.id == user['id']);
+            movedUser['marker'].setPosition({ lat: data.location.lat, lng: data.location.lng });
+          }
+        });
+}
 
     function closeOtherInfo() {
       if (InforObj.length > 0) {
@@ -216,3 +227,10 @@ export async function getULocation(userIds:string[], domain:string, centerCords)
       }
     }
   }
+
+  export function disposeMap() {
+    if (subUsersWatch) {
+    subUsersWatch.unsubscribe();
+    subUsersWatch = null;
+    }
+  } 

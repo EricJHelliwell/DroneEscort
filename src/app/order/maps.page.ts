@@ -6,7 +6,7 @@ import { LoadingController } from '@ionic/angular';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder, isOrderActive } from '../library/order'
 import { setUserLocation, watchUserLocationUpdate, watchUserLocationCancel } from '../library/user'
-import { getULocation, test } from '../library/map';
+import { createMap, disposeMap } from '../library/map';
 
 
 @Component({
@@ -17,14 +17,11 @@ import { getULocation, test } from '../library/map';
 export class MapsPage implements OnInit {
 
   loading: boolean = true;
-  // lat: GLfloat;
-  // lng: GLfloat;
   watchId: any;
   coordinates: any;
   isPilot: boolean = false;   
   isSubscriber: boolean = false; 
   userId: string;
-  userMarker: any;
   
   // @ViewChild('map', { static: true }) mapElement: ElementRef;
   // map: any;
@@ -51,10 +48,8 @@ export class MapsPage implements OnInit {
         lat: this.coordinates.latitude,
         lng: this.coordinates.longitude
       };
-      // this.lat = this.coordinates.latitude;
-      // this.lng = this.coordinates.longitude;
       setTimeout(() => {
-        getULocation([this.userId], this.authService.userEmailDomain(), centerCords);
+        createMap([this.userId], this.authService.userEmailDomain(), centerCords);
       }, 1000);
     });
   }
@@ -73,6 +68,7 @@ export class MapsPage implements OnInit {
   }
 
   ionViewDidLeave() {
+    disposeMap();
     watchUserLocationCancel();
     cancelMonitorOrder();
   }
