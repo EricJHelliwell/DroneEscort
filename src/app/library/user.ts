@@ -39,11 +39,12 @@ export async function watchUserLocationUpdate(userId: string, zone, callback) {
 
           if (kmDist > 0.02) {
             coordinates = position.coords;
-            callback(position.coords);
             client.models.User.update({
               id: userId,
               location: {lat: coordinates.latitude, lng: coordinates.longitude}
             });
+            alert('user movement detected and saved')
+            callback(position.coords);
           }
         }
       });

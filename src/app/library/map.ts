@@ -152,6 +152,7 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
           next: (data) => {
             const movedUser = userIds.find(user => data.id == user['id']);
             movedUser['marker'].setPosition({ lat: data.location.lat, lng: data.location.lng });
+            alert('user moved on map');
           }
         });
 }

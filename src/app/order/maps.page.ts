@@ -7,7 +7,7 @@ import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder, isOrderActive } from '../library/order'
 import { setUserLocation, watchUserLocationUpdate, watchUserLocationCancel } from '../library/user'
 import { createMap, disposeMap } from '../library/map';
-
+import { getActiveConvUsers } from '../library/chat'
 
 @Component({
   selector: 'app-maps',
@@ -40,6 +40,15 @@ export class MapsPage implements OnInit {
     this.showOrderButton();
     this.isPilot = this.authService.isPilot();
     this.isSubscriber = this.authService.isSubscriber();
+
+    // if a subscriber, just use own id on map, else pilot sees all active users
+    var userIds: string[] = [ this.userId ];
+    if (this.isPilot) {
+      userIds = await getActiveConvUsers();
+      // remove pilot
+      userIds.splice(userIds.indexOf(this.userId), 1);
+    };
+
     setUserLocation(this.userId, (coords) => {
       this.loading = false;
       this.coordinates = coords;
@@ -48,8 +57,9 @@ export class MapsPage implements OnInit {
         lat: this.coordinates.latitude,
         lng: this.coordinates.longitude
       };
+
       setTimeout(() => {
-        createMap([this.userId], this.authService.userEmailDomain(), centerCords);
+          createMap(userIds, this.authService.userEmailDomain(), centerCords);
       }, 1000);
     });
   }
