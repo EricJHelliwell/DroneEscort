@@ -6,7 +6,7 @@ import { LoadingController } from '@ionic/angular';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder, isOrderActive } from '../library/order'
 import { setUserLocation, watchUserLocationUpdate, watchUserLocationCancel } from '../library/user'
-import { createMap, disposeMap } from '../library/map';
+import { createMap, moveUserMarker } from '../library/map';
 import { getActiveConvUsers } from '../library/chat'
 
 @Component({
@@ -67,6 +67,7 @@ export class MapsPage implements OnInit {
   ionViewDidEnter(){
     watchUserLocationUpdate(this.userId, this.zone, (coords) => {
       this.coordinates = coords;
+      moveUserMarker(this.userId, coords);
     });
 
     if (isOrderActive()) {
@@ -78,7 +79,6 @@ export class MapsPage implements OnInit {
   }
 
   ionViewDidLeave() {
-    disposeMap();
     watchUserLocationCancel();
     cancelMonitorOrder();
   }

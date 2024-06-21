@@ -8,7 +8,7 @@ import { getUserProfilePhoto } from '../library/user'
 
 const client = generateClient<Schema>();
 declare var google: any;
-var subUsersWatch: any = null;
+var userIds: string[] = [];
 
 export async function test() {
     const {data: dronesQuery } = await client.models.Drone.list({
@@ -31,7 +31,7 @@ export async function test() {
     console.log(dronesQuery2);
 }
 
-export async function createMap(userIds:string[], domain:string, centerCords) {
+export async function createMap(userMarkerIds:string[], domain:string, centerCords) {
     let map;
 /*
     const markersOnMap = [
@@ -81,6 +81,7 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
       },
     ];
 */
+    userIds = userMarkerIds;
     var InforObj = [];
 /*
     var centerCords = {
@@ -145,17 +146,7 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
                 });      
             });
          }
-
-         // watch all the user updates to reset location
-         subUsersWatch = client.models.User.onUpdate({ filter })
-         .subscribe({
-          next: (data) => {
-            const movedUser = userIds.find(user => data.id == user['id']);
-            movedUser['marker'].setPosition({ lat: data.location.lat, lng: data.location.lng });
-            alert('user moved on map');
-          }
-        });
-}
+    }
 
     function closeOtherInfo() {
       if (InforObj.length > 0) {
@@ -229,9 +220,9 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
     }
   }
 
-  export function disposeMap() {
-    if (subUsersWatch) {
-    subUsersWatch.unsubscribe();
-    subUsersWatch = null;
-    }
-  } 
+  export function moveUserMarker(userId, location) {
+        const movedUser = userIds.find(user => userId == user['id']);
+        movedUser['marker'].setPosition({ lat: location.latitude, lng: location.longitude });
+        alert('user moved on map');
+  }
+
