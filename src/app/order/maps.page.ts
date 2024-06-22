@@ -7,7 +7,7 @@ import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder,
          sendOrderMessage, isOrderActive } from '../library/order'
 import { setUserLocation, watchUserLocationUpdate, watchUserLocationCancel } from '../library/user'
-import { createMap, disposeMap, moveUserMarker } from '../library/map';
+import { createMap, disposeMap } from '../library/map';
 import { getActiveConvUsers } from '../library/chat'
 
 @Component({
@@ -23,7 +23,7 @@ export class MapsPage implements OnInit {
   isPilot: boolean = false;   
   isSubscriber: boolean = false; 
   userId: string;
-  
+
   // @ViewChild('map', { static: true }) mapElement: ElementRef;
   // map: any;
 
@@ -43,7 +43,7 @@ export class MapsPage implements OnInit {
     this.isSubscriber = this.authService.isSubscriber();
 
     // if a subscriber, just use own id on map, else pilot sees all active users
-    var userIds: string[] = [ this.userId ];
+    var userIds = [ this.userId ];
     if (this.isPilot) {
       userIds = await getActiveConvUsers();
       // remove pilot
@@ -62,7 +62,6 @@ export class MapsPage implements OnInit {
       setTimeout(() => {
           createMap(userIds, this.authService.userEmailDomain(), centerCords);
       }, 1000);
-
     });
   }
 
@@ -78,13 +77,12 @@ export class MapsPage implements OnInit {
         const messageToDisplay = 'User location change.  New geo:\nlat: ' + 
         this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude;
         sendOrderMessage(messageToDisplay);
-
-        moveUserMarker(this.userId, this.coordinates);
       });
+
  
-      if (isOrderActive()) {
-        this.showCancelButton()
-        }
+    if (isOrderActive()) {
+      this.showCancelButton()
+      }
     }
   }
 

@@ -9,7 +9,7 @@ import { getUserProfilePhoto } from '../library/user'
 const client = generateClient<Schema>();
 declare var google: any;
 var userMarkerIds: any[] = [];
-
+var subUsersWatch: any;
 
 export async function createMap(userIds:string[], domain:string, centerCords) {
     let map;
@@ -128,6 +128,13 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
                 userMarkerIds.push({userId: user.id, marker: marker});
             });
          }
+        // watch all the user updates to reset location
+        subUsersWatch = client.models.User.onUpdate({ filter })
+        .subscribe({
+          next: (data) => {
+            moveUserMarker(data.id, data.location);
+          }
+        });
     }
 
     function closeOtherInfo() {
@@ -203,11 +210,13 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
   }
 
   export function disposeMap() {
+    if (subUsersWatch)
+      subUsersWatch.unsubscribe();
     userMarkerIds = [];
   }
 
   export function moveUserMarker(userMarkerId, location) {
         const movedUser = userMarkerIds.find(({userId}) => userId == userMarkerId);
-        movedUser['marker'].setPosition({ lat: location.latitude, lng: location.longitude });
+        movedUser['marker'].setPosition({ lat: location.lat, lng: location.lng });
   }
 
