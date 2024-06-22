@@ -8,72 +8,24 @@ import { getUserProfilePhoto } from '../library/user'
 
 const client = generateClient<Schema>();
 declare var google: any;
-var userMarkerIds: any[] = [];
+var markerIdsMap: any[] = [];
 var subUsersWatch: any;
+var subDronesWatch: any;
 
 export async function createMap(userIds:string[], domain:string, centerCords) {
     let map;
-
-/*
-    const markersOnMap = [
-      {
-        placeName: 'Drone 1 (2 min)',
-        cover: '../../assets/images/drone-2.png',
-        LatLng: [
-          {
-            lat: coordinates.latitude + (180/Math.PI)*(Math.random() * 300 / 6378137),
-            lng: coordinates.longitude + (180/Math.PI)*(Math.random() * 300 / 6378137) / 
-              Math.cos(coordinates.latitude)
-          }
-        ]
-      },
-      {
-        placeName: 'Drone 3  (3 min)',
-        cover: '../../assets/images/drone-2.png',
-        LatLng: [
-          {
-            lat: coordinates.latitude + (180/Math.PI)*(Math.random() * 300 / 6378137),
-            lng: coordinates.longitude + (180/Math.PI)*(Math.random() * 300 / 6378137) / 
-              Math.cos(coordinates.latitude)
-          }
-        ]
-      },
-      {
-        placeName: 'Drone 4  (5 min)',
-        cover: '../../assets/images/drone-2.png',
-        LatLng: [
-          {
-            lat: coordinates.latitude + (180/Math.PI)*(Math.random() * 300 / 6378137),
-            lng: coordinates.longitude + (180/Math.PI)*(Math.random() * 300 / 6378137) / 
-              Math.cos(coordinates.latitude)
-          }
-        ]
-      },
-      {
-        placeName: 'Drone 2  (7 min)',
-        cover: '../../assets/images/drone-2.png',
-        LatLng: [
-          {
-            lat: coordinates.latitude + (180/Math.PI) * (Math.random() * 300 / 6378137),
-            lng: coordinates.longitude + (180/Math.PI) * (Math.random() * 300 / 6378137) / 
-              Math.cos(coordinates.latitude)
-          }
-        ]
-      },
-    ];
-*/
     var InforObj = [];
-/*
-    var centerCords = {
-      lat: coordinates.latitude,
-      lng: coordinates.longitude
-    };
-*/
+
     initMap();
 
     async function addMarker() {
+      var filter;
+
       // map drones
       const {errors, data: drones } = await client.models.Drone.list();
+      filter = {
+          or: drones.map(id => ({ id: { eq: id } }))
+      };
 
       for (const drone of drones) {
         if (!drone.location)
@@ -106,10 +58,19 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
           InforObj[0] = infowindow;
         });
 
+        markerIdsMap.push({id: drone.id, marker: marker});
       }
 
+      // watch all the drone updates to reset location
+      subDronesWatch = client.models.Drone.onUpdate({ filter })
+      .subscribe({
+        next: (data) => {
+          moveMarker(data.id, data.location);
+        }
+      });
+
       // mark users
-        const filter = {
+        filter = {
             or: userIds.map(id => ({ id: { eq: id } }))
         };
 
@@ -131,14 +92,25 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
                 icon: userIcon,
                 });
 
-                userMarkerIds.push({userId: user.id, marker: marker});
+                const infowindow = new google.maps.InfoWindow({
+                  content: user.username,
+                  maxWidth: 200
+                });
+        
+                marker.addListener('click', function () {
+                  closeOtherInfo();
+                  infowindow.open(marker.get('map'), marker);
+                  InforObj[0] = infowindow;
+                });
+        
+                markerIdsMap.push({id: user.id, marker: marker});
             });
          }
         // watch all the user updates to reset location
         subUsersWatch = client.models.User.onUpdate({ filter })
         .subscribe({
           next: (data) => {
-            moveUserMarker(data.id, data.location);
+            moveMarker(data.id, data.location);
           }
         });
     }
@@ -218,11 +190,11 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
   export function disposeMap() {
     if (subUsersWatch)
       subUsersWatch.unsubscribe();
-    userMarkerIds = [];
+    markerIdsMap = [];
   }
 
-  export function moveUserMarker(userMarkerId, location) {
-        const movedUser = userMarkerIds.find(({userId}) => userId == userMarkerId);
-        movedUser['marker'].setPosition({ lat: location.lat, lng: location.lng });
+  export function moveMarker(markerId, location) {
+        const movedObj = markerIdsMap.find(({id}) => id == markerId);
+        movedObj['marker'].setPosition({ lat: location.lat, lng: location.lng });
   }
 
