@@ -7,7 +7,7 @@ const client = generateClient<Schema>();
 let updateSub : any = null;
 let ReqId : any = null;
  
- export async function createNewOrder(messageToDisplay:string, user:any): Promise<string> {
+ export async function createNewOrder(user:any): Promise<string> {
     const now = new Date();
     const convName =  user.username + " " + 
       now.toLocaleDateString("en-US") + " " +
@@ -20,13 +20,6 @@ let ReqId : any = null;
       droneId: "unassigned",
     });
 
-    const {errors, data: firstMsg } = await client.models.Message.create({
-      content: messageToDisplay,
-      isSent: true,
-      conversationId: conv.id,
-      sender: "System"
-    });
-
     const {data: convUser } = await client.models.UserConversation.create({
       userId: reqId,
       userConversationId: conv.id,
@@ -35,6 +28,20 @@ let ReqId : any = null;
 
     ReqId = conv.id;
     return ReqId;
+  }
+
+  export async function sendOrderMessage (messageToDisplay:string)
+  {
+    if (!ReqId) {
+      return;
+    }
+
+    const {errors, data: firstMsg } = await client.models.Message.create({
+      content: messageToDisplay,
+      isSent: true,
+      conversationId: ReqId,
+      sender: "System"
+    });
   }
 
   export async function cancelOrder() {

@@ -4,7 +4,8 @@ import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
-import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder, isOrderActive } from '../library/order'
+import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder,
+         sendOrderMessage, isOrderActive } from '../library/order'
 import { setUserLocation, watchUserLocationUpdate, watchUserLocationCancel } from '../library/user'
 import { createMap, moveUserMarker } from '../library/map';
 import { getActiveConvUsers } from '../library/chat'
@@ -65,22 +66,31 @@ export class MapsPage implements OnInit {
   }
 
   ionViewDidEnter(){
-    watchUserLocationUpdate(this.userId, this.zone, (coords) => {
-      this.coordinates = coords;
-      moveUserMarker(this.userId, coords);
-    });
+    if (this.isSubscriber) {
+      watchUserLocationUpdate(this.userId, this.zone, (coords) => {
+        this.coordinates = coords;
+        
+        const messageToDisplay = 'User location change.  New geo:\nlat: ' + 
+        this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude;
+        sendOrderMessage(messageToDisplay);
 
-    if (isOrderActive()) {
-      this.showCancelButton()
-      }
+        moveUserMarker(this.userId, this.coordinates);
+      });
+ 
+      if (isOrderActive()) {
+        this.showCancelButton()
+        }
+    }
   }
 
   ionViewCanLeave() {
   }
 
   ionViewDidLeave() {
-    watchUserLocationCancel();
-    cancelMonitorOrder();
+    if (this.isSubscriber) {
+      watchUserLocationCancel();
+      cancelMonitorOrder();
+    }
   }
 
   async showLoading() {
@@ -95,7 +105,9 @@ export class MapsPage implements OnInit {
     });
 
     // Create and Subscribe to order
-    this.ReqId = await createNewOrder(messageToDisplay, this.authService.userDatabase());
+    this.ReqId = await createNewOrder(this.authService.userDatabase());
+    sendOrderMessage(messageToDisplay);
+
     const WatchId = monitorOrder((result) => {
       console.log(result);
       if (result == "Cancelled") {

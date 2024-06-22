@@ -223,6 +223,5 @@ export async function createMap(userMarkerIds:string[], domain:string, centerCor
   export function moveUserMarker(userId, location) {
         const movedUser = userIds.find(user => userId == user['id']);
         movedUser['marker'].setPosition({ lat: location.latitude, lng: location.longitude });
-        alert('user moved on map');
   }
 

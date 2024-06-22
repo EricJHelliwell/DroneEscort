@@ -43,7 +43,7 @@ export async function watchUserLocationUpdate(userId: string, zone, callback) {
               id: userId,
               location: {lat: coordinates.latitude, lng: coordinates.longitude}
             });
-            alert('user movement detected and saved')
+
             callback(position.coords);
           }
         }
