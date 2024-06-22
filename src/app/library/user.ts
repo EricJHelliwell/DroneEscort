@@ -28,27 +28,26 @@ export async function watchUserLocationUpdate(userId: string, zone, callback) {
     maximumAge: 0,
   };
 
-    watchId = Geolocation.watchPosition(options, (position, err) => {
-      zone.runGuarded(() => {
-        if (!err) {
-          // look for distance greater than 10 meters to update user
-          const kmDist = distanceInKmBetweenEarthCoordinates(
-            coordinates.latitude, coordinates.longitude,
-            position.coords.latitude, position.coords.longitude
-          );
+  watchId = Geolocation.watchPosition(options, (position, err) => {
+    zone.runGuarded(() => {
+      if (!err) {
+        // look for distance greater than 10 meters to update user
+        const kmDist = distanceInKmBetweenEarthCoordinates(
+          coordinates.latitude, coordinates.longitude,
+          position.coords.latitude, position.coords.longitude
+        );
 
-          if (kmDist > 0.02) {
-            coordinates = position.coords;
-            client.models.User.update({
-              id: userId,
-              location: {lat: coordinates.latitude, lng: coordinates.longitude}
-            });
-
-            callback(position.coords);
-          }
+        if (kmDist > 0.02) {
+          coordinates = position.coords;
+          client.models.User.update({
+            id: userId,
+            location: {lat: coordinates.latitude, lng: coordinates.longitude}
+          });
+          callback(coordinates);
         }
-      });
+      }
     });
+  });
 }
 
 export async function watchUserLocationCancel() {
@@ -62,7 +61,6 @@ export async function getUserProfilePhoto(userId, callback) {
   const result = await getUrl({path: "profile-pictures/" + userId + ".png"});
   const testURLReq = await fetch(result.url);
   if (testURLReq.status != 404) {
-    console.log('found image');
     callback(result.url.toString());
   }
   else {

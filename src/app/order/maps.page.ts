@@ -7,7 +7,7 @@ import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder,
          sendOrderMessage, isOrderActive } from '../library/order'
 import { setUserLocation, watchUserLocationUpdate, watchUserLocationCancel } from '../library/user'
-import { createMap, moveUserMarker } from '../library/map';
+import { createMap, disposeMap, moveUserMarker } from '../library/map';
 import { getActiveConvUsers } from '../library/chat'
 
 @Component({
@@ -62,14 +62,19 @@ export class MapsPage implements OnInit {
       setTimeout(() => {
           createMap(userIds, this.authService.userEmailDomain(), centerCords);
       }, 1000);
+
     });
+  }
+
+  ngOnDestroy() {
+    disposeMap();
   }
 
   ionViewDidEnter(){
     if (this.isSubscriber) {
       watchUserLocationUpdate(this.userId, this.zone, (coords) => {
         this.coordinates = coords;
-        
+
         const messageToDisplay = 'User location change.  New geo:\nlat: ' + 
         this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude;
         sendOrderMessage(messageToDisplay);

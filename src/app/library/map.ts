@@ -8,31 +8,12 @@ import { getUserProfilePhoto } from '../library/user'
 
 const client = generateClient<Schema>();
 declare var google: any;
-var userIds: string[] = [];
+var userMarkerIds: any[] = [];
 
-export async function test() {
-    const {data: dronesQuery } = await client.models.Drone.list({
-        filter: {
-            or: [
-                {id: {eq: "511217d6-5317-4e41-abd2-7ac8e5040203"}},
-                {id: {eq: "9c8ddbbb-0008-491b-85c9-5e432daf4652"}},
-            ]
-        }
-    });
-    console.log(dronesQuery);
 
-    const droneIds = ["511217d6-5317-4e41-abd2-7ac8e5040203"];
-
-    const filter = {
-        or: droneIds.map(id => ({ id: { eq: id } }))
-    };
-    
-    const { data: dronesQuery2 } = await client.models.Drone.list({ filter });
-    console.log(dronesQuery2);
-}
-
-export async function createMap(userMarkerIds:string[], domain:string, centerCords) {
+export async function createMap(userIds:string[], domain:string, centerCords) {
     let map;
+
 /*
     const markersOnMap = [
       {
@@ -81,7 +62,6 @@ export async function createMap(userMarkerIds:string[], domain:string, centerCor
       },
     ];
 */
-    userIds = userMarkerIds;
     var InforObj = [];
 /*
     var centerCords = {
@@ -138,12 +118,14 @@ export async function createMap(userMarkerIds:string[], domain:string, centerCor
                 }
         
                 // add a marker to the user object
-                user['marker'] = new google.maps.Marker({
+                const marker = new google.maps.Marker({
                 position: { lat: user.location.lat, lng: user.location.lng },
                 map: map,
                 animation: google.maps.Animation.DROP,
                 icon: userIcon,
-                });      
+                });
+
+                userMarkerIds.push({userId: user.id, marker: marker});
             });
          }
     }
@@ -220,8 +202,12 @@ export async function createMap(userMarkerIds:string[], domain:string, centerCor
     }
   }
 
-  export function moveUserMarker(userId, location) {
-        const movedUser = userIds.find(user => userId == user['id']);
+  export function disposeMap() {
+    userMarkerIds = [];
+  }
+
+  export function moveUserMarker(userMarkerId, location) {
+        const movedUser = userMarkerIds.find(({userId}) => userId == userMarkerId);
         movedUser['marker'].setPosition({ lat: location.latitude, lng: location.longitude });
   }
 
