@@ -72,19 +72,24 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
     initMap();
 
     async function addMarker() {
-/*
-      for (var i = 0; i < markersOnMap.length; i++) {
-        var contentString = '<div id="content"><h1>' + markersOnMap[i].placeName +
+      // map drones
+      const {errors, data: drones } = await client.models.Drone.list();
+
+      for (const drone of drones) {
+        if (!drone.location)
+          continue;
+
+        var contentString = '<div id="content"><h1>' + drone.name +
           '</h1></div>';
         const icon = {
-          url: markersOnMap[i].cover,
+          url: '../../assets/images/uss_drone.png',
           scaledSize: new google.maps.Size(30, 30), // scaled size
           origin: new google.maps.Point(0, 0), // origin
           anchor: new google.maps.Point(0, 0) // anchor
         };
-        // console.log(markersOnMap[i].LatLng[0]);
+
         const marker = new google.maps.Marker({
-          position: markersOnMap[i].LatLng[0],
+          position: {lat: drone.location.lat, lng: drone.location.lng},
           map: map,
           animation: google.maps.Animation.DROP,
           icon: icon,
@@ -102,7 +107,8 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
         });
 
       }
-*/
+
+      // mark users
         const filter = {
             or: userIds.map(id => ({ id: { eq: id } }))
         };
