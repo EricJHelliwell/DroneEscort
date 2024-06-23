@@ -144,7 +144,7 @@ export class MapsPage implements OnInit {
   }
 
   showOrderButton() {
-    this.orderText = "Order";
+    this.orderText = "Call a Drone";
     this.orderColor = "success";
   }
 

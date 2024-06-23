@@ -1,20 +1,17 @@
 
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>
-      Find a Drone
-    </ion-title>
     <ion-buttons slot="start" class="ion-padding-start">
       <ion-avatar>
         <img src="assets/images/uss_drone.jpg"/>
       </ion-avatar>
     </ion-buttons>
-    <ion-buttons slot="end" *ngIf="isSubscriber">
-      <ion-button id="startOrder" (click)="onOrder()" fill="solid" color="{{orderColor}}">
-        <ion-icon slot="start" name="receipt-outline"></ion-icon>
-        {{orderText}}
-      </ion-button>
-    </ion-buttons>
+      <ion-buttons slot="end" *ngIf="isSubscriber">
+        <ion-button id="startOrder" (click)="onOrder()" size="large" fill="solid" color="{{orderColor}}">
+          <ion-icon slot="start" name="receipt-outline"></ion-icon>
+          {{orderText}}
+        </ion-button>
+      </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

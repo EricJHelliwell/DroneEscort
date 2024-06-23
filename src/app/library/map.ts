@@ -24,7 +24,7 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
       // map drones
       const {errors, data: drones } = await client.models.Drone.list();
       filter = {
-          or: drones.map(id => ({ id: { eq: id } }))
+          or: drones.map(({id}) => ({ id: { eq: id } }))
       };
 
       for (const drone of drones) {
