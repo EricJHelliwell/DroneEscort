@@ -62,12 +62,14 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
       }
 
       // watch all the drone updates to reset location
-      subDronesWatch = client.models.Drone.onUpdate({ filter })
-      .subscribe({
-        next: (data) => {
-          moveMarker(data.id, data.location);
-        }
-      });
+      if (drones.length > 0) {
+        subDronesWatch = client.models.Drone.onUpdate({ filter })
+        .subscribe({
+          next: (data) => {
+            moveMarker(data.id, data.location);
+          }
+        });
+      }
 
       // mark users
         filter = {
@@ -107,12 +109,14 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
             });
          }
         // watch all the user updates to reset location
-        subUsersWatch = client.models.User.onUpdate({ filter })
-        .subscribe({
-          next: (data) => {
-            moveMarker(data.id, data.location);
-          }
-        });
+        if (users.length > 0) {
+          subUsersWatch = client.models.User.onUpdate({ filter })
+          .subscribe({
+            next: (data) => {
+              moveMarker(data.id, data.location);
+            }
+          });
+        }
     }
 
     function closeOtherInfo() {
@@ -194,7 +198,9 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
   }
 
   export function moveMarker(markerId, location) {
-        const movedObj = markerIdsMap.find(({id}) => id == markerId);
-        movedObj['marker'].setPosition({ lat: location.lat, lng: location.lng });
+    const movedObj = markerIdsMap.find(({id}) => id == markerId);
+    if (movedObj) {
+      movedObj['marker'].setPosition({ lat: location.lat, lng: location.lng });
+    }
   }
 

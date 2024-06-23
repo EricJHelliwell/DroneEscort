@@ -4,13 +4,16 @@ import { Subscription } from 'rxjs';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { Geolocation, ClearWatchOptions } from '@capacitor/geolocation';
 import { getUrl } from "aws-amplify/storage";
+import outputs from '../../../amplify_outputs.json';
 
 const client = generateClient<Schema>();
 
 let watchId: any = null;
 let coordinates: any = null;
 
+
 export async function setUserLocation(userId: string, callback) {
+
     const loc = await Geolocation.getCurrentPosition();
     coordinates = loc.coords;
 

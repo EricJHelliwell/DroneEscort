@@ -116,6 +116,7 @@ export class MessagesPage implements OnInit {
     const {data: droneMsg } = await client.models.Message.create({
       content: "Drone " + name + " assigned.  Stay close.",
       isSent: true,
+      isText: true,
       conversationId: this.conversationId,
       sender: "System"
     });
@@ -186,6 +187,7 @@ export class MessagesPage implements OnInit {
     const {data: droneMsg } = await client.models.Message.create({
       content: sendObj.value,
       isSent: true,
+      isText: true,
       conversationId: this.conversationId,
       sender: this.userId,
     });

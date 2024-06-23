@@ -27,6 +27,7 @@ const schema = a.schema({
         content: a.string(),
         sender: a.string().required(),
         isSent: a.boolean().required(),
+        isText: a.boolean().required(),
         conversationId: a.id().required(),
         conversation: a.belongsTo("Conversation", "conversationId"),
       }),
@@ -42,6 +43,8 @@ const schema = a.schema({
       .model({
         cognitoId: a.id().required(),  // this is specific to the security subsystem
         username: a.string().required(),
+        phone: a.phone().required(),
+        email: a.email().required(),
         registered: a.boolean().required(),
         description: a.string(),
         conversations: a.hasMany("UserConversation", "userId"),

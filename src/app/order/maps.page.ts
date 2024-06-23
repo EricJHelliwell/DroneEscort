@@ -8,7 +8,7 @@ import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder,
          sendOrderMessage, isOrderActive } from '../library/order'
 import { setUserLocation, watchUserLocationUpdate, watchUserLocationCancel } from '../library/user'
 import { createMap, disposeMap } from '../library/map';
-import { getActiveConvUsers } from '../library/chat'
+import { getActiveConvUsers } from '../library/chat';
 
 @Component({
   selector: 'app-maps',

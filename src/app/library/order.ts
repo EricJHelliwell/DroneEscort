@@ -39,6 +39,7 @@ let ReqId : any = null;
     const {errors, data: firstMsg } = await client.models.Message.create({
       content: messageToDisplay,
       isSent: true,
+      isText: true,
       conversationId: ReqId,
       sender: "System"
     });

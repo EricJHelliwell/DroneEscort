@@ -58,6 +58,7 @@ export class AuthGuardService implements OnInit {
     .then((auth) => {
       this.loggedIn = true;
       this.authDetails = auth.tokens.idToken.payload;
+      console.log(this.authDetails);
     })
     .catch(err => {
       console.log(err);
@@ -81,10 +82,23 @@ export class AuthGuardService implements OnInit {
       const { errors, data: newuser } = await client.models.User.create({
         cognitoId: this.authDetails.sub,
         username: this.authDetails.preferred_username,
+        email: this.authDetails.email,
+        phone: this.authDetails.phone_number,
         registered: true,
       });
       this.userDB = newuser;
-      console.log(errors);
+    }
+    else if ((existingUser[0].email != this.authDetails.email)
+      || (existingUser[0].phone != this.authDetails.phone_number)
+      || (existingUser[0].username != this.authDetails.preferred_username))
+    {
+      const { errors, data: updateuser } = await client.models.User.update({
+        id: existingUser[0].id,
+        username: this.authDetails.preferred_username,
+        email: this.authDetails.email,
+        phone: this.authDetails.phone_number,
+      });
+      this.userDB = updateuser;
     }
     else {
       this.userDB = existingUser[0];
