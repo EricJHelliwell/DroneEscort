@@ -28,7 +28,8 @@ export class MessagesPage implements OnInit {
   userMePhoto: any;
   userOther: any;
   userOtherPhoto: any;
-  isModalOpen = false;
+  isDroneModalOpen = false;  
+  isAttachModalOpen = false;
   conversationId = "";
   convSub = null;
 
@@ -73,7 +74,7 @@ export class MessagesPage implements OnInit {
       {
         const {data: dronesQuery } = await client.models.Drone.list();
         this.drones = dronesQuery;
-        this.isModalOpen = true;
+        this.isDroneModalOpen = true;
       }
     const {data: msgs } = await conv.messages();
     this.messages = msgs.sort(function(a, b) {
@@ -186,10 +187,14 @@ export class MessagesPage implements OnInit {
       });  
   }
 
-  goToAttach() {
-
+  goToAttachPhoto() {
+    this.setAttachOpenModal(false);
   }
   
+  goToAttachGallery() {
+    this.setAttachOpenModal(false);
+  }
+
   scrollToBottom(){
     setTimeout(() => {
       if (this.content.scrollToBottom) {
@@ -211,8 +216,11 @@ export class MessagesPage implements OnInit {
     this.scrollToBottom();
   }
 
-  setOpenModal(isOpen: boolean) {
-    this.isModalOpen = isOpen;
+  setDroneOpenModal(isOpen: boolean) {
+    this.isDroneModalOpen = isOpen;
   }
 
+  setAttachOpenModal(isOpen: boolean) {
+    this.isAttachModalOpen = isOpen;
+  }
 }
