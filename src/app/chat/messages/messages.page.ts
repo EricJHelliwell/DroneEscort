@@ -110,7 +110,6 @@ export class MessagesPage implements OnInit {
 
     // get the other party. Maybe not exist if pilot not assigned
     const findOther = userConv.find(({userId}) => userId != this.userMe.id)
-    console.log(findOther);
     if (findOther) {
       getUser(findOther.userId, (result) => {
         this.userOther = result;
