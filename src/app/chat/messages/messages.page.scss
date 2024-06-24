@@ -27,8 +27,6 @@ ion-avatar {
         align-items: flex-end;
         margin-bottom: 20px;
         width: 80%;
-        flex-shrink: 0;
-        white-space: nowrap;
 
         .msg {
           background-color: var(--ion-color-primary);
@@ -60,8 +58,6 @@ ion-avatar {
       flex-direction: row-reverse;
       align-items: center;
       position: relative;
-      flex-shrink: 0;
-      white-space: nowrap;
 
       .content {
         display: flex;
