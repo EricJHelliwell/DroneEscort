@@ -76,10 +76,7 @@
             <ion-img src="{{userOtherPhoto}}"/>
           </ion-avatar>
           <div class="msg_div">
-            <div *ngIf="msg.content.length < 25" class="msg" style="white-space: nowrap">
-              {{msg.content}}
-            </div>
-            <div *ngIf="msg.content.length >= 25" class="msg">
+            <div class="msg">
               {{msg.content}}
             </div>
             <ion-label class="time">{{ msg.createdAt | shortenDate }}</ion-label>
@@ -90,10 +87,7 @@
       <div class="right" *ngIf="msg.sender && msg.sender == userMe.id">
         <div class="content">
           <div class="msg_div">
-            <div *ngIf="msg.content.length < 25" class="msg" style="white-space: nowrap">
-              {{msg.content}}
-            </div>
-            <div *ngIf="msg.content.length >= 25" class="msg">
+            <div class="msg">
               {{msg.content}}
             </div>
             <ion-label class="time">{{ msg.createdAt | shortenDate }}</ion-label>
