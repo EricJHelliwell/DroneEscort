@@ -9,6 +9,9 @@ import { AuthGuardService } from '../../auth/auth-route-guard.service'
 import { parseISO } from 'date-fns';
 import { isDroneAssigned } from '../../library/order'
 import { getUser, getUserProfilePhoto } from '../../library/user';
+import { Camera, CameraResultType } from '@capacitor/camera';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { uploadData, getUrl } from "aws-amplify/storage";
 
 const client = generateClient<Schema>();
 
@@ -62,6 +65,17 @@ export class MessagesPage implements OnInit {
     }
   }
 
+  async pushMessageType(msg: any)  {
+    if (!msg.isText) {
+      const URL = await getUrl({path: msg.content});
+      msg.content = URL.url.toString();
+    }
+    this.messages.push(msg);
+    this.messages = this.messages.sort(function(a, b) {
+      return (a.createdAt < b.createdAt) ? -1 : ((a.createdAt > b.createdAt) ? 1 : 0);
+    });
+  }
+
   async loadMessage(conversationId) {
     const {errors, data: conv } = await client.models.Conversation.get ({
       id: conversationId,
@@ -77,10 +91,12 @@ export class MessagesPage implements OnInit {
         this.isDroneModalOpen = true;
       }
     const {data: msgs } = await conv.messages();
-    this.messages = msgs.sort(function(a, b) {
-      return (a.createdAt < b.createdAt) ? -1 : ((a.createdAt > b.createdAt) ? 1 : 0);
-    });
-    this.scrollToBottom();
+
+    for (const msg of msgs) {
+      this.pushMessageType(msg);
+    }
+
+    this.scrollToBottomDelay();
     this.convSub = client.models.Message.onCreate( { 
       filter: {
         conversationId: {
@@ -88,7 +104,10 @@ export class MessagesPage implements OnInit {
         },
       }
     },).subscribe({
-      next: (data) => {this.messages.push(data); this.scrollToBottom()},
+      next: (data) => {
+        this.pushMessageType(data);
+        this.scrollToBottomNow()
+      },
       error: (error) => console.warn(error),
     });
 
@@ -134,7 +153,7 @@ export class MessagesPage implements OnInit {
       isSent: true,
       isText: true,
       conversationId: this.conversationId,
-      sender: "System"
+      sender: this.userOther.id
     });
     const {data: msgs } = await conv.messages();
     this.messages = msgs;
@@ -187,7 +206,58 @@ export class MessagesPage implements OnInit {
       });  
   }
 
-  goToAttachPhoto() {
+  async goToAttachPhoto(isCamera: boolean) {
+    var image: any;
+    if (isCamera) {
+      image = await Camera.getPhoto({
+        quality: 90,
+        // width: 300,
+        allowEditing: true,
+        resultType: CameraResultType.Uri
+      });
+    }
+    else {
+      const images = await Camera.pickImages({
+        quality: 90,
+        // width: 300,
+        limit: 1
+      });
+      image = images.photos[0];
+    }
+  
+    // image.webPath will contain a path that can be set as an image src.
+    // You can access the original file using image.path, which can be
+    // passed to the Filesystem API to read the raw data of the image,
+    // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
+
+    // Can be set to the src of an image now
+    let blob = await fetch(image.webPath).then(r => r.blob());
+    const fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(blob);
+  
+    const { v4: uuidv4 } = require('uuid');
+    const uuid = uuidv4();
+    const pathImage = "chat-submissions/" + this.conversationId + "/" + uuid + ".png";
+    fileReader.onload = async (event) => {
+      try {
+        const result = await uploadData({
+              data: event.target.result, 
+              path: pathImage,
+          });
+      } catch (e) {
+        console.log("error", e);
+      }
+    };
+
+    // set the message with weburl as content
+    const {data: msg } = await client.models.Message.create({
+      content: pathImage,
+      isSent: true,
+      isText: false,
+      conversationId: this.conversationId,
+      sender: this.userMe.id
+    });
+
     this.setAttachOpenModal(false);
   }
   
@@ -195,13 +265,19 @@ export class MessagesPage implements OnInit {
     this.setAttachOpenModal(false);
   }
 
-  scrollToBottom(){
+  scrollToBottomDelay(){
     setTimeout(() => {
       if (this.content.scrollToBottom) {
           this.content.scrollToBottom(400);
       }
-  }, 500);
+    }, 500);
   }
+
+  scrollToBottomNow(){
+    if (this.content.scrollToBottom) {
+        this.content.scrollToBottom(400);
+    }
+}
 
   async goToSend(sendObj) {
     const {data: droneMsg } = await client.models.Message.create({
@@ -213,7 +289,7 @@ export class MessagesPage implements OnInit {
     });
     console.log(droneMsg);
     sendObj.value = ""
-    this.scrollToBottom();
+//    this.scrollToBottomNow();
   }
 
   setDroneOpenModal(isOpen: boolean) {

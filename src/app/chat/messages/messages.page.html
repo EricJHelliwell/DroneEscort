@@ -58,10 +58,10 @@
       <ion-content class="ion-padding">
         <ion-radio-group value="attachlist">
           <ion-item>
-            <ion-radio value="galleryAttach" (click)="goToAttachGallery">Camera</ion-radio>
+            <ion-radio value="galleryAttach" (click)="goToAttachPhoto(true)">Camera</ion-radio>
           </ion-item>
           <ion-item>
-            <ion-radio value="photoAttach" (click)="goToAttachPhoto">Photo Gallery</ion-radio>
+            <ion-radio value="photoAttach" (click)="goToAttachPhoto(false)">Photo Gallery</ion-radio>
           </ion-item>
         </ion-radio-group>
       </ion-content>
@@ -76,9 +76,16 @@
             <ion-img src="{{userOtherPhoto}}"/>
           </ion-avatar>
           <div class="msg_div">
-            <div class="msg">
+            <div *ngIf="msg.isText" class="msg">
               {{msg.content}}
             </div>
+            <div *ngIf="!msg.isText" class="msg">
+              <img
+              src="{{msg.content}}"
+              alt=""
+              srcset=""
+            />
+            </div>            
             <ion-label class="time">{{ msg.createdAt | shortenDate }}</ion-label>
           </div>
         </div>
@@ -87,9 +94,16 @@
       <div class="right" *ngIf="msg.sender && msg.sender == userMe.id">
         <div class="content">
           <div class="msg_div">
-            <div class="msg">
+            <div *ngIf="msg.isText" class="msg">
               {{msg.content}}
             </div>
+            <div *ngIf="!msg.isText" class="msg">
+              <img
+              src="{{msg.content}}"
+              alt=""
+              srcset=""
+            />
+            </div>     
             <ion-label class="time">{{ msg.createdAt | shortenDate }}</ion-label>
           </div>
           <ion-avatar *ngIf="userMePhoto">
