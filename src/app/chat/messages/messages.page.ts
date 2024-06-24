@@ -8,6 +8,7 @@ import type { Schema } from '../../../../amplify/data/resource';
 import { AuthGuardService } from '../../auth/auth-route-guard.service'
 import { parseISO } from 'date-fns';
 import { isDroneAssigned } from '../../library/order'
+import { getUser, getUserProfilePhoto } from '../../library/user';
 
 const client = generateClient<Schema>();
 
@@ -23,7 +24,10 @@ export class MessagesPage implements OnInit {
   chatName = "";
   messages: any[] = [];
   drones: any[] = [];
-  userId = "";
+  userMe: any;
+  userMePhoto: any;
+  userOther: any;
+  userOtherPhoto: any;
   isModalOpen = false;
   conversationId = "";
   convSub = null;
@@ -44,8 +48,10 @@ export class MessagesPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    console.log('ionViewDidEnter');
-    this.userId = this.authService.userDatabaseId();
+    this.userMe = this.authService.userDatabase();
+    getUserProfilePhoto(this.userMe.id, (url) => {
+      this.userMePhoto = url;
+    });
     this.loadMessage(this.conversationId);
   }
 
@@ -90,19 +96,29 @@ export class MessagesPage implements OnInit {
     const {data: userConv } = await client.models.UserConversation.list ({
       filter: {
         and: [
-          { userId: { eq: this.userId }},
           { userConversationId: { eq: conv.id }},
         ]
       }
     });
-    // sanity check there are results.
-    // there may not be if we are still assigning the drone and pilot
-    if (userConv.length < 1)
-      return;
+
+    // update last read of current reader
+    const findMe = userConv.find(({userId}) => userId == this.userMe.id)
     const {data: userConvUpdate} = await client.models.UserConversation.update({
-      id: userConv[0].id,
+      id: findMe.id,
       lastRead: now.toISOString()
     })
+
+    // get the other party. Maybe not exist if pilot not assigned
+    const findOther = userConv.find(({userId}) => userId != this.userMe.id)
+    console.log(findOther);
+    if (findOther) {
+      getUser(findOther.userId, (result) => {
+        this.userOther = result;
+      });
+      getUserProfilePhoto(findOther.userId, (url) => {
+        this.userOtherPhoto = url;
+      });
+    }
   }
 
   async setDrone(id:string, name:string) {
@@ -125,7 +141,7 @@ export class MessagesPage implements OnInit {
 
     // now connect the pilot to the chat
     const {data: convUser } = await client.models.UserConversation.create({
-      userId: this.userId,
+      userId: this.userMe.id,
       userConversationId: this.conversationId,
       lastRead: now.toISOString(),
     });
@@ -189,8 +205,9 @@ export class MessagesPage implements OnInit {
       isSent: true,
       isText: true,
       conversationId: this.conversationId,
-      sender: this.userId,
+      sender: this.userMe.id,
     });
+    console.log(droneMsg);
     sendObj.value = ""
     this.scrollToBottom();
   }

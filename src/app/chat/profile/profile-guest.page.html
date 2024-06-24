@@ -27,11 +27,6 @@
               alt=""
               srcset=""
             />
-            <img *ngIf="!photo"
-              src="/assets/icon/avatar.png"
-              alt=""
-              srcset=""
-            />
           </ion-avatar>
           <h4 class="ion-margin-vertical">{{user.username}}</h4>
           <p *ngIf="user.description">
@@ -60,13 +55,13 @@
     </ion-row>
     <ion-row>
       <ion-col size="6" class="ion-padding-vertical">
-          <ion-button class="action-button" expand="block" fill="solid" color="primary">
+          <ion-button href="mailto:{{user.email}}" class="action-button" expand="block" fill="solid" color="primary">
             <ion-icon slot="start" name="mail-outline"></ion-icon>
             <span>Email User</span>
         </ion-button>
       </ion-col>
       <ion-col size="6" class="ion-padding-vertical">
-        <ion-button class="action-button" expand="block"  fill="solid" color="primary">
+        <ion-button href="tel:{{user.phone}}" class="action-button" expand="block"  fill="solid" color="primary">
           <ion-icon slot="start" name="call-outline"></ion-icon>
           <span>Call User</span>
       </ion-button>

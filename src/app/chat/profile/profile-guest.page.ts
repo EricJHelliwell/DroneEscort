@@ -8,6 +8,7 @@ import { signOut } from 'aws-amplify/auth';
 import { AuthGuardService } from '../../auth/auth-route-guard.service'
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../../amplify/data/resource';
+import { getUser, getUserProfilePhoto } from '../../library/user';
 
 const client = generateClient<Schema>();
 
@@ -38,27 +39,18 @@ export class ProfileActiveDetailPage implements OnInit {
         this.userIdArg = paramMap.get('userId');
       }
     });
-    console.log('ionViewDidEnter');
-    if (this.userIdArg)
-      {
-        const {errors, data: userProf } = await client.models.User.get ({
-          id: this.userIdArg,
+    if (this.userIdArg) {
+        getUser(this.userIdArg, (result) => {
+          this.user = result;
         });
-        if (!errors) {
-          console.log(userProf);
-          this.user = userProf;
-        }
-      }
+    }
     else {
       this.user = this.authService.userDatabase();
     }
-
-    const result = await getUrl({path: "profile-pictures/" + this.user.id + ".png"});
-    fetch(result.url)
-    .then((response) => {
-      if (response.status != 404)
-        this.photo = result.url; 
+    getUserProfilePhoto(this.user.id, (url) => {
+      this.photo = url;
     });
+    console.log(this.user);
   }
 
   goToBack() {

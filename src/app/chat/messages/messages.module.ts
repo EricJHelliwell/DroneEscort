@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-
+import { UtilsModule } from '../../utils/utils.module';
 import { MessagesPageRoutingModule } from './messages-routing.module';
 import { MessagesPage } from './messages.page';
 
@@ -12,7 +12,8 @@ import { MessagesPage } from './messages.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    MessagesPageRoutingModule
+    MessagesPageRoutingModule,
+    UtilsModule
   ],
   declarations: [MessagesPage]
 })

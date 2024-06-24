@@ -7,12 +7,12 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)=" goToVideoCall()">
+      <ion-button *ngIf="userOther" href="tel:{{userOther.phone}}">
         <ion-icon slot="start" name="call-outline" color="dark"></ion-icon>
       </ion-button>
-      <ion-button (click)="goToVideoCall()">
+      <!-- <ion-button (click)="goToVideoCall()">
         <ion-icon slot="start" name="videocam-outline" color="dark"></ion-icon>
-      </ion-button>
+      </ion-button> -->
       <ion-button (click)="goToCancel()">
         <ion-icon slot="start" name="exit-outline" color="dark"></ion-icon>
       </ion-button>
@@ -44,31 +44,31 @@
 
   <div class="main-content" #content>
     <div class="lower_div" *ngFor="let msg of messages">
-      <div class="left" *ngIf="msg.sender && msg.sender != userId">
+      <div class="left" *ngIf="msg.sender && msg.sender != userMe.id">
         <div class="content">
-          <div class="icon_div">
-            <ion-icon class="icon" name="person" color="light"></ion-icon>
-          </div>
+          <ion-avatar *ngIf="userOtherPhoto">
+            <ion-img src="{{userOtherPhoto}}"/>
+          </ion-avatar>
           <div class="msg_div">
             <div class="msg">
               {{msg.content}}
             </div>
-            <ion-label class="time">12.03 PM</ion-label>
+            <ion-label class="time">{{ msg.createdAt | shortenDate }}</ion-label>
           </div>
         </div>
       </div>
 
-      <div class="right" *ngIf="msg.sender && msg.sender == userId">
+      <div class="right" *ngIf="msg.sender && msg.sender == userMe.id">
         <div class="content">
           <div class="msg_div">
             <div class="msg">
               {{msg.content}}
             </div>
-            <ion-label class="time">12.03 PM</ion-label>
+            <ion-label class="time">{{ msg.createdAt | shortenDate }}</ion-label>
           </div>
-          <div class="icon_div">
-            <ion-icon class="icon" name="person" color="light"></ion-icon>
-          </div>
+          <ion-avatar *ngIf="userMePhoto">
+            <ion-img src="{{userMePhoto}}"/>
+          </ion-avatar>
         </div>
       </div>
     </div>

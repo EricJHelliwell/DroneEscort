@@ -5,6 +5,11 @@ ion-header {
   }
 }
 
+ion-avatar {
+  max-width: 50px !important;  //any size
+  max-height: 50px !important; //any size
+  }
+
 .main-content {
   .lower_div {
     margin: 5px;

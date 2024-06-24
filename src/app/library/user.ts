@@ -72,6 +72,16 @@ export async function getUserProfilePhoto(userId, callback) {
   }
 }
 
+export async function getUser(userId, callback) {
+  const { errors, data: user } = await client.models.User.get({
+    id: userId
+  });
+  if (errors) {
+    console.log(errors);
+    callback(null);
+  }
+  callback(user);
+}
 
 function degreesToRadians(degrees) {
   return degrees * Math.PI / 180;

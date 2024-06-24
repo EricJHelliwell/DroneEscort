@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HumanizePipe } from './humanize.pipe';
+import { ShortenDatePipe } from './shortendate.pipe';
 
 @NgModule({
-  declarations: [HumanizePipe],
+  declarations: [HumanizePipe, ShortenDatePipe],
   imports: [CommonModule],
-  exports: [HumanizePipe],
+  exports: [HumanizePipe, ShortenDatePipe],
 })
 export class UtilsModule {}
