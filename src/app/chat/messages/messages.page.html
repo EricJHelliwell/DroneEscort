@@ -77,7 +77,7 @@
           </ion-avatar>
           <div class="msg_div">
             <div *ngIf="msg.isText" class="msg">
-              {{msg.content}}
+              <span>{{msg.content}}</span>
             </div>
             <div *ngIf="!msg.isText" class="msg">
               <img
@@ -95,7 +95,7 @@
         <div class="content">
           <div class="msg_div">
             <div *ngIf="msg.isText" class="msg">
-              {{msg.content}}
+              <span>{{msg.content}}</span>
             </div>
             <div *ngIf="!msg.isText" class="msg">
               <img
