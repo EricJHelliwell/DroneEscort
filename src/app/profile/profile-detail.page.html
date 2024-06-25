@@ -34,6 +34,8 @@
             />
           </ion-avatar>
           <h4 class="ion-margin-vertical">{{user.username}}</h4>
+          <h4 class="ion-margin-vertical">{{user.email}}</h4>
+          <h4 class="ion-margin-vertical">{{user.phone}}</h4>
           <p *ngIf="user.description">
             {{user.description}}
           </p>
@@ -72,7 +74,7 @@
       </ion-button>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <!-- <ion-row>
       <ion-col class="ion-no-padding">
         <ion-item lines="none" class="section">
           <ion-text color="dark">
@@ -102,12 +104,12 @@
           </ion-buttons>
         </ion-item>
       </ion-col>
-    </ion-row>
+    </ion-row> 
     <ion-row>
       <ion-col size="4" *ngFor="let photo of photos">
         <img class="image-element" [src]="photo" alt="">
       </ion-col>
-    </ion-row>
+    </ion-row> -->
   </ion-grid>
 <!-- Set description modal-->
   <ion-modal [isOpen]="isDescModalOpen">
