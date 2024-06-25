@@ -86,7 +86,7 @@
               srcset=""
             />
             </div>            
-            <ion-label class="time">{{ msg.createdAt | shortenDate }}</ion-label>
+            <ion-label class="ion-text-nowrap time">{{ msg.createdAt | shortenDate }}</ion-label>
           </div>
         </div>
       </div>
@@ -104,7 +104,7 @@
               srcset=""
             />
             </div>     
-            <ion-label class="time">{{ msg.createdAt | shortenDate }}</ion-label>
+            <ion-label class="ion-text-nowrap time">{{ msg.createdAt | shortenDate }}</ion-label>
           </div>
           <ion-avatar *ngIf="userMePhoto">
             <ion-img src="{{userMePhoto}}"/>
