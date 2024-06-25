@@ -14,12 +14,13 @@ ion-avatar {
   .lower_div {
     margin: 5px;
     font-family: "medium";
+    font-size: small;
 
     .left {
-      // display: flex;
-      // justify-content: flex-start;
-      // align-items: center;
-      // position: relative;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      position: relative;
 
       .content {
         display: flex;
@@ -54,11 +55,11 @@ ion-avatar {
     }
 
     .right {
-      // display: flex;
-      // justify-content: flex-start;
-      // flex-direction: row-reverse;
-      // align-items: center;
-      // position: relative;
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: row-reverse;
+      align-items: center;
+      position: relative;
 
       .content {
         display: flex;
