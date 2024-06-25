@@ -77,8 +77,8 @@
           </ion-avatar>
           <div class="msg_div">
             <div *ngIf="msg.isText" class="msg">
-              <span *ngIf="msg.content.length >= 10">{{msg.content}}</span>
-              <span *ngIf="msg.content.length < 10" class="ion-text-nowrap ion-padding  ion-text-right">{{msg.content}}</span>
+              <span *ngIf="msg.content.toString().indexOf(' ') != -1">{{msg.content}}</span>
+              <span *ngIf="msg.content.toString().indexOf(' ') == -1" class="ion-text-nowrap  ion-padding ion-text-left">{{msg.content}}</span>
             </div>
             <div *ngIf="!msg.isText" class="msg">
               <img
@@ -96,8 +96,8 @@
         <div class="content">
           <div class="msg_div">
             <div *ngIf="msg.isText" class="msg">
-              <span *ngIf="msg.content.length >= 10">{{msg.content}}</span>
-              <span *ngIf="msg.content.length < 10" class="ion-text-nowrap  ion-padding ion-text-left">{{msg.content}}</span>
+              <span *ngIf="msg.content.toString().indexOf(' ') != -1">{{msg.content}}</span>
+              <span *ngIf="msg.content.toString().indexOf(' ') == -1" class="ion-text-nowrap ion-padding ion-text-left">{{msg.content}}</span>
             </div>
             <div *ngIf="!msg.isText" class="msg">
               <img
