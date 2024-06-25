@@ -78,7 +78,7 @@
           <div class="msg_div">
             <div *ngIf="msg.isText" class="msg">
               <span *ngIf="msg.content.length >= 10">{{msg.content}}</span>
-              <span *ngIf="msg.content.length < 10" class="ion-text-nowrap ion-padding">{{msg.content}}</span>
+              <span *ngIf="msg.content.length < 10" class="ion-text-nowrap ion-padding  ion-text-left">{{msg.content}}</span>
             </div>
             <div *ngIf="!msg.isText" class="msg">
               <img
@@ -97,7 +97,7 @@
           <div class="msg_div">
             <div *ngIf="msg.isText" class="msg">
               <span *ngIf="msg.content.length >= 10">{{msg.content}}</span>
-              <span *ngIf="msg.content.length < 10" class="ion-text-nowrap  ion-padding">{{msg.content}}</span>
+              <span *ngIf="msg.content.length < 10" class="ion-text-nowrap  ion-padding ion-text-right">{{msg.content}}</span>
             </div>
             <div *ngIf="!msg.isText" class="msg">
               <img
