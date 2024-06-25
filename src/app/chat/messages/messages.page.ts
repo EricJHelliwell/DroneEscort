@@ -12,6 +12,7 @@ import { getUser, getUserProfilePhoto } from '../../library/user';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { uploadData, getUrl } from "aws-amplify/storage";
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 const client = generateClient<Schema>();
 
@@ -77,6 +78,8 @@ export class MessagesPage implements OnInit {
   }
 
   async loadMessage(conversationId) {
+    // await StatusBar.hide();
+
     const {errors, data: conv } = await client.models.Conversation.get ({
       id: conversationId,
     });
