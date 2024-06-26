@@ -76,7 +76,7 @@ export class MapsPage implements OnInit {
 
         const messageToDisplay = 'User location change.  New geo:\nlat: ' + 
         this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude;
-        sendOrderMessage(messageToDisplay);
+        sendOrderMessage(this.userId, messageToDisplay);
       });
 
  
@@ -109,7 +109,7 @@ export class MapsPage implements OnInit {
 
     // Create and Subscribe to order
     this.ReqId = await createNewOrder(this.authService);
-    sendOrderMessage(messageToDisplay);
+    sendOrderMessage(this.userId, messageToDisplay);
 
     const WatchId = monitorOrder((result) => {
       console.log(result);

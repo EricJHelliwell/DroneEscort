@@ -40,7 +40,7 @@ let ReqId : any = null;
     return ReqId;
   }
 
-  export async function sendOrderMessage (messageToDisplay:string)
+  export async function sendOrderMessage (userId:string, messageToDisplay:string)
   {
     if (!ReqId) {
       return;
@@ -51,7 +51,7 @@ let ReqId : any = null;
       isSent: true,
       isText: true,
       conversationId: ReqId,
-      sender: "System"
+      sender: userId
     });
   }
 
