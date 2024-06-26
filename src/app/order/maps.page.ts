@@ -121,7 +121,7 @@ export class MapsPage implements OnInit {
         loading.dismiss();
         this.showOrderButton();
         this.zone.run(() => {
-          this.router.navigate(['/tabs/chat', this.ReqId])});
+          this.router.navigate(['/message', this.ReqId])});
       }
     });
 
