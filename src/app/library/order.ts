@@ -28,13 +28,12 @@ let ReqId : any = null;
     });
 
     const newCount = user.chatCount + 1
-    client.models.User.update({
-      id: user.id,
+    const {data: updateUser} = await client.models.User.update({
+      id: this.userMe.id,
       chatCount: newCount,
-    })
-    .then((data) => {
-      authService.updateUserDB(data);
     });
+    authService.updateUserDB(updateUser);
+  
     
     ReqId = conv.id;
     return ReqId;
