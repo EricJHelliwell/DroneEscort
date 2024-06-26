@@ -49,7 +49,6 @@ const schema = a.schema({
         description: a.string(),
         conversations: a.hasMany("UserConversation", "userId"),
         location: a.ref('Location'),
-        counts: a.hasOne("UserCounts", "userId"),
         chatCount: a.integer().default(0),
         textCount: a.integer().default(0),
         imageCount: a.integer().default(0),
