@@ -63,10 +63,11 @@ export class InboxPage implements OnInit {
   }
 
   async getUserConversations() {
-    const {data: user } = await client.models.User.get ({
-      id: this.authService.userDatabaseId(),
+    const {data: userConvs } = await client.models.UserConversation.list({
+      filter: {
+        userId: {eq: this.authService.userDatabaseId()}
+      }
     });
-    const {data: userConvs } = await user.conversations();
 
     for (const conv of userConvs) {
         const {data: convDetail } = await conv.conversation();
