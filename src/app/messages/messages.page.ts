@@ -4,11 +4,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
 import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '../../../../amplify/data/resource';
-import { AuthGuardService } from '../../auth/auth-route-guard.service'
+import type { Schema } from '../../../amplify/data/resource';
+import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { parseISO } from 'date-fns';
-import { isDroneAssigned } from '../../library/order'
-import { getUser, getUserProfilePhoto } from '../../library/user';
+import { isDroneAssigned } from '../library/order'
+import { getUser, getUserProfilePhoto } from '../library/user';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { uploadData, getUrl } from "aws-amplify/storage";

@@ -10,6 +10,16 @@ const routes: Routes = [
     canActivate: [(next: ActivatedRouteSnapshot) => inject(AuthGuardService).canActivate(next)],
   },
   {
+    path: 'message',
+    children: [
+      {
+        path: ':conversationId',
+        loadChildren: () => import('./messages/messages.module').then(m => m.MessagesPageModule),
+        canActivate: [(next: ActivatedRouteSnapshot) => inject(AuthGuardService).canActivate(next)],
+      },
+    ]
+  },
+  {
     path: 'login',
     loadChildren: () => import('./auth/login/login.module').then( m => m.LoginPageModule)
   }];

@@ -40,7 +40,7 @@ export class ProfileActiveDetailPage implements OnInit {
       }
     });
     if (this.userIdArg) {
-        getUser(this.userIdArg, (result) => {
+        await getUser(this.userIdArg, (result) => {
           this.user = result;
         });
     }
@@ -50,7 +50,6 @@ export class ProfileActiveDetailPage implements OnInit {
     getUserProfilePhoto(this.user.id, (url) => {
       this.photo = url;
     });
-    console.log(this.user);
   }
 
   goToBack() {

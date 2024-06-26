@@ -42,7 +42,7 @@
     </ion-buttons>
   </div>
 
-    <div class="list_card" *ngFor="let item of conversations; ; let i = index" [routerLink]="['./', item.id]">
+    <div class="list_card" *ngFor="let item of conversations; ; let i = index" [routerLink]="['/message', item.id]">
       <div class="img" [style.backgroundImage]="'url(assets/images/drone-1.png)'"></div>
 
       <div class="details">
