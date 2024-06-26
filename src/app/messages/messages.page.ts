@@ -126,10 +126,12 @@ export class MessagesPage implements OnInit {
 
     // update last read of current reader
     const findMe = userConv.find(({userId}) => userId == this.userMe.id)
-    const {data: userConvUpdate} = await client.models.UserConversation.update({
-      id: findMe.id,
-      lastRead: now.toISOString()
-    })
+    if (findMe) {
+      const {data: userConvUpdate} = await client.models.UserConversation.update({
+        id: findMe.id,
+        lastRead: now.toISOString()
+      })
+    }
 
     // get the other party. Maybe not exist if pilot not assigned
     const findOther = userConv.find(({userId}) => userId != this.userMe.id)
@@ -156,7 +158,7 @@ export class MessagesPage implements OnInit {
       isSent: true,
       isText: true,
       conversationId: this.conversationId,
-      sender: this.userOther.id
+      sender: this.userMe.id
     });
     const {data: msgs } = await conv.messages();
     this.messages = msgs;
@@ -167,6 +169,7 @@ export class MessagesPage implements OnInit {
       userConversationId: this.conversationId,
       lastRead: now.toISOString(),
     });
+    console.log(convUser);
     const newCount = this.userMe.chatCount + 1
     client.models.User.update({
       id: this.userMe.id,
