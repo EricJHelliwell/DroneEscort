@@ -26,6 +26,12 @@ let ReqId : any = null;
       lastRead: now.toISOString(),
     });
 
+    const newCount = this.userMe.chatCount + 1
+    const { data: updateUser } = await client.models.User.update({
+      id: reqId,
+      chatCount: newCount,
+    });
+
     ReqId = conv.id;
     return ReqId;
   }

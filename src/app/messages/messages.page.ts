@@ -260,6 +260,11 @@ export class MessagesPage implements OnInit {
       conversationId: this.conversationId,
       sender: this.userMe.id
     });
+    const newCount = this.userMe.imageCount + 1
+    const { data: updateUser } = await client.models.User.update({
+      id: this.userMe.id,
+      imageCount: newCount,
+    });
 
     this.setAttachOpenModal(false);
   }
@@ -283,16 +288,20 @@ export class MessagesPage implements OnInit {
 }
 
   async goToSend(sendObj) {
-    const {data: droneMsg } = await client.models.Message.create({
+    const { data: droneMsg } = await client.models.Message.create({
       content: sendObj.value,
       isSent: true,
       isText: true,
       conversationId: this.conversationId,
       sender: this.userMe.id,
     });
-    console.log(droneMsg);
+    const newCount = this.userMe.textCount + 1
+    const { data: updateUser } = await client.models.User.update({
+      id: this.userMe.id,
+      textCount: newCount,
+    });
     sendObj.value = ""
-//    this.scrollToBottomNow();
+    this.scrollToBottomNow();
   }
 
   setDroneOpenModal(isOpen: boolean) {

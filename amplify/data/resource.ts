@@ -50,14 +50,9 @@ const schema = a.schema({
         conversations: a.hasMany("UserConversation", "userId"),
         location: a.ref('Location'),
         counts: a.hasOne("UserCounts", "userId"),
-      }),
-      UserCounts: a.
-      model({
         chatCount: a.integer().default(0),
         textCount: a.integer().default(0),
         imageCount: a.integer().default(0),
-        userId: a.id().required(),
-        user: a.belongsTo("User", "userId"),
       }),
       Drone: a
       .model({
