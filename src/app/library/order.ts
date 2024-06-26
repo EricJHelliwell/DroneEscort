@@ -7,31 +7,35 @@ const client = generateClient<Schema>();
 let updateSub : any = null;
 let ReqId : any = null;
  
- export async function createNewOrder(user:any): Promise<string> {
+ export async function createNewOrder(authService:AuthGuardService): Promise<string> {
     const now = new Date();
+    const user = authService.userDatabase();
     const convName =  user.username + " " + 
       now.toLocaleDateString("en-US") + " " +
       now.toLocaleTimeString("en-US");
-    const reqId = user.id;
+
     const {data: conv } = await client.models.Conversation.create({
       name: convName,
       active: true,
-      requestorId: reqId,
+      requestorId: user.id,
       droneId: "unassigned",
     });
 
     const {data: convUser } = await client.models.UserConversation.create({
-      userId: reqId,
+      userId: user.id,
       userConversationId: conv.id,
       lastRead: now.toISOString(),
     });
 
-    const newCount = this.userMe.chatCount + 1
-    const { data: updateUser } = await client.models.User.update({
-      id: reqId,
+    const newCount = user.chatCount + 1
+    client.models.User.update({
+      id: user.id,
       chatCount: newCount,
+    })
+    .then((data) => {
+      authService.updateUserDB(data);
     });
-
+    
     ReqId = conv.id;
     return ReqId;
   }

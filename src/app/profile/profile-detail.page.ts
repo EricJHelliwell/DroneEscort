@@ -8,6 +8,7 @@ import { signOut } from 'aws-amplify/auth';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
+import { getUser, getUserProfilePhoto } from '../library/user'
 
 const client = generateClient<Schema>();
 
@@ -39,18 +40,16 @@ export class ProfileDetailPage implements OnInit {
     }
 
     async ngOnInit() {
-      this.user = this.authService.userDatabase();
+      await getUser(this.authService.userDatabaseId(), (result) => {
+        this.user = result;
+      });
   
-      const result = await getUrl({path: "profile-pictures/" + this.user.id + ".png"});
-      fetch(result.url)
-      .then((response) => {
-        if (response.status != 404)
-          this.photo = result.url; 
+      await getUserProfilePhoto(this.user.id, (url) => {
+        this.photo = url;
       });
       }
 
    async ionViewDidEnter() {
-    console.log('ionViewWillEnter');
   }
 
     async takePicture() {
