@@ -27,12 +27,12 @@ let ReqId : any = null;
       lastRead: now.toISOString(),
     });
 
-    const newCount = user.chatCount + 1
-    const {data: updateUser} = await client.models.User.update({
-      id: this.userMe.id,
-      chatCount: newCount,
-    });
-    authService.updateUserDB(updateUser);
+    // const newCount = user.chatCount + 1
+    // const {data: updateUser} = await client.models.User.update({
+    //   id: this.userMe.id,
+    //   chatCount: newCount,
+    // });
+    // authService.updateUserDB(updateUser);
   
     
     ReqId = conv.id;

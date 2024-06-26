@@ -271,12 +271,12 @@ export class MessagesPage implements OnInit {
       sender: this.userMe.id
     });
 
-    const newCount = this.userMe.imageCount + 1
-    const {data: updateUser} = await client.models.User.update({
-      id: this.userMe.id,
-      imageCount: newCount,
-    });
-    this.authService.updateUserDB(updateUser);
+    // const newCount = this.userMe.imageCount + 1
+    // const {data: updateUser} = await client.models.User.update({
+    //   id: this.userMe.id,
+    //   imageCount: newCount,
+    // });
+    // this.authService.updateUserDB(updateUser);
 
 
     this.setAttachOpenModal(false);
@@ -308,13 +308,15 @@ export class MessagesPage implements OnInit {
       conversationId: this.conversationId,
       sender: this.userMe.id,
     });
+
     // update counts, async
-    const newCount = this.userMe.textCount + 1
-    const {data: updateUser} = await client.models.User.update({
-      id: this.userMe.id,
-      textCount: newCount,
-    });
-    this.authService.updateUserDB(updateUser);
+    // const newCount = this.userMe.textCount + 1
+    // const {data: updateUser} = await client.models.User.update({
+    //   id: this.userMe.id,
+    //   textCount: newCount,
+    // });
+    // this.authService.updateUserDB(updateUser);
+
     sendObj.value = ""
     this.scrollToBottomNow();
   }
