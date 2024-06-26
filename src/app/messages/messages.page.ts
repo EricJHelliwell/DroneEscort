@@ -167,7 +167,14 @@ export class MessagesPage implements OnInit {
       userConversationId: this.conversationId,
       lastRead: now.toISOString(),
     });
-
+    const newCount = this.userMe.chatCount + 1
+    client.models.User.update({
+      id: this.userMe.id,
+      chatCount: newCount,
+    })
+    .then((data) => {
+      this.authService.updateUserDB(data);
+    });
   }
 
   goToBack() {
