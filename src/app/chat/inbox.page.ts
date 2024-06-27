@@ -57,7 +57,8 @@ export class InboxPage implements OnInit {
         const result = this.conversations.find((conv) => data.conversationId == conv.id);
         if (result) {
           result.msgCount++;
-          result.lastUpdatedAt = data.createdAt;       }
+          result.lastUpdatedAt = data.createdAt;      
+         }
       }
     });
   }

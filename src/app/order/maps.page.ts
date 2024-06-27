@@ -108,7 +108,7 @@ export class MapsPage implements OnInit {
     });
 
     // Create and Subscribe to order
-    this.ReqId = await createNewOrder(this.authService);
+    this.ReqId = await createNewOrder(this.authService.userDatabase());
     sendOrderMessage(this.userId, messageToDisplay);
 
     const WatchId = monitorOrder((result) => {

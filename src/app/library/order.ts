@@ -7,9 +7,9 @@ const client = generateClient<Schema>();
 let updateSub : any = null;
 let ReqId : any = null;
  
- export async function createNewOrder(authService:AuthGuardService): Promise<string> {
+ export async function createNewOrder(user): Promise<string> {
     const now = new Date();
-    const user = authService.userDatabase();
+
     const convName =  user.username + " " + 
       now.toLocaleDateString("en-US") + " " +
       now.toLocaleTimeString("en-US");
@@ -29,10 +29,9 @@ let ReqId : any = null;
 
     // const newCount = user.chatCount + 1
     // const {data: updateUser} = await client.models.User.update({
-    //   id: this.userMe.id,
+    //   id: user.id,
     //   chatCount: newCount,
     // });
-    // authService.updateUserDB(updateUser);
   
     
     ReqId = conv.id;
