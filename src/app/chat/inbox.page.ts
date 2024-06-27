@@ -13,6 +13,7 @@ const client = generateClient<Schema>();
 type PhotoStorage = {
   userId: string,
   conversationId: string,
+  createdAt: string,
   username: string,
   url: string
 }
@@ -223,9 +224,13 @@ export class InboxPage implements OnInit {
       await getUserProfilePhoto(activeUser.userId, (url) => {
         this.activePhotos.push({
           userId: activeUser.userId, 
-          conversationId: newConv.id, 
+          conversationId: newConv.id,
+          createdAt: newConv.createdAt, 
           username: newUser.username,
           url: url
+        });
+        this.activePhotos.sort(function(a, b) {
+          return (a.createdAt < b.createdAt) ? -1 : ((a.createdAt > b.createdAt) ? 1 : 0);
         });
       });
     }
