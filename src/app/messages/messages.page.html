@@ -119,19 +119,25 @@
 
 <ion-footer>
   <div class="footer">
-    <div class="sendbox">
-      <ion-input #sendText id="sendText" type="text" placeholder="Send Message..." 
-        class="ion-no-padding" (keyup.enter)="goToSend(sendText)"></ion-input>
-      <div class="icon">
-        <ion-buttons>
-          <ion-button (click)="setAttachOpenModal(true)">
-            <ion-icon class="attach" name="attach-outline"></ion-icon>
-          </ion-button>
-          <ion-button (click)="goToSend(sendText)">
-            <ion-icon slot="start" name="send-outline" color="dark"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </div>
-    </div>
+    <ion-grid class="sendbox">
+      <ion-row>
+        <ion-col size = "9">
+          <ion-input #sendText id="sendText" type="text" placeholder="Send Message..." 
+            class="ion-no-padding" (keyup.enter)="goToSend(sendText)"></ion-input>
+        </ion-col>
+        <ion-col size="3">
+          <div class="icon">
+          <ion-buttons>
+            <ion-button (click)="setAttachOpenModal(true)">
+              <ion-icon class="attach" name="attach-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="goToSend(sendText)">
+              <ion-icon slot="start" name="send-outline" color="dark"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </div>
 </ion-footer>
