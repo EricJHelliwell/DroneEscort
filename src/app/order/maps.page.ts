@@ -97,7 +97,7 @@ export class MapsPage implements OnInit {
   }
 
   async showLoading() {
-    const messageToDisplay = this.authService.userPreferredName + ' requested a drone.  You will be met at geo:\nlat: ' + 
+    const messageToDisplay = this.authService.userPreferredName() + ' requested a drone.  You will be met at geo:\nlat: ' + 
         this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude;
 
     const loading = await this.loadingCtrl.create({
