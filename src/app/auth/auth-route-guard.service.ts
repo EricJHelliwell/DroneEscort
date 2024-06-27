@@ -150,5 +150,15 @@ export class AuthGuardService implements OnInit {
   public updateUserDB(newUser) : any {
     this.userDB = newUser;
   } 
+
+  public async refreshUserDB() {
+    const { errors, data: existingUser } = await client.models.User.get({
+      id: this.userDB.id
+    });
+    if (!errors) {
+      this.userDB = existingUser;
+    }
+  }
+
 }
 

@@ -169,15 +169,6 @@ export class MessagesPage implements OnInit {
       userConversationId: this.conversationId,
       lastRead: now.toISOString(),
     });
-    console.log(convUser);
-    const newCount = this.userMe.chatCount + 1
-    client.models.User.update({
-      id: this.userMe.id,
-      chatCount: newCount,
-    })
-    .then((data) => {
-      this.authService.updateUserDB(data);
-    });
   }
 
   goToBack() {
@@ -271,12 +262,12 @@ export class MessagesPage implements OnInit {
       sender: this.userMe.id
     });
 
-    // const newCount = this.userMe.imageCount + 1
-    // const {data: updateUser} = await client.models.User.update({
-    //   id: this.userMe.id,
-    //   imageCount: newCount,
-    // });
-    // this.authService.updateUserDB(updateUser);
+    const newCount = this.userMe.imageCount + 1
+    const {data: updateUser} = await client.models.User.update({
+      id: this.userMe.id,
+      imageCount: newCount,
+    });
+    this.authService.updateUserDB(updateUser);
 
 
     this.setAttachOpenModal(false);
@@ -310,12 +301,12 @@ export class MessagesPage implements OnInit {
     });
 
     // update counts, async
-    // const newCount = this.userMe.textCount + 1
-    // const {data: updateUser} = await client.models.User.update({
-    //   id: this.userMe.id,
-    //   textCount: newCount,
-    // });
-    // this.authService.updateUserDB(updateUser);
+    const newCount = this.userMe.textCount + 1
+    const {data: updateUser} = await client.models.User.update({
+      id: this.userMe.id,
+      textCount: newCount,
+    });
+    this.authService.updateUserDB(updateUser);
 
     sendObj.value = ""
     this.scrollToBottomNow();

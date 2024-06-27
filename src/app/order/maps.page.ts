@@ -109,6 +109,7 @@ export class MapsPage implements OnInit {
 
     // Create and Subscribe to order
     this.ReqId = await createNewOrder(this.authService.userDatabase());
+    this.authService.refreshUserDB();
     sendOrderMessage(this.userId, messageToDisplay);
 
     const WatchId = monitorOrder((result) => {

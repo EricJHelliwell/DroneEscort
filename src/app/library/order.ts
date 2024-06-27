@@ -27,11 +27,11 @@ let ReqId : any = null;
       lastRead: now.toISOString(),
     });
 
-    // const newCount = user.chatCount + 1
-    // const {data: updateUser} = await client.models.User.update({
-    //   id: user.id,
-    //   chatCount: newCount,
-    // });
+    const newCount = user.chatCount + 1
+    const {data: updateUser} = await client.models.User.update({
+       id: user.id,
+       chatCount: newCount,
+    });
   
     
     ReqId = conv.id;

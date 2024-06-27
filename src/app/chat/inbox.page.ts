@@ -1,6 +1,6 @@
 
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, IsActiveMatchOptions  } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { getUrl } from "aws-amplify/storage";
@@ -29,14 +29,12 @@ export class InboxPage implements OnInit {
   subUserConv = null;
   subUnassigned = null;
   subMessages = null;
+  subConvUpdates = null;
 
   constructor(public router: Router,
     public navCtrl: NavController, private authService: AuthGuardService) { }
 
   ngOnInit() {
-  }
-
-  ionViewDidEnter() {
     this.conversations = [];
     this.getUserConversations();
     if (this.authService.isPilot)
@@ -44,10 +42,17 @@ export class InboxPage implements OnInit {
     this.watchMessages();
   }
 
-  ionViewDidLeave() {
+  ngOnDestoy() {
     if (this.subUserConv) this.subUserConv.unsubscribe();
     if (this.subUnassigned) this.subUnassigned.unsubscribe();
     if (this.subMessages) this.subMessages.unsubscribe();
+    if (this.subConvUpdates) this.subConvUpdates.unsubscribe();
+  }
+
+  ionViewDidEnter() {
+  }
+
+  ionViewDidLeave() {
   }
 
   async watchMessages() {
@@ -56,9 +61,76 @@ export class InboxPage implements OnInit {
       next: (data) => {
         const result = this.conversations.find((conv) => data.conversationId == conv.id);
         if (result) {
-          result.msgCount++;
+          const isActive = this.router.isActive('/tabs/chat', {
+            matrixParams: 'ignored',
+            queryParams: 'ignored',
+            fragment: 'ignored',
+            paths: 'exact'
+          });
+          // only update msg count if I am the active page
+          if (isActive) {
+            result.msgCount++;
+          } 
           result.lastUpdatedAt = data.createdAt;      
          }
+      }
+    });
+  }
+
+  async watchNewUnassigned() {
+    //subscribe
+    this.subUnassigned = client.models.Conversation.onCreate({ 
+      filter: {
+        and: [
+          { droneId: { eq: "unassigned" }},
+          { active: { eq: true }},
+        ]
+      }
+    })
+    .subscribe({
+      next: (data) => {
+        // if we don't have it, add it 
+        const result = this.conversations.find((conv) => data.id == conv.id);
+        if (!result) {
+          this.pushAndSort(data, null); 
+        }
+      }
+    });
+  }
+
+  async watchNewUserConversation() {
+    this.subUserConv = client.models.UserConversation.onCreate( { 
+      filter: {
+        userId: {
+          eq: this.authService.userDatabaseId(),
+        },
+      }
+    }).subscribe({
+      next: (data) => {
+        const result = this.conversations.find((conv) => data.id == conv.id);
+        if (!result) {
+          data.conversation().then((convDetail) => {
+            this.pushAndSort(convDetail.data, data.lastRead);
+          });
+        }
+      }
+    });
+  }
+
+  async watchConversationUpdates() {
+    this.subConvUpdates = client.models.Conversation.onUpdate({ 
+    })
+    .subscribe({
+      next: (data) => {
+        // if we don't have it, add it 
+        const result = this.conversations.find((conv) => data.id == conv.id);
+        if (result) {
+          // remove old copy and update if it is not inactove
+          this.conversations.splice(this.conversations.findIndex((conv) =>  data.id == conv.id), 1);
+          if (data.active == true) {
+            this.pushAndSort(data, null);
+          } 
+        }
       }
     });
   }
@@ -72,22 +144,17 @@ export class InboxPage implements OnInit {
 
     for (const conv of userConvs) {
         const {data: convDetail } = await conv.conversation();
-        this.pushAndSort(convDetail, conv.lastRead);
+        if (convDetail) {
+          this.pushAndSort(convDetail, conv.lastRead);
+        }
     }
 
-    this.subUserConv = client.models.UserConversation.onCreate( { 
-      filter: {
-        userId: {
-          eq: this.authService.userDatabaseId(),
-        },
-      }
-    }).subscribe({
-      next: (data) => {
-        data.conversation().then((convDetail) => {
-          this.pushAndSort(convDetail.data, data.lastRead);
-        });
-      }
-    });
+    // we only watch subscribers since pilots watch unassigned
+    if (this.authService.isSubscriber()) {
+      this.watchNewUserConversation();
+    }
+
+    this.watchConversationUpdates();
   }
 
   async getPilotConvos() {
@@ -104,18 +171,7 @@ export class InboxPage implements OnInit {
       this.pushAndSort(conv, null);
     }
 
-    //subscribe
-      this.subUnassigned = client.models.Conversation.onCreate({ 
-        filter: {
-          and: [
-            { droneId: { eq: "unassigned" }},
-            { active: { eq: true }},
-          ]
-        }
-      })
-      .subscribe({
-        next: (data) => { this.pushAndSort(data, null); }
-      });
+    this.watchNewUnassigned();
   }
 
   
@@ -171,5 +227,13 @@ export class InboxPage implements OnInit {
   goToProfile(id)
   {
     this.router.navigate(['./profile', id]);
+  }
+
+  goToConversation(id) {
+    const result = this.conversations.find((conv) => id == conv.id);
+    if (result) {
+      result.msgCount = 0;
+      this.router.navigate(['/message', id]);
+    }
   }
 }
