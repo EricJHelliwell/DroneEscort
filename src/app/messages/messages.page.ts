@@ -269,12 +269,8 @@ export class MessagesPage implements OnInit {
       sender: this.userMe.id
     });
 
-    
     this.setAttachOpenModal(false);
-    // push message now for efficiency in display
-    this.pushMessageType(msg);
-    this.scrollToBottomNow();
-    
+
     const newCount = this.userMe.imageCount + 1
     const {data: updateUser} = await client.models.User.update({
       id: this.userMe.id,
