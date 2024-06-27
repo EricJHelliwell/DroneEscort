@@ -149,6 +149,7 @@ export class AuthGuardService implements OnInit {
 
   public updateUserDB(newUser) : any {
     this.userDB = newUser;
+    return this.userDB;
   } 
 
   public async refreshUserDB() {
@@ -157,7 +158,9 @@ export class AuthGuardService implements OnInit {
     });
     if (!errors) {
       this.userDB = existingUser;
+      return (this.userDB)
     }
+    return null;
   }
 
 }

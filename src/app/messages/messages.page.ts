@@ -267,7 +267,7 @@ export class MessagesPage implements OnInit {
       id: this.userMe.id,
       imageCount: newCount,
     });
-    this.authService.updateUserDB(updateUser);
+    this.userMe = this.authService.updateUserDB(updateUser);
 
 
     this.setAttachOpenModal(false);
@@ -306,7 +306,7 @@ export class MessagesPage implements OnInit {
       id: this.userMe.id,
       textCount: newCount,
     });
-    this.authService.updateUserDB(updateUser);
+    this.userMe = this.authService.updateUserDB(updateUser);
 
     sendObj.value = ""
     this.scrollToBottomNow();
