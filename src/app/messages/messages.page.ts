@@ -151,29 +151,31 @@ export class MessagesPage implements OnInit {
   }
 
   async setDrone(id:string, name:string) {
+    const now = new Date();
+    // connect the pilot to the chat
+    const {data: convUser } = await client.models.UserConversation.create({
+      userId: this.userMe.id,
+      userConversationId: this.conversationId,
+      lastRead: now.toISOString(),
+    });
+    // put message for subscriber
+    const {data: droneMsg } = await client.models.Message.create({
+      content: "Drone " + name + " assigned.  Your pilot is " + this.userMe.username + ". Stay close.",
+      isSent: true,
+      isText: true,
+      conversationId: this.conversationId,
+      sender: this.userMe.id
+    });
+    // update the drone.  This will release user from wait mode on Order
     const {errors, data: conv } = await client.models.Conversation.update ({
       id: this.conversationId,
       droneId: id,
       name: name,
       active: true
     });
-    const now = new Date();
-    const {data: droneMsg } = await client.models.Message.create({
-      content: "Drone " + name + " assigned.  Stay close.",
-      isSent: true,
-      isText: true,
-      conversationId: this.conversationId,
-      sender: this.userMe.id
-    });
+
     const {data: msgs } = await conv.messages();
     this.messages = msgs;
-
-    // now connect the pilot to the chat
-    const {data: convUser } = await client.models.UserConversation.create({
-      userId: this.userMe.id,
-      userConversationId: this.conversationId,
-      lastRead: now.toISOString(),
-    });
   }
 
   goToBack() {
