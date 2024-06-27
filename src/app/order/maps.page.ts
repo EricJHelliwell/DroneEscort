@@ -97,7 +97,7 @@ export class MapsPage implements OnInit {
   }
 
   async showLoading() {
-    const messageToDisplay = 'Looking for your drone.  Stay nearby.  You will be met at geo:\nlat: ' + 
+    const messageToDisplay = 'Call dispatched.  You will be met at geo:\nlat: ' + 
         this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude;
 
     const loading = await this.loadingCtrl.create({
