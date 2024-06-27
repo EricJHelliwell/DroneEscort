@@ -67,6 +67,11 @@ export class MessagesPage implements OnInit {
   }
 
   async pushMessageType(msg: any)  {
+    // ensure msg is unique
+    const findMsg = this.messages.find((id) => msg.id == id);
+    if (findMsg)
+      return;
+
     if (!msg.isText) {
       const URL = await getUrl({path: msg.content});
       msg.content = URL.url.toString();
@@ -262,15 +267,18 @@ export class MessagesPage implements OnInit {
       sender: this.userMe.id
     });
 
+    
+    this.setAttachOpenModal(false);
+    // push message now for efficiency in display
+    this.pushMessageType(msg);
+    this.scrollToBottomNow();
+    
     const newCount = this.userMe.imageCount + 1
     const {data: updateUser} = await client.models.User.update({
       id: this.userMe.id,
       imageCount: newCount,
     });
     this.userMe = this.authService.updateUserDB(updateUser);
-
-
-    this.setAttachOpenModal(false);
   }
   
   goToAttachGallery() {
@@ -292,7 +300,7 @@ export class MessagesPage implements OnInit {
 }
 
   async goToSend(sendObj) {
-    const { data: droneMsg } = await client.models.Message.create({
+    const { data: msg } = await client.models.Message.create({
       content: sendObj.value,
       isSent: true,
       isText: true,
@@ -300,7 +308,11 @@ export class MessagesPage implements OnInit {
       sender: this.userMe.id,
     });
 
-    // update counts, async
+    // push message now for efficiency in display
+    this.pushMessageType(msg);
+    this.scrollToBottomNow();
+
+        // update counts, async
     const newCount = this.userMe.textCount + 1
     const {data: updateUser} = await client.models.User.update({
       id: this.userMe.id,
@@ -309,7 +321,6 @@ export class MessagesPage implements OnInit {
     this.userMe = this.authService.updateUserDB(updateUser);
 
     sendObj.value = ""
-    this.scrollToBottomNow();
   }
 
   setDroneOpenModal(isOpen: boolean) {
