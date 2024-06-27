@@ -6,12 +6,14 @@ import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { getUrl } from "aws-amplify/storage";
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
-import { getUserProfilePhoto } from '../library/user'
+import { getUserProfilePhoto, getUser } from '../library/user'
 
 const client = generateClient<Schema>();
 
 type PhotoStorage = {
   userId: string,
+  conversationId: string,
+  username: string,
   url: string
 }
 
@@ -23,7 +25,6 @@ type PhotoStorage = {
 export class InboxPage implements OnInit {
 
   user: any;
-  activeUsers: string[] = [];
   activePhotos: PhotoStorage[] = [];
   conversations: any[];
   subUserConv = null;
@@ -122,11 +123,15 @@ export class InboxPage implements OnInit {
     })
     .subscribe({
       next: (data) => {
-        // if we don't have it, add it 
+        // if we don't have it, ignor
         const result = this.conversations.find((conv) => data.id == conv.id);
         if (result) {
-          // remove old copy and update if it is not inactove
-          this.conversations.splice(this.conversations.findIndex((conv) =>  data.id == conv.id), 1);
+          // remove old copy and update if it is not inactive
+          this.conversations.splice(this.conversations.findIndex((conv) =>  
+              data.id == conv.id), 1);
+          // remove active photo
+          this.activePhotos.splice(this.activePhotos.findIndex((conv) => 
+              data.id == conv.conversationId ), 1);
           if (data.active == true) {
             this.pushAndSort(data, null);
           } 
@@ -210,15 +215,22 @@ export class InboxPage implements OnInit {
     if (errors)
       return;
     for (const activeUser of actives) {
-      const found = this.activeUsers.find((userId) => userId == activeUser.userId);
-      if (!found) {
-        this.activeUsers.push(activeUser.userId);
-        getUserProfilePhoto(activeUser.userId, (url) => {
-          this.activePhotos.push({userId: activeUser.userId, url: url});
-        })
-      }
+      var newUser: any;
+      await getUser(activeUser.userId, (result) => {
+        newUser = result;
+      });
+
+      await getUserProfilePhoto(activeUser.userId, (url) => {
+        this.activePhotos.push({
+          userId: activeUser.userId, 
+          conversationId: newConv.id, 
+          username: newUser.username,
+          url: url
+        });
+      });
     }
   }
+  
 
   goToBack() {
     this.navCtrl.back();
