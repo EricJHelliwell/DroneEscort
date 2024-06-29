@@ -11,7 +11,7 @@
           EMERGENCY
       </ion-button>
     </ion-buttons>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="isSubscriber">
       <ion-button id="startOrder" (click)="onOrder()" size="large" fill="solid" color="{{orderColor}}">
         {{orderText}}
       </ion-button>

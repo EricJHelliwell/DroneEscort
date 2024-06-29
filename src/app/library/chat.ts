@@ -9,6 +9,7 @@ import { getUserProfilePhoto } from '../library/user'
 const client = generateClient<Schema>();
 
 export async function getActiveConvUsers(): Promise<string[]> {
+
     const {errors, data: convs } = await client.models.Conversation.list ({
         filter: {
         active: {eq: true}
@@ -20,7 +21,6 @@ export async function getActiveConvUsers(): Promise<string[]> {
     const filter = {
         or: convs.map(conv => ({ userConversationId: { eq: conv.id } }))
     };
-
     const {data: users } = await client.models.UserConversation.list ({ filter });
     var userIds = users.map(({ userId }) => userId);
     return [...new Set(userIds)];
