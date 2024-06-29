@@ -6,14 +6,14 @@
         <img src="assets/images/uss_drone.jpg"/>
       </ion-avatar>
     </ion-buttons>
-    <ion-buttons slot="end">
+    <!-- <ion-buttons slot="end">
       <ion-button>
         <ion-icon slot="start" name="search-outline" color="dark"></ion-icon>
       </ion-button>
       <ion-button>
         <ion-icon slot="start" name="ellipsis-vertical-outline" color="dark"></ion-icon>
       </ion-button>
-    </ion-buttons>
+    </ion-buttons> -->
     <ion-title>Chats</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -27,7 +27,10 @@
           <ion-label class="title">Now Active</ion-label>
         </div>
         <div class="all_btn">
-          <ion-label>See All</ion-label>
+          <ion-buttons>
+            <ion-button size="small" (click)="seeAllMessages()" *ngIf="seeAll">See Active</ion-button>
+            <ion-button size="small" (click)="seeAllMessages()" *ngIf="!seeAll">See All</ion-button>
+          </ion-buttons>
         </div>
       </div>
     </div>

@@ -58,7 +58,6 @@ export class AuthGuardService implements OnInit {
     .then((auth) => {
       this.loggedIn = true;
       this.authDetails = auth.tokens.idToken.payload;
-      console.log(this.authDetails);
     })
     .catch(err => {
       console.log(err);
@@ -77,7 +76,6 @@ export class AuthGuardService implements OnInit {
         }
       }
     });
-    console.log(existingUser);
 
     if (!existingUser || existingUser.length === 0) {
       const { errors, data: newuser } = await client.models.User.create({

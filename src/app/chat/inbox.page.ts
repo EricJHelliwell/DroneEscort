@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router, IsActiveMatchOptions  } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { AuthGuardService } from '../auth/auth-route-guard.service'
-import { getUrl } from "aws-amplify/storage";
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
 import { getUserProfilePhoto, getUser } from '../library/user'
@@ -24,8 +23,7 @@ type PhotoStorage = {
   styleUrls: ['./inbox.page.scss'],
 })
 export class InboxPage implements OnInit {
-
-  user: any;
+  seeAll: boolean = false;
   activePhotos: PhotoStorage[] = [];
   conversations: any[];
   subUserConv = null;
@@ -37,24 +35,39 @@ export class InboxPage implements OnInit {
     public navCtrl: NavController, private authService: AuthGuardService) { }
 
   ngOnInit() {
+    this.initConversations();
+  }
+
+  ngOnDestoy() {
+    this.clearWatches();
+  }
+
+  initConversations() {
     this.conversations = [];
+    this.activePhotos = [];
     this.getUserConversations();
     if (this.authService.isPilot)
       this.getPilotConvos();
     this.watchMessages();
   }
 
-  ngOnDestoy() {
-    if (this.subUserConv) this.subUserConv.unsubscribe();
-    if (this.subUnassigned) this.subUnassigned.unsubscribe();
-    if (this.subMessages) this.subMessages.unsubscribe();
-    if (this.subConvUpdates) this.subConvUpdates.unsubscribe();
-  }
-
-  ionViewDidEnter() {
-  }
-
-  ionViewDidLeave() {
+  clearWatches() {
+    if (this.subUserConv) {
+      this.subUserConv.unsubscribe();
+      this.subUserConv = null;
+    }
+    if (this.subUnassigned) {
+      this.subUnassigned.unsubscribe();
+      this.subUnassigned = null;
+    }
+    if (this.subMessages) {
+      this.subMessages.unsubscribe();
+      this.subMessages = null;
+    }
+    if (this.subConvUpdates) {
+      this.subConvUpdates.unsubscribe();
+      this.subConvUpdates = null;
+    }
   }
 
   async watchMessages() {
@@ -72,8 +85,8 @@ export class InboxPage implements OnInit {
           // only update msg count if I am the active page
           if (isActive) {
             result.msgCount++;
+            result.lastUpdatedAt = data.createdAt;      
           } 
-          result.lastUpdatedAt = data.createdAt;      
          }
       }
     });
@@ -133,9 +146,7 @@ export class InboxPage implements OnInit {
           // remove active photo
           this.activePhotos.splice(this.activePhotos.findIndex((conv) => 
               data.id == conv.conversationId ), 1);
-          if (data.active == true) {
-            this.pushAndSort(data, null);
-          } 
+          this.pushAndSort(data, null);
         }
       }
     });
@@ -148,11 +159,14 @@ export class InboxPage implements OnInit {
       }
     });
 
-    for (const conv of userConvs) {
-        const {data: convDetail } = await conv.conversation();
-        if (convDetail) {
-          this.pushAndSort(convDetail, conv.lastRead);
-        }
+    const filter = {
+      or: userConvs.map(({userConversationId}) => ({ id: { eq: userConversationId } })),
+      and: {or: [{active: {eq: !this.seeAll}}, {active: {eq: true}}]}
+    };
+    const {data: convs } = await client.models.Conversation.list({ filter });
+    for (const conv of convs) {
+      const find = userConvs.find((userConv) => userConv.userConversationId = conv.id);
+      this.pushAndSort(conv, find.lastRead);
     }
 
     // we only watch subscribers since pilots watch unassigned
@@ -183,8 +197,6 @@ export class InboxPage implements OnInit {
   
   async pushAndSort(newConv, dateLastRead)
   {
-    if (newConv.active == false)
-      return;
     // add the unread message count dynamically to object
     const {data: msgs } = await newConv.messages();
     const result = msgs.filter((msg) => !dateLastRead || msg.createdAt > dateLastRead );
@@ -252,5 +264,11 @@ export class InboxPage implements OnInit {
       result.msgCount = 0;
       this.router.navigate(['/message', id]);
     }
+  }
+
+  seeAllMessages() {
+    this.seeAll = !this.seeAll;
+    this.clearWatches();
+    this.initConversations();
   }
 }
