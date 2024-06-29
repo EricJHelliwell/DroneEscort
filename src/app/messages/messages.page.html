@@ -22,52 +22,6 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-modal [isOpen]="isDroneModalOpen">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Assign Drone</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="setDroneOpenModal(false)">Close</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
-        <ion-radio-group value="dronelist">
-          <ion-item *ngFor="let drone of drones">
-            <ion-radio value="{{drone.id}}" (click)="setDrone(drone.id, drone.name)">{{drone.name}}</ion-radio>
-          </ion-item>
-        </ion-radio-group>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
-  <ion-modal [isOpen]="isAttachModalOpen">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-buttons slot="start">
-            <ion-button (click)="setAttachOpenModal(false)">Close</ion-button>
-          </ion-buttons>
-          <ion-title>Attachment Type</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="setAttachOpenModal(false)">OK</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
-        <ion-radio-group value="attachlist">
-          <ion-item>
-            <ion-radio value="galleryAttach" (click)="goToAttachPhoto(true)">Camera</ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-radio value="photoAttach" (click)="goToAttachPhoto(false)">Photo Gallery</ion-radio>
-          </ion-item>
-        </ion-radio-group>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
   <div class="main-content" #content>
     <div class="lower_div" *ngFor="let msg of messages">
       <div class="left" *ngIf="msg.sender && msg.sender != userMe.id">
@@ -137,6 +91,54 @@
       </ion-row>
     </ion-grid>
 </ion-footer>
+
+<ion-modal [isOpen]="isDroneModalOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Assign Drone</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="setDroneOpenModal(false)">Close</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-radio-group value="dronelist">
+        <ion-item *ngFor="let drone of drones">
+          <ion-radio value="{{drone.id}}" (click)="setDrone(drone.id, drone.name)">{{drone.name}}</ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="isAttachModalOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button (click)="setAttachOpenModal(false)">Close</ion-button>
+        </ion-buttons>
+        <ion-title>Attachment Type</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="setAttachOpenModal(false)">OK</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-radio-group value="attachlist">
+        <ion-item>
+          <ion-radio value="galleryAttach" (click)="goToAttachPhoto(true)">Camera</ion-radio>
+        </ion-item>
+        <ion-item>
+          <ion-radio value="photoAttach" (click)="goToAttachPhoto(false)">Photo Gallery</ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+
 
 <!-- <ion-footer>
   <div class="footer">
