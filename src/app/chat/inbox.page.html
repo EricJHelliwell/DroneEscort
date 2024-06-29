@@ -62,8 +62,8 @@
         <div class="flex_row">
           <ion-label class="text">Created: {{ item.createdAt | shortenDate }}</ion-label>
         </div>
-        <div *ngIf="item.emergency == true" class="flex_row">
-          <ion-label class="text" color="danger">EMERGENCY CALL</ion-label>
+        <div *ngIf="item.emergency == true" class="flex_row_red">
+          <ion-label class="text">EMERGENCY CALL</ion-label>
         </div>
       </div>
     </div>

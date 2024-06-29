@@ -208,6 +208,6 @@ export class MapsPage implements OnInit {
     this.authService.refreshUserDB();
     sendOrderMessage(this.userId, messageToDisplay);
     this.isEmergencyModalOpen = false;
-    this.router.navigate(['tel:'+this.authService.userDatabase().phone]);
+    window.open('tel:'+this.authService.userDatabase().phone);
   }
 }

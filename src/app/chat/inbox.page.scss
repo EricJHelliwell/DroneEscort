@@ -62,6 +62,10 @@ ion-header {
       display: block;
       width: 90%;
 
+      .flex_row_red {
+        color: red
+      }
+
       .flex_row {
         display: flex;
         justify-content: space-between;

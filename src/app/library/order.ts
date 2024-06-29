@@ -34,7 +34,6 @@ let ReqId : any = null;
        chatCount: newCount,
     });
   
-    
     ReqId = conv.id;
     return ReqId;
   }

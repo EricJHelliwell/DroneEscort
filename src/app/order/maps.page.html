@@ -7,12 +7,12 @@
       </ion-avatar>
     </ion-buttons>
     <ion-buttons slot="start" *ngIf="isSubscriber">
-      <ion-button id="startEmergency" (click)="isEmergencyModalOpen = true" size="medium" fill="solid" color="danger">
+      <ion-button id="startEmergency" (click)="isEmergencyModalOpen = true" size="large" fill="solid" color="danger">
           EMERGENCY
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button id="startOrder" (click)="onOrder()" size="medium" fill="solid" color="{{orderColor}}">
+      <ion-button id="startOrder" (click)="onOrder()" size="large" fill="solid" color="{{orderColor}}">
         {{orderText}}
       </ion-button>
     </ion-buttons>
