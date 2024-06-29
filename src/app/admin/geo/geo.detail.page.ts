@@ -14,6 +14,7 @@ const client = generateClient<Schema>();
 export class GeoBoundaryDetailPage implements OnInit {
   @ViewChild('domain') private geoDomain: any;
   @ViewChild('desc') private geoDesc: any;
+  @ViewChild('phone') private geoPhone: any;
   @ViewChild('active') private geoActive: any;
   locations: any[] = [];
 
@@ -43,6 +44,7 @@ export class GeoBoundaryDetailPage implements OnInit {
     if (errors) return;
     this.geoDesc.value = geo.description;
     this.geoDomain.value = geo.domain;
+    this.geoPhone.value = geo.phone;
     this.geoActive.checked = geo.active;
 
     const {data: locations } = await geo.locations();
@@ -53,7 +55,8 @@ export class GeoBoundaryDetailPage implements OnInit {
   async createDomainBoundary() {
     const {errors, data: geo } = await client.models.GeoDomainBoundary.create ({
       domain: this.geoDomain.value,
-      description: this.geoDesc.value,
+      description: this.geoDesc.value,      
+      phone: this.geoPhone.value,
       active: this.geoActive.checked
     });
     if (errors) alert('Issue with updating.  Try later.');
@@ -75,6 +78,8 @@ export class GeoBoundaryDetailPage implements OnInit {
         || this.geoDomain.value.length == 0
         || !this.geoDesc
         || this.geoDesc.value.length == 0
+        || !this.geoPhone
+        || this.geoPhone.value.length == 0
     ) return;
 
     if (this.geoBoundaryId) {
@@ -82,6 +87,7 @@ export class GeoBoundaryDetailPage implements OnInit {
         id: this.geoBoundaryId,
         description: this.geoDesc.value,
         domain: this.geoDomain.value,
+        phone: this.geoPhone.value,
         active: this.geoActive.checked
       });
       
