@@ -161,7 +161,7 @@ export class InboxPage implements OnInit {
 
     const filter = {
       or: userConvs.map(({userConversationId}) => ({ id: { eq: userConversationId } })),
-      and: {or: [{active: {eq: !this.seeAll}}, {active: {eq: true}}]}
+      and: {active: {eq: !this.seeAll}}
     };
     const {data: convs } = await client.models.Conversation.list({ filter });
     for (const conv of convs) {
@@ -216,7 +216,11 @@ export class InboxPage implements OnInit {
       return (a.createdAt < b.createdAt) ? -1 : ((a.createdAt > b.createdAt) ? 1 : 0);
     });
 
-    // add any counterparts to the Active list
+    // add any counterparts to the Active list if in active mode
+    if (!newConv.active) {
+      return;
+    }
+
     const {errors, data: actives } = await client.models.UserConversation.list ({ 
       filter: {
         and: [

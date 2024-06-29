@@ -24,12 +24,12 @@
     <div class="heading_div">
       <div class="heading_title">
         <div class="title_div">
-          <ion-label class="title">Now Active</ion-label>
+          <ion-label *ngIf="!seeAll" class="title">Now Active</ion-label>
         </div>
         <div class="all_btn">
           <ion-buttons>
             <ion-button size="small" (click)="seeAllMessages()" *ngIf="seeAll">See Active</ion-button>
-            <ion-button size="small" (click)="seeAllMessages()" *ngIf="!seeAll">See All</ion-button>
+            <ion-button size="small" (click)="seeAllMessages()" *ngIf="!seeAll">See Archived</ion-button>
           </ion-buttons>
         </div>
       </div>
