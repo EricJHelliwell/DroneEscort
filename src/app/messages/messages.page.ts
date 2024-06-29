@@ -306,11 +306,7 @@ export class MessagesPage implements OnInit {
       sender: this.userMe.id,
     });
 
-    // push message now for efficiency in display
-    this.pushMessageType(msg);
-    this.scrollToBottomNow();
-
-        // update counts, async
+    // update counts, async
     const newCount = this.userMe.textCount + 1
     const {data: updateUser} = await client.models.User.update({
       id: this.userMe.id,
