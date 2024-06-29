@@ -23,6 +23,7 @@ export class MapsPage implements OnInit {
   isPilot: boolean = false;   
   isSubscriber: boolean = false; 
   userId: string;
+  isEmergencyModalOpen: boolean = false;
 
   // @ViewChild('map', { static: true }) mapElement: ElementRef;
   // map: any;
@@ -108,7 +109,7 @@ export class MapsPage implements OnInit {
     });
 
     // Create and Subscribe to order
-    this.ReqId = await createNewOrder(this.authService.userDatabase());
+    this.ReqId = await createNewOrder(this.authService.userDatabase(), false);
     this.authService.refreshUserDB();
     sendOrderMessage(this.userId, messageToDisplay);
 
@@ -199,4 +200,14 @@ export class MapsPage implements OnInit {
     }
   }
 
+  async onEmergency() {
+    const messageToDisplay = this.authService.userPreferredName() + 
+        ' called emergency at geo:\nlat: ' + 
+        this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude; 
+    await createNewOrder(this.authService.userDatabase(), true);
+    this.authService.refreshUserDB();
+    sendOrderMessage(this.userId, messageToDisplay);
+    this.isEmergencyModalOpen = false;
+    this.router.navigate(['tel:'+this.authService.userDatabase().phone]);
+  }
 }

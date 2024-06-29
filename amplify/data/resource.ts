@@ -16,6 +16,7 @@ const schema = a.schema({
     .model({
       name: a.string().required(),
       active: a.boolean().required(),
+      emergency: a.boolean().required(),
       requestorId: a.string().required(),
       userConversation: a.hasOne("UserConversation", "userConversationId"),
       messages: a.hasMany("Message", "conversationId"),

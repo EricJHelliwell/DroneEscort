@@ -7,7 +7,7 @@ const client = generateClient<Schema>();
 let updateSub : any = null;
 let ReqId : any = null;
  
- export async function createNewOrder(user): Promise<string> {
+ export async function createNewOrder(user:any, isEmergency: boolean): Promise<string> {
     const now = new Date();
 
     const convName =  user.username + " " + 
@@ -17,6 +17,7 @@ let ReqId : any = null;
     const {data: conv } = await client.models.Conversation.create({
       name: convName,
       active: true,
+      emergency: isEmergency,
       requestorId: user.id,
       droneId: "unassigned",
     });

@@ -6,12 +6,16 @@
         <img src="assets/images/uss_drone.jpg"/>
       </ion-avatar>
     </ion-buttons>
-      <ion-buttons slot="end" *ngIf="isSubscriber">
-        <ion-button id="startOrder" (click)="onOrder()" size="large" fill="solid" color="{{orderColor}}">
-          <ion-icon slot="start" name="receipt-outline"></ion-icon>
-          {{orderText}}
-        </ion-button>
-      </ion-buttons>
+    <ion-buttons slot="start" *ngIf="isSubscriber">
+      <ion-button id="startEmergency" (click)="isEmergencyModalOpen = true" size="medium" fill="solid" color="danger">
+          EMERGENCY
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button id="startOrder" (click)="onOrder()" size="medium" fill="solid" color="{{orderColor}}">
+        {{orderText}}
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -32,3 +36,22 @@
     </div>
   </div>
 </ion-content>
+
+<ion-modal [isOpen]="isEmergencyModalOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button (click)="isEmergencyModalOpen = false">Cancel</ion-button>
+        </ion-buttons>
+        <ion-title>Emergency Call</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="onEmergency()" [strong]="true">Confirm</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+        <h1>This will create an emergency drone security request and call security directly.  Proceed?</h1>
+    </ion-content>
+  </ng-template>
+</ion-modal>

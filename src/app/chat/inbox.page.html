@@ -42,9 +42,9 @@
             <img class="img" src={{item.url}}/>
           </ion-button>
           <ion-label class="slide_button">{{item.username}}</ion-label>
-      </div>
-    </ion-buttons>
-  </div>
+        </div>
+      </ion-buttons>
+    </div>
 
     <div class="list_card" *ngFor="let item of conversations; ; let i = index" (click)="goToConversation(item.id)">
       <div class="img" [style.backgroundImage]="'url(assets/images/drone-1.png)'"></div>
@@ -58,11 +58,12 @@
         </div>
         <div class="flex_row">
           <ion-label class="text">Updated: {{ item.lastUpdatedAt | humanizeDate }}</ion-label>
-          <!-- <ion-label class="text">12:26</ion-label> -->
         </div>
         <div class="flex_row">
           <ion-label class="text">Created: {{ item.createdAt | shortenDate }}</ion-label>
-          <!-- <ion-label class="text">12:26</ion-label> -->
+        </div>
+        <div *ngIf="item.emergency == true" class="flex_row">
+          <ion-label class="text" color="danger">EMERGENCY CALL</ion-label>
         </div>
       </div>
     </div>
