@@ -221,7 +221,7 @@ export class MessagesPage implements OnInit {
     var image: any;
     if (isCamera) {
       image = await Camera.getPhoto({
-        quality: 90,
+        quality: 50,
         // width: 300,
         allowEditing: true,
         resultType: CameraResultType.Uri
@@ -229,7 +229,7 @@ export class MessagesPage implements OnInit {
     }
     else {
       const images = await Camera.pickImages({
-        quality: 90,
+        quality: 50,
         // width: 300,
         limit: 1
       });
