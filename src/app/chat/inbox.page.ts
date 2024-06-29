@@ -197,7 +197,6 @@ export class InboxPage implements OnInit {
   
   async pushAndSort(newConv, dateLastRead)
   {
-    console.log(newConv);
     // add the unread message count dynamically to object
     const {data: msgs } = await newConv.messages();
     const result = msgs.filter((msg) => !dateLastRead || msg.createdAt > dateLastRead );

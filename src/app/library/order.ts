@@ -40,10 +40,6 @@ let ReqId : any = null;
 
   export async function sendOrderMessage (userId:string, messageToDisplay:string)
   {
-    if (!ReqId) {
-      return;
-    }
-
     const {errors, data: firstMsg } = await client.models.Message.create({
       content: messageToDisplay,
       isSent: true,
@@ -54,8 +50,7 @@ let ReqId : any = null;
   }
 
   export async function cancelOrder() {
-    if (!ReqId || ReqId == "")
-        return;
+
     const {errors, data: conv } = await client.models.Conversation.update ({
         id: ReqId,
         active: false

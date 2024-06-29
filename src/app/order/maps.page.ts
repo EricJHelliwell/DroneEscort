@@ -204,10 +204,24 @@ export class MapsPage implements OnInit {
     const messageToDisplay = this.authService.userPreferredName() + 
         ' called emergency at geo:\nlat: ' + 
         this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude; 
-    await createNewOrder(this.authService.userDatabase(), true);
+    this.ReqId = await createNewOrder(this.authService.userDatabase(), true);
     this.authService.refreshUserDB();
     sendOrderMessage(this.userId, messageToDisplay);
     this.isEmergencyModalOpen = false;
-    window.open('tel:'+this.authService.userDatabase().phone);
+
+    const WatchId = monitorOrder((result) => {
+      console.log(result);
+      if (result == "Cancelled") {
+        this.zone.run(() => {this.showCancelling();});
+      }
+      else if (result == "Accepted") {
+        this.showOrderButton();
+        this.zone.run(() => {
+          this.router.navigate(['/message', this.ReqId])});
+      }
+    });
+
+    const domainPhone = await this.authService.domainPhone(); 
+    window.open('tel:' + domainPhone);
   }
 }

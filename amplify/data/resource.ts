@@ -74,6 +74,7 @@ const schema = a.schema({
         domain: a.string().required(),
         description: a.string().required(),
         active: a.boolean().required(),
+        phone: a.phone().required(),
         locations: a.hasMany('GeoBoundary','domainId'),
       })
 })

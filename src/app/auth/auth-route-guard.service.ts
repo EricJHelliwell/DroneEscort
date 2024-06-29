@@ -133,6 +133,21 @@ export class AuthGuardService implements OnInit {
     return this.authDetails.email.split('@')[1];
   }
 
+  public async domainPhone(): Promise<string> {
+    // create user in DB for conversations if not already there
+    const { errors, data: domain } = await client.models.GeoDomainBoundary.list({
+      filter: {
+        domain: {
+          eq: this.userEmailDomain()
+        }
+      }
+    });
+    if (errors) {
+      return "";
+    }
+    return domain[0].phone;
+  }
+
   public userphone(): string {
     return this.authDetails.phone_number;
   }
