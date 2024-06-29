@@ -174,8 +174,8 @@ export class MessagesPage implements OnInit {
       active: true
     });
 
-    const {data: msgs } = await conv.messages();
-    this.messages = msgs;
+    // const {data: msgs } = await conv.messages();
+    // this.messages = msgs;
   }
 
   goToBack() {

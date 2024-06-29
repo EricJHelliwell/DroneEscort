@@ -38,15 +38,28 @@ let ReqId : any = null;
     return ReqId;
   }
 
-  export async function sendOrderMessage (userId:string, messageToDisplay:string)
+  export async function sendOrderMessage (userId:string, messageToDisplay:string
+    , isPhoto: boolean)
   {
-    const {errors, data: firstMsg } = await client.models.Message.create({
-      content: messageToDisplay,
-      isSent: true,
-      isText: true,
-      conversationId: ReqId,
-      sender: userId
-    });
+    if (isPhoto) {
+      const {errors, data: firstMsg } = await client.models.Message.create({
+        content: messageToDisplay,
+        isSent: true,
+        isText: false,
+        conversationId: ReqId,
+        sender: userId
+      });
+  
+    }
+    else {
+      const {errors, data: firstMsg } = await client.models.Message.create({
+        content: messageToDisplay,
+        isSent: true,
+        isText: true,
+        conversationId: ReqId,
+        sender: userId
+      });
+    }
   }
 
   export async function cancelOrder() {

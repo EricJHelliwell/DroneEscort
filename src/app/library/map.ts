@@ -5,9 +5,12 @@ import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { Geolocation, ClearWatchOptions } from '@capacitor/geolocation';
 import { getUrl } from "aws-amplify/storage";
 import { getUserProfilePhoto } from '../library/user'
+import html2canvas from 'html2canvas'
+import { PlacesService } from '@google/maps';
 
 const client = generateClient<Schema>();
 declare var google: any;
+var mapService: any;
 var markerIdsMap: any[] = [];
 var subUsersWatch: any;
 var subDronesWatch: any;
@@ -158,6 +161,7 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
       }
 
       map = new google.maps.Map(document.getElementById('map'), mapOptions);
+      mapService = new google.maps.places.PlacesService(map);
       var mapType = new google.maps.StyledMapType(style, { name: 'Grayscale' });
       map.mapTypes.set('nepate', mapType);
       map.setMapTypeId('nepate');
@@ -204,3 +208,34 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
     }
   }
 
+  export async function saveMapToDataUrl(callback) {
+    var element = document.getElementById('map'); // Replace with your map container ID
+    var dataUrl;
+    await html2canvas(element, {
+      useCORS: true
+    }).then(function(canvas) {
+          var dataUrl = canvas.toDataURL("image/png");
+          // Do something with the data URL (e.g., display it on the page)
+          callback(dataUrl);
+    });
+  }
+
+  export async function findNearbyPlaces(lat, lng, radius, 
+      // type,
+      callback) {
+    const location = new google.maps.LatLng(lat, lng);
+    const request = {
+      location: location,
+      radius: radius, // in meters
+      // type: type // optional place type (e.g., 'restaurant', 'atm')
+    };
+  
+    await mapService.nearbySearch(request, (results, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        // handle successful results (places array in 'results')
+        callback(results);
+      } else {
+        console.error("Places search failed:", status);
+      }
+    });
+  }

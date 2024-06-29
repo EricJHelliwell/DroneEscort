@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
+import { uploadData, getUrl } from "aws-amplify/storage";
 import { AuthGuardService } from '../auth/auth-route-guard.service'
 import { createNewOrder, cancelOrder, monitorOrder, cancelMonitorOrder,
          sendOrderMessage, isOrderActive } from '../library/order'
 import { setUserLocation, watchUserLocationUpdate, watchUserLocationCancel } from '../library/user'
-import { createMap, disposeMap } from '../library/map';
+import { createMap, disposeMap, saveMapToDataUrl, findNearbyPlaces } from '../library/map';
 import { getActiveConvUsers } from '../library/chat';
 
 @Component({
@@ -77,7 +78,7 @@ export class MapsPage implements OnInit {
 
         const messageToDisplay = 'User location change.  New geo:\nlat: ' + 
         this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude;
-        sendOrderMessage(this.userId, messageToDisplay);
+        sendOrderMessage(this.userId, messageToDisplay, false);
       });
 
  
@@ -111,7 +112,7 @@ export class MapsPage implements OnInit {
     // Create and Subscribe to order
     this.ReqId = await createNewOrder(this.authService.userDatabase(), false);
     this.authService.refreshUserDB();
-    sendOrderMessage(this.userId, messageToDisplay);
+    sendOrderMessage(this.userId, messageToDisplay, false);
 
     const WatchId = monitorOrder((result) => {
       console.log(result);
@@ -201,13 +202,45 @@ export class MapsPage implements OnInit {
   }
 
   async onEmergency() {
+    this.showCancelButton();
+
     const messageToDisplay = this.authService.userPreferredName() + 
         ' called emergency at geo:\nlat: ' + 
         this.coordinates.latitude + '\nlong: ' + this.coordinates.longitude; 
     this.ReqId = await createNewOrder(this.authService.userDatabase(), true);
     this.authService.refreshUserDB();
-    sendOrderMessage(this.userId, messageToDisplay);
-    this.isEmergencyModalOpen = false;
+    sendOrderMessage(this.userId, messageToDisplay, false);
+
+    var mapLocalURI;
+    await saveMapToDataUrl((data) => {
+      mapLocalURI = data;
+    });
+
+    let blob = await fetch(mapLocalURI).then(r => r.blob());
+    const fileReader = new FileReader();
+    fileReader.readAsArrayBuffer(blob);
+  
+    fileReader.onload = async (event) => {
+      const { v4: uuidv4 } = require('uuid');
+      const uuid = uuidv4();
+      const mapPath = "chat-submissions/" + this.ReqId + "/" + uuid + ".png"; 
+      try {
+        const upload = await uploadData({
+              data: event.target.result, 
+              path: mapPath,
+          });
+      } catch (e) {
+        console.log("error", e);
+      }
+      sendOrderMessage(this.ReqId, mapPath, true);
+    }  
+
+    await findNearbyPlaces(this.coordinates.latitude, this.coordinates.longitude
+      , 0.2, (results) => {
+        const placesMessages = "Here are some nearby places: " +
+          results.map((place) => place.name).join(", ");
+        sendOrderMessage(this.ReqId, placesMessages, false);
+      });
 
     const WatchId = monitorOrder((result) => {
       console.log(result);
@@ -220,6 +253,8 @@ export class MapsPage implements OnInit {
           this.router.navigate(['/message', this.ReqId])});
       }
     });
+
+    this.isEmergencyModalOpen = false;
 
     const domainPhone = await this.authService.domainPhone(); 
     window.open('tel:' + domainPhone);
