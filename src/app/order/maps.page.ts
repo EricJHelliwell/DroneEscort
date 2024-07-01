@@ -48,8 +48,10 @@ export class MapsPage implements OnInit {
     var userIds = [ this.userId ];
     if (this.isPilot) {
       userIds = await getActiveConvUsers();
+      console.log(userIds);
       // remove pilot
       userIds.splice(userIds.indexOf(this.userId), 1);
+      console.log(userIds);
     };
 
     setUserLocation(this.userId, (coords) => {

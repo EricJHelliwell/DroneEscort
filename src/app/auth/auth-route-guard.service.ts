@@ -58,6 +58,7 @@ export class AuthGuardService implements OnInit {
     .then((auth) => {
       this.loggedIn = true;
       this.authDetails = auth.tokens.idToken.payload;
+      console.log(this.authDetails);
     })
     .catch(err => {
       console.log(err);

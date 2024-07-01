@@ -74,6 +74,7 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
         });
       }
 
+      if (userIds.length > 0) {
       // mark users
         filter = {
             or: userIds.map(id => ({ id: { eq: id } }))
@@ -120,6 +121,7 @@ export async function createMap(userIds:string[], domain:string, centerCords) {
             }
           });
         }
+      }
     }
 
     function closeOtherInfo() {
